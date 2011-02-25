@@ -1,7 +1,7 @@
 //******************************************************************************
-//  MSP430x2xx Demo - Software Toggle P1.0
+//  UMass WISP Demo - Flash LED by toggling MSP430F2618/2619 P4.2
 //
-//  Description; Toggle P1.0 by xor'ing P1.0 inside of a software loop.
+//  Description; Toggle P4.2 by xor'ing P1.0 inside of a software loop.
 //  ACLK = n/a, MCLK = SMCLK = default DCO
 //
 //                MSP430x2xx
@@ -10,12 +10,12 @@
 //          | |                 |
 //          --|RST          XOUT|-
 //            |                 |
-//            |             P1.0|-->LED
+//            |             P4.2|-->LED
 //
-//  A. Dannenberg
-//  Texas Instruments, Inc
-//  January 2006
-//  Built with CCE for MSP430 Version: 3.0
+//  H. Zhang
+//  UMass, Amherst, SPQR Lab
+//  October 2010
+//  Built with IAR Embeded Workbench kickstart for MSP430 Version: 4.21
 //******************************************************************************
 
 #include "msp430x26x.h"

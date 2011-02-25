@@ -77,13 +77,13 @@ EHLD					Enables Hold# pin functionality of the RST#/HOLD# pin
 //"C" LANGUAGE DRIVERS 
 
 /********************************************************************/
-/* Copyright Microchip Technology Inc.  1994-2010	    */
-/* Example "C" language Driver of SST25WF040 Serial Flash	    */
-/* Hardik Patel, Microchip Technology Inc.                  */
+/* Copyright Microchip Technology Inc.  1994-2010	                */
+/* Example "C" language Driver of SST25WF040 Serial Flash	        */
+/* Hardik Patel, Microchip Technology Inc.                          */
 /*                                                                  */
-/* Revision 1.0, October 11, 2010			  	    */   
+/* Revision 1.0, October 11, 2010			  	                    */   
 /*                                                                  */
-/*								    */
+/*								                                    */
 /********************************************************************/
 #include "msp430x26x.h"
 #define CE    0x01

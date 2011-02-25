@@ -1,5 +1,5 @@
 //******************************************************************************
-//   Moo read/write external flash SST25WF040 Demo - USCI_B1, SPI 3-Wire Master
+//   UMass WISP read/write serial flash Demo - USCI_B1, SPI 3-Wire Master
 //
 //   Description: MCU talks to SST25WF040 flash using 3-wire mode. A data with 
 //   any value is sent by the MCU if there is no write protection on the flash. 
@@ -10,7 +10,7 @@
 //   ACLK = 32.768kHz, MCLK = SMCLK = DCO ~ 1048kHz.  BRCLK = SMCLK/2
 //
 //
-//                    MSP430F261x/241x
+//                    MSP430F261x
 //                 -----------------
 //             /|\|              XIN|-
 //              | |                 |  32kHz xtal
@@ -256,10 +256,7 @@ void main(void)
       Byte_Program(0x012349, 0x25);
       Read(0x012349);
     }
-    
   }
-  
-
 }
 
 #pragma vector=USCIAB1RX_VECTOR

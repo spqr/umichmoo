@@ -1,9 +1,9 @@
 //******************************************************************************
-//  MSP430x26x Demo - Flash In-System Programming, Copy SegC to SegD
+//  UMass WISP Demo - Flash In-System Programming, Copy SegC to SegD
 //
 //  Description: This program first erases flash seg C, then it increments all
 //  values in seg C, then it erases seg D, then copies seg C to seg D. Starting
-//  addresses of segments defined in this code: Seg C-0x1040, Seg D-0x1000.
+//  addresses of segments defined in this code: Seg C-0x1100, Seg D-0x8000.
 //  ACLK = n/a, MCLK = SMCLK = CALxxx_1MHZ = 1MHz
 //  //* Set Breakpoint on NOP in the Mainloop to avoid Stressing Flash *//
 //
@@ -14,10 +14,10 @@
 //         --|RST          XOUT|-
 //           |                 |
 //
-//  B. Nisarga
-//  Texas Instruments Inc.
-//  September 2007
-//  Built with CCE Version: 3.2.0 and IAR Embedded Workbench Version: 3.42A
+//  H. Zhang
+//  UMass, Amherst, SPQR Lab
+//  February 2011
+//  Built with IAR Embeded Workbench kickstart for MSP430 Version: 4.21
 //******************************************************************************
 #include "msp430x26x.h"
 
@@ -38,7 +38,7 @@ void main(void)
 
   while(1)                                  // Repeat forever
   {
-    copy_RAM2FLASH();                             // Copy segment C to D
+    copy_RAM2FLASH();                       // Copy segment C to D
     __no_operation();                       // SET BREAKPOINT HERE
   }
 }
@@ -53,7 +53,7 @@ void copy_RAM2FLASH(void)
   Flash_ptrD = (char *)0x8000;              // Initialize Flash segment D ptr
   FCTL3 = FWKEY;                            // Clear Lock bit
   FCTL1 = FWKEY + ERASE;                    // Set Erase bit
-//  *Flash_ptrD = 0;                          // Dummy write to erase Flash seg D
+  *Flash_ptrD = 0;                          // Dummy write to erase Flash seg D
   FCTL1 = FWKEY + WRT;                      // Set WRT bit for write operation
 
   for (i = 0; i < 64; i++)

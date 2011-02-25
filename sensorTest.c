@@ -1,3 +1,4 @@
+// Copyright (c) 2009, Intel Corporation
 
 // Copyright 2011 UMass, Amherst, PRISMS Lab.
 

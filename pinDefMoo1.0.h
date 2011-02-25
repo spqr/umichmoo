@@ -1,8 +1,8 @@
-// Pin definitions
+// Pin definitions: these bit definitions are specific to Moo 1.0
 // UMass Moo 1.0
 // (derived from WISP 4.1 DL ["Blue WISP"] definitions)
 
-// MSP430F2132
+// MSP430F2618
 
 // See wisp.wikispaces.com for a schematic.
 
@@ -71,8 +71,6 @@
 #define CRYSTAL_IN     BIT7       // input
 #define CRYSTAL_OUT    BIT6       // output
 
-
-
 // Analog Inputs (ADC In Channel)
 #define INCH_ACCEL_Z     INCH_0
 #define INCH_ACCEL_Y     INCH_1
@@ -82,9 +80,6 @@
 #define INCH_DEBUG_6_5   INCH_5
 #define INCH_DEBUG_6_6   INCH_6
 
-
-//#define INCH_2_4 INCH_4   // not accessible
-// #define INCH_3_5 INCH_5  // ??
 
 #define DRIVE_ALL_PINS  \
   P1OUT = 0;  \
