@@ -16,6 +16,8 @@
 //  UMass, Amherst, SPQR Lab
 //  October 2010
 //  Built with IAR Embeded Workbench kickstart for MSP430 Version: 4.21
+//
+//  (adapted from MSP430x261x_1.c from TI's MSP430F261x code examples)
 //******************************************************************************
 
 #include "msp430x26x.h"

@@ -27,6 +27,9 @@
 //   PRISMS Lab, Computer Science, UMass, Amherst.
 //   January 2011
 //   Built with IAR Embedded Workbench Version: 4.21.2
+//
+//   (adapted from MSP430x261x_uscia0_spi_09.c from TI's MSP430F261x code
+//    examples)
 //******************************************************************************
 #include  <msp430x26x.h>
 #define CE    0x01
