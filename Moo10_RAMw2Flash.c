@@ -1,5 +1,5 @@
 //******************************************************************************
-//  UMass WISP Demo - Flash In-System Programming, Copy SegC to SegD
+//  UMass Moo Demo - Flash In-System Programming, Copy SegC to SegD
 //
 //  Description: This program first erases flash seg C, then it increments all
 //  values in seg C, then it erases seg D, then copies seg C to seg D. Starting
@@ -18,6 +18,9 @@
 //  UMass, Amherst, SPQR Lab
 //  February 2011
 //  Built with IAR Embeded Workbench kickstart for MSP430 Version: 4.21
+//
+//  (adapted from MSP430x261x_flashwrite_01.c from TI's MSP430F261x code
+//   examples)
 //******************************************************************************
 #include "msp430x26x.h"
 

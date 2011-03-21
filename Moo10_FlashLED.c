@@ -1,5 +1,5 @@
 //******************************************************************************
-//  UMass WISP Demo - Flash LED by toggling MSP430F2618/2619 P4.2
+//  UMass Moo Demo - Flash LED by toggling MSP430F2618/2619 P4.2
 //
 //  Description; Toggle P4.2 by xor'ing P1.0 inside of a software loop.
 //  ACLK = n/a, MCLK = SMCLK = default DCO
@@ -16,6 +16,8 @@
 //  UMass, Amherst, SPQR Lab
 //  October 2010
 //  Built with IAR Embeded Workbench kickstart for MSP430 Version: 4.21
+//
+//  (adapted from MSP430x261x_1.c from TI's MSP430F261x code examples)
 //******************************************************************************
 
 #include "msp430x26x.h"

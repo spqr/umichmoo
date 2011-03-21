@@ -1,5 +1,5 @@
 //******************************************************************************
-//   UMass WISP read/write serial flash Demo - USCI_B1, SPI 3-Wire Master
+//   UMass Moo read/write serial flash Demo - USCI_B1, SPI 3-Wire Master
 //
 //   Description: MCU talks to SST25WF040 flash using 3-wire mode. A data with 
 //   any value is sent by the MCU if there is no write protection on the flash. 
@@ -27,6 +27,9 @@
 //   PRISMS Lab, Computer Science, UMass, Amherst.
 //   January 2011
 //   Built with IAR Embedded Workbench Version: 4.21.2
+//
+//   (adapted from MSP430x261x_uscia0_spi_09.c from TI's MSP430F261x code
+//    examples)
 //******************************************************************************
 #include  <msp430x26x.h>
 #define CE    0x01
