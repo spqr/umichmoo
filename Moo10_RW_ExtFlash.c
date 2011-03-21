@@ -1,5 +1,5 @@
 //******************************************************************************
-//   UMass WISP read/write serial flash Demo - USCI_B1, SPI 3-Wire Master
+//   UMass Moo read/write serial flash Demo - USCI_B1, SPI 3-Wire Master
 //
 //   Description: MCU talks to SST25WF040 flash using 3-wire mode. A data with 
 //   any value is sent by the MCU if there is no write protection on the flash. 

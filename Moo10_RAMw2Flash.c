@@ -1,5 +1,5 @@
 //******************************************************************************
-//  UMass WISP Demo - Flash In-System Programming, Copy SegC to SegD
+//  UMass Moo Demo - Flash In-System Programming, Copy SegC to SegD
 //
 //  Description: This program first erases flash seg C, then it increments all
 //  values in seg C, then it erases seg D, then copies seg C to seg D. Starting

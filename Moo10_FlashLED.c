@@ -1,5 +1,5 @@
 //******************************************************************************
-//  UMass WISP Demo - Flash LED by toggling MSP430F2618/2619 P4.2
+//  UMass Moo Demo - Flash LED by toggling MSP430F2618/2619 P4.2
 //
 //  Description; Toggle P4.2 by xor'ing P1.0 inside of a software loop.
 //  ACLK = n/a, MCLK = SMCLK = default DCO
