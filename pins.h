@@ -1,5 +1,10 @@
-// Pin definitions: these bit definitions are specific to Moo 1.0, 1.1
-// (derived from WISP 4.1 DL ["Blue WISP"] definitions)
+/* See license.txt for license information. */
+
+#ifndef PINS_H
+#define PINS_H
+
+// Pin definitions for Moo 1.0 and 1.1
+// (derived from Intel WISP 4.1 DL ["Blue WISP"] definitions)
 
 // MSP430F2618
 
@@ -92,3 +97,14 @@
   P4DIR = CAP_SENSE | LED_POWER | VSENSE_POWER; \
   P5DIR = FLASH_CE | FLASH_SIMO | FLASH_SCK; \
   P8DIR = CRYSTAL_OUT; 
+
+#define DEBUG_PINS_ENABLED            0
+#if DEBUG_PINS_ENABLED
+#define DEBUG_PIN5_HIGH               P3OUT |= BIT5;
+#define DEBUG_PIN5_LOW                P3OUT &= ~BIT5;
+#else
+#define DEBUG_PIN5_HIGH               
+#define DEBUG_PIN5_LOW                
+#endif
+
+#endif // PINS_H

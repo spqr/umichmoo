@@ -120,7 +120,7 @@
 
 #if(WISP_VERSION == BLUE_WISP)
   #include <msp430x26x.h>
-  #include "pinDefMoo1.0.h"
+  #include "pins.h"
   #define USE_2618  1
 #else
   #error "WISP Version not supported"
@@ -158,15 +158,6 @@
 #define wisp_debug_4                  TX_A        // P3.4
 #define wisp_debug_5                  RX_A        // P3.5
 #define MONITOR_DEBUG_ON                 0
-
-#define DEBUG_PINS_ENABLED            0
-#if DEBUG_PINS_ENABLED
-#define DEBUG_PIN5_HIGH               P3OUT |= BIT5;
-#define DEBUG_PIN5_LOW                P3OUT &= ~BIT5;
-#else
-#define DEBUG_PIN5_HIGH               
-#define DEBUG_PIN5_LOW                
-#endif
 
 // ------------------------------------------------------------------------
 
