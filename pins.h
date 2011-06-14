@@ -3,12 +3,9 @@
 #ifndef PINS_H
 #define PINS_H
 
-// Pin definitions for Moo 1.0 and 1.1
+// Pin definitions for Moo 1.0 and 1.1 (MSP430F2618)
 // (derived from Intel WISP 4.1 DL ["Blue WISP"] definitions)
-
-// MSP430F2618
-
-// See wisp.wikispaces.com for a schematic.
+// See the schematics/ directory for diagrams.
 
 // Port 1
 #define TEMP_POWER     BIT0       // output

@@ -81,10 +81,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-// Step 2: pick a reader and wisp hardware
+// Step 2: pick a reader and moo hardware
 // make sure this syncs with project target
-#define BLUE_WISP                     0x11
-#define WISP_VERSION                  BLUE_WISP
+#define MOO1_1                        0x11
+#define MOO_VERSION                   MOO1_1
 #define IMPINJ_READER                 1
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -96,9 +96,9 @@
 // e.g., you're using the flash-limited free IAR kickstart compiler -- you probably
 // want to leave these features out unless you really need them.
 //
-// You only need ENABLE_SLOTS when you're working with more than one WISP. The
-// code will run fine without ENABLE_SLOTS if you're using one WISP with
-// multiple non-WISP rfid tags.
+// You only need ENABLE_SLOTS when you're working with more than one Moo. The
+// code will run fine without ENABLE_SLOTS if you're using one Moo with
+// multiple non-Moo rfid tags.
 //
 // ENABLE_SESSIONS is new code that hasn't been tested in a multiple reader
 // environment. Also note a workaround I use in handle_queryrep to deal with
@@ -113,17 +113,17 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 4: set EPC and TID identifiers (optional)
-#define WISP_ID 0x00, 0x08
-#define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, WISP_VERSION, WISP_ID
+#define MOO_ID 0x00, 0x08
+#define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, MOO_VERSION, MOO_ID
 #define TID_DESIGNER_ID_AND_MODEL_NUMBER  0xFF, 0xF0, 0x01
 ////////////////////////////////////////////////////////////////////////////////
 
-#if(WISP_VERSION == BLUE_WISP)
+#if(MOO_VERSION == MOO1_1)
   #include <msp430x26x.h>
   #include "pins.h"
   #define USE_2618  1
 #else
-  #error "WISP Version not supported"
+  #error "Moo version not supported"
 #endif
 
 #if SIMPLE_QUERY_ACK
@@ -152,11 +152,11 @@
 #define MILLER_4_ENCODING             1
 
 // as per mapping in monitor code
-#define wisp_debug_1                  DEBUG_1_5   // P1.5
-#define wisp_debug_2                  DEBUG_2_1   // P2.1
-#define wisp_debug_3                  CLK_A       // P3.0
-#define wisp_debug_4                  TX_A        // P3.4
-#define wisp_debug_5                  RX_A        // P3.5
+#define moo_debug_1                  DEBUG_1_5   // P1.5
+#define moo_debug_2                  DEBUG_2_1   // P2.1
+#define moo_debug_3                  CLK_A       // P3.0
+#define moo_debug_4                  TX_A        // P3.4
+#define moo_debug_5                  RX_A        // P3.5
 #define MONITOR_DEBUG_ON                 0
 
 // ------------------------------------------------------------------------
@@ -348,11 +348,11 @@ int main(void)
   // already set.
 #if MONITOR_DEBUG_ON
     // for monitor - pin direction
-  P1DIR |= wisp_debug_1;
-  P2DIR |= wisp_debug_2;
-  P3DIR |= wisp_debug_3;
-  P3DIR |= wisp_debug_4;
-  P3DIR |= wisp_debug_5;
+  P1DIR |= moo_debug_1;
+  P2DIR |= moo_debug_2;
+  P3DIR |= moo_debug_3;
+  P3DIR |= moo_debug_4;
+  P3DIR |= moo_debug_5;
 #endif
   */
 
@@ -423,9 +423,9 @@ int main(void)
 
 #if MONITOR_DEBUG_ON  
   // for monitor - set STATE READY debug line - 00000 - 0
-  P1OUT |= wisp_debug_1;
-  P1OUT &= ~wisp_debug_1;
-  P2OUT &= ~wisp_debug_2;
+  P1OUT |= moo_debug_1;
+  P1OUT &= ~moo_debug_1;
+  P2OUT &= ~moo_debug_2;
 #endif
   
   setup_to_receive();
@@ -444,9 +444,9 @@ int main(void)
       // for monitor - set TAR OVERFLOW debug line - 00111 - 7
       if (!delimiterNotFound)
       {
-        P1OUT |= wisp_debug_1;
-        P1OUT &= ~wisp_debug_1;
-        P2OUT &= ~wisp_debug_2;
+        P1OUT |= moo_debug_1;
+        P1OUT &= ~moo_debug_1;
+        P2OUT &= ~moo_debug_2;
         P3OUT = 0x31;
       }
 #endif
@@ -472,9 +472,9 @@ int main(void)
     
 #if MONITOR_DEBUG_ON
     // for monitor - set STATE READY debug line - 00000 - 0
-    P1OUT |= wisp_debug_1;
-    P1OUT &= ~wisp_debug_1;
-    P2OUT &= ~wisp_debug_2;
+    P1OUT |= moo_debug_1;
+    P1OUT &= ~moo_debug_1;
+    P2OUT &= ~moo_debug_2;
 #endif
     
 #endif
@@ -505,9 +505,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
             // for monitor - set QUERY PKT debug line - 01001 - 9
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x01;
 #endif
           
@@ -516,9 +516,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE REPLY debug line - 00010 - 2
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x10;
 #endif
           
@@ -533,9 +533,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_ADJ debug line - 01101 - 13
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x30;
 #endif
           //DEBUG_PIN5_HIGH;
@@ -554,9 +554,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set debug line - 01110 - 14
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
         }   
@@ -571,9 +571,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY PKT debug line - 01001 - 9
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x01;
 #endif
           
@@ -582,9 +582,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE REPLY debug line - 00010 - 2
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x10;
 #endif
           
@@ -603,9 +603,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -619,9 +619,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_REP debug line - 01100 - 12
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x20;
 #endif
           //DEBUG_PIN5_HIGH;
@@ -632,9 +632,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
         } // queryrep command
@@ -650,9 +650,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_ADJ debug line - 01101 - 13
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x21;
 #endif
           
@@ -669,9 +669,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set SELECT debug line - 01110 - 14
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -682,9 +682,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -703,9 +703,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set ACK PKT debug line - 01010 - 10
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x10;
 #endif
 #if ENABLE_READS
@@ -723,9 +723,9 @@ int main(void)
 #endif
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE ACK debug line - 00011 - 3
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x11;
 #endif
         }
@@ -736,9 +736,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY PKT debug line - 01001 - 9
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x01;
 #endif
           // i'm supposed to stay in state_reply when I get this, but if I'm
@@ -759,9 +759,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_REP debug line - 01100 - 12
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x20;
 #endif
           
@@ -771,9 +771,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE ARBITRATE debug line - 00001 - 1
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x01;
 #endif
           
@@ -789,9 +789,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_ADJ debug line - 01101 - 13
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x21;
 #endif
           //DEBUG_PIN5_HIGH;
@@ -802,9 +802,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -816,9 +816,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
           // for monitor - set SELECT debug line - 01110 - 14
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT |= wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT |= moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -829,9 +829,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -859,9 +859,9 @@ int main(void)
 #if 1
 #if MONITOR_DEBUG_ON
           // for monitor - set REQ_RN debug line - 01011 - 11
-    P1OUT |= wisp_debug_1;
-    P1OUT &= ~wisp_debug_1;
-    P2OUT |= wisp_debug_2;
+    P1OUT |= moo_debug_1;
+    P1OUT &= ~moo_debug_1;
+    P2OUT |= moo_debug_2;
     P3OUT = 0x11;
 #endif
           DEBUG_PIN5_HIGH;
@@ -874,9 +874,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
 #endif
@@ -890,9 +890,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
               // for monitor - set QUERY PKT debug line - 01001 - 9
-    P1OUT |= wisp_debug_1;
-    P1OUT &= ~wisp_debug_1;
-    P2OUT |= wisp_debug_2;
+    P1OUT |= moo_debug_1;
+    P1OUT &= ~moo_debug_1;
+    P2OUT |= moo_debug_2;
     P3OUT = 0x01;
 #endif
           //DEBUG_PIN5_HIGH;
@@ -902,9 +902,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= wisp_debug_1;
-          P1OUT &= ~wisp_debug_1;
-          P2OUT &= ~wisp_debug_2;
+          P1OUT |= moo_debug_1;
+          P1OUT &= ~moo_debug_1;
+          P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
           
@@ -921,9 +921,9 @@ int main(void)
         {
 #if MONITOR_DEBUG_ON
               // for monitor - set ACK PKT debug line - 01010 - 10
-    P1OUT |= wisp_debug_1;
-    P1OUT &= ~wisp_debug_1;
-    P2OUT |= wisp_debug_2;
+    P1OUT |= moo_debug_1;
+    P1OUT &= ~moo_debug_1;
+    P2OUT |= moo_debug_2;
     P3OUT = 0x10;
 #endif
           //DEBUG_PIN5_HIGH;
@@ -931,9 +931,9 @@ int main(void)
           
 #if MONITOR_DEBUG_ON
               // for monitor - set STATE ACK debug line - 00011 - 3
-    P1OUT |= wisp_debug_1;
-    P1OUT &= ~wisp_debug_1;
-    P2OUT &= ~wisp_debug_2;
+    P1OUT |= moo_debug_1;
+    P1OUT &= ~moo_debug_1;
+    P2OUT &= ~moo_debug_2;
     P3OUT = 0x11;
 #endif
           
@@ -1804,9 +1804,9 @@ inline void sleep()
 
 #if MONITOR_DEBUG_ON
   // for monitor - set SLEEP debug line - 01000 - 8
-  P1OUT |= wisp_debug_1;
-  P1OUT &= ~wisp_debug_1;
-  P2OUT |= wisp_debug_2;
+  P1OUT |= moo_debug_1;
+  P1OUT &= ~moo_debug_1;
+  P2OUT |= moo_debug_2;
   P3OUT = 0x00;
 #endif
   
