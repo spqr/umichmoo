@@ -18,34 +18,36 @@
 //	       Alien reader code is out of date
 //
 //	This is a partial implementation of the RFID EPCGlobal C1G2 protocol
-//	for the Moo 1.1 hardware platform.
+//  for the Moo 1.1 hardware platform.
 //	
 //	What's missing: 
 //        - SECURED and KILLED states.
-//        - No support for WRITE, KILL, LOCK, ACCESS, BLOCKWRITE and BLOCKERASE commands.
+//        - No support for WRITE, KILL, LOCK, ACCESS, BLOCKWRITE and BLOCKERASE
+//          commands.
 //        - Commands with EBVs always assume that the field is 8 bits long.
 //        - SELECTS don't support truncation.
 //        - READs ignore membank, wordptr, and wordcount fields. (What READs do
-//          return is dependent on what application you have configured in step 1.)
-//        - I sometimes get erroneous-looking session values in QUERYREP commands.
-//          For the time being, I just parse the command as if the session value
-//          is the same as my previous_session value.
+//          return is dependent on what application you have configured in step
+//          1.)
+//        - I sometimes get erroneous-looking session values in QUERYREP
+//          commands. For the time being, I just parse the command as if the
+//          session value is the same as my previous_session value.
 //        - QUERYs use a pretty aggressive slotting algorithm to preserve power.
 //          See the comments in that function for details.
-//        - Session timeouts work differently than what's in table 6.15 of the spec.
-//          Here's what we do:
-//            SL comes up as not asserted, and persists as long as it's in ram retention
-//            mode or better.
-//            All inventory flags come up as 'A'. S0's inventory flag persists as
-//            long as it's in ram retention mode or better. S1's inventory flag persists
-//            as long as it's in an inventory round and in ram retention mode or better;
-//            otherwise it is reset to 'A' with every reset at the top of the while
-//            loop. S2's and S3's inventory flag is reset to 'A' with every reset at
-//            the top of the while loop.
+//        - Session timeouts work differently than what's in table 6.15 of the
+//          spec.  Here's what we do:
+//            SL comes up as not asserted, and persists as long as it's in ram
+//            retention mode or better.
+//            All inventory flags come up as 'A'. S0's inventory flag persists
+//            as long as it's in ram retention mode or better. S1's inventory
+//            flag persists as long as it's in an inventory round and in ram
+//            retention mode or better; otherwise it is reset to 'A' with every
+//            reset at the top of the while loop. S2's and S3's inventory flag
+//            is reset to 'A' with every reset at the top of the while loop.
 //******************************************************************************
 
 /*******************************************************************************
- ***************** Edit mymoo.h to configure this Moo **************************
+ ****************  Edit mymoo.h to configure this Moo  *************************
  ******************************************************************************/
 #include "mymoo.h"
 
@@ -104,9 +106,9 @@
 
 volatile unsigned char* destorig = &cmd[0];         // pointer to beginning of cmd
 
-// #pragma data_alignment=2 is important in sendResponse() when the words are copied into arrays.
-// Sometimes the compiler puts reply[0] on an
-// odd address, which cannot be copied as a word and thus screws everything up.
+// #pragma data_alignment=2 is important in sendResponse() when the words are
+// copied into arrays.  Sometimes the compiler puts reply[0] on an odd address,
+// which cannot be copied as a word and thus screws everything up.
 #pragma data_alignment=2
 
 // compiler uses working register 4 as a global variable
@@ -127,7 +129,6 @@ unsigned short TRcal=0;
 #define STATE_KILLED              6
 #define STATE_READ_SENSOR         7
 
-
 #if ENABLE_SESSIONS
 // selected and session inventory flags
 #define S0_INDEX		0x00
@@ -142,12 +143,16 @@ unsigned short TRcal=0;
 
 unsigned char SL;
 unsigned char previous_session = 0x00;
-unsigned char session_table[] = { SESSION_STATE_A, SESSION_STATE_A, SESSION_STATE_A, SESSION_STATE_A };
+unsigned char session_table[] = {
+    SESSION_STATE_A, SESSION_STATE_A,
+    SESSION_STATE_A, SESSION_STATE_A
+};
 void initialize_sessions();
 void handle_session_timeout();
-inline int bitCompare(unsigned char *startingByte1, unsigned short startingBit1, unsigned char *startingByte2, unsigned short startingBit2, unsigned short len);
+inline int bitCompare(unsigned char *startingByte1, unsigned short startingBit1,
+        unsigned char *startingByte2, unsigned short startingBit2, unsigned
+        short len);
 #endif
-
 void setup_to_receive();
 void sleep();
 unsigned short is_power_good();
@@ -176,7 +181,7 @@ int i;
 
 int main(void)
 {
-  //**********************************Timer setup**********************************
+  //*******************************Timer setup**********************************
   WDTCTL = WDTPW + WDTHOLD;            // Stop Watchdog Timer 
   
   P1SEL = 0;
@@ -687,7 +692,8 @@ int main(void)
           
           //setup_to_receive();
         } // select command
-        else if ( bits >= MAX_NUM_QUERY_BITS && ( ( cmd[0] & 0xF0 ) != 0xA0 ) && ( ( cmd[0] & 0xF0 ) != 0x80 ) )
+        else if ( bits >= MAX_NUM_QUERY_BITS && ( ( cmd[0] & 0xF0 ) != 0xA0 ) &&
+                ( ( cmd[0] & 0xF0 ) != 0x80 ) )
         {
           //DEBUG_PIN5_HIGH;
           do_nothing();
@@ -795,7 +801,8 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_QUERYREP_BITS && ( ( cmd[0] & 0x06 ) == 0x00 ) )
         {
-          // in the acknowledged state, rfid chips don't respond to queryrep commands
+          // in the acknowledged state, rfid chips don't respond to queryrep
+          // commands
           do_nothing();
           state = STATE_READY; 
           delimiterNotFound = 1;
@@ -881,7 +888,8 @@ int main(void)
       }
       case STATE_OPEN:		
       {
-        // responds to query, ack, req_rn, read, write, kill, access, blockwrite, and blockerase cmds
+        // responds to query, ack, req_rn, read, write, kill, access,
+        // blockwrite, and blockerase cmds
         // processes queryrep, queryadjust, select cmds
         //////////////////////////////////////////////////////////////////////
         // process the READ command
@@ -994,7 +1002,7 @@ int main(void)
   } // while loop
 }
 
-//****************************** SETUP TO RECEIVE  *************************************
+//************************** SETUP TO RECEIVE  *********************************
 // note: port interrupt can also reset, but it doesn't call this function
 //       because function call causes PUSH instructions prior to bit read
 //       at beginning of interrupt, which screws up timing.  so, remember
@@ -1002,30 +1010,35 @@ int main(void)
 static inline void setup_to_receive()
 {
   //P4OUT &= ~BIT3;
-  _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts at the same time
+  _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts
+                // at the same time
   
   P1OUT |= RX_EN_PIN;
   
   delimiterNotFound = 0;
   // setup port interrupt on pin 1.2
   P1SEL &= ~BIT2;  //Disable TimerA2, so port interrupt can be used
-  // Setup timer. It has to setup because there is no setup time after done with port1 interrupt.
+  // Setup timer. It has to setup because there is no setup time after done with
+  // port1 interrupt.
   TACTL = 0;
   TAR = 0;
   TACCR0 = 0xFFFF;    // Set up TimerA0 register as Max
   TACCTL0 = 0;
   TACCTL1 = SCS + CAP;   //Synchronize capture source and capture mode
-  TACTL = TASSEL1 + MC1 + TAIE;  // SMCLK and continuous mode and Timer_A interrupt enabled.
+  TACTL = TASSEL1 + MC1 + TAIE;  // SMCLK and continuous mode and Timer_A
+                                 // interrupt enabled.
 
   // initialize bits
   bits = 0;
   // initialize dest
   dest = destorig;  // = &cmd[0]
-  // clear R6 bits of word counter from prior communications to prevent dest++ on 1st port interrupt
+  // clear R6 bits of word counter from prior communications to prevent dest++
+  // on 1st port interrupt
   asm("CLR R6");
   
   P1IE = 0;
-  P1IES &= ~RX_PIN; // Make positive edge for port interrupt to detect start of delimiter
+  P1IES &= ~RX_PIN; // Make positive edge for port interrupt to detect start of
+                    // delimiter
   P1IFG = 0;  // Clear interrupt flag
             
   P1IE  |= RX_PIN; // Enable Port1 interrupt
@@ -1053,7 +1066,8 @@ inline void sleep()
   P1IFG = 0;
   TACTL = 0;
   
-  _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts at the same time
+  _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts
+                // at the same time
   P2IE |= VOLTAGE_SV_PIN; // Enable Port 2 interrupt
   
   if (is_power_good())
@@ -1108,7 +1122,8 @@ __interrupt void TimerA0_ISR(void)   // (5-6 cycles) to enter interrupt
 //*************************************************************************
 //************************ PORT 1 INTERRUPT *******************************
 
-// warning   :  Whenever the clock frequency changes, the value of TAR should be changed in aesterick lines
+// warning   :  Whenever the clock frequency changes, the value of TAR should be
+//              changed in aesterick lines
 // Pin Setup :  P1.2
 // Description : Port 1 interrupt is used as finding delimeter.
 
@@ -1131,9 +1146,11 @@ __interrupt void Port1_ISR(void)   // (5-6 cycles) to enter interrupt
   // bits != 0:
   asm("MOV #0000h, R5\n");          // bits = 0  (1 cycles)
 
-  asm("CMP #0010h, R7\n");          //************ this is finding delimeter (12.5us)  (2 cycles)*********/   2d  ->   14
+  asm("CMP #0010h, R7\n");          // finding delimeter (12.5us, 2 cycles)
+                                    // 2d -> 14
   asm("JNC delimiter_Value_Is_wrong\n");            //(2 cycles)
-  asm("CMP #0040h, R7");             //************ this is finding delimeter (12.5us)  (2 cycles)*********  43H
+  asm("CMP #0040h, R7");            // finding delimeter (12.5us, 2 cycles)
+                                    // 43H
   asm("JC  delimiter_Value_Is_wrong\n");
   asm("CLR P1IE");
 #if USE_2618
@@ -1179,7 +1196,7 @@ __interrupt void TimerA1_ISR(void)   // (6 cycles) to enter interrupt
     TAR = 0;               // reset timer (4 cycles)
     TACCTL1 &= ~CCIFG;      // must manually clear interrupt flag (4 cycles)
 
-    //<--------------up to here 26 cycles + 6 cyles of Interrupt == 32 cycles ---------------->
+    //<------up to here 26 cycles + 6 cyles of Interrupt == 32 cycles -------->
     asm("CMP #0003h, R5\n");      // if (bits >= 3).  it will do store bits
     asm("JGE bit_Is_Over_Three\n");
     // bit is not 3
@@ -1187,7 +1204,7 @@ __interrupt void TimerA1_ISR(void)   // (6 cycles) to enter interrupt
     asm("JEQ bit_Is_Two\n");         // if (bits == 2).
 
     // <----------------- bit is not 2 ------------------------------->
-    asm("CMP #0001h, R5\n");      // if ( bits == 1). it will measure RTcal value.
+    asm("CMP #0001h, R5\n");      // if (bits == 1) -- measure RTcal value.
     asm("JEQ bit_Is_One\n");          // bits == 1
 
     // <-------------------- this is bit == 0 case --------------------->
@@ -1202,7 +1219,8 @@ __interrupt void TimerA1_ISR(void)   // (6 cycles) to enter interrupt
     asm("MOV R7, R9\n");       // 1 cycle
     asm("RRA R7\n");    // R7(count) is divided by 2.   1 cycle
     asm("MOV #0FFFFh, R8\n");   // R8(pivot) is set to max value    1 cycle
-    asm("SUB R7, R8\n");        // R8(pivot) = R8(pivot) -R7(count/2) make new R8(pivot) value     1 cycle
+    asm("SUB R7, R8\n");        // R8(pivot) = R8(pivot) -R7(count/2) make new
+                                // R8(pivot) value     1 cycle
     asm("INC R5\n");        // bits++
     asm("CLR R6\n");
     asm("RETI\n");
@@ -1210,42 +1228,55 @@ __interrupt void TimerA1_ISR(void)   // (6 cycles) to enter interrupt
 
     // <-------------------- this is bit == 2 case --------------------->
     asm("bit_Is_Two:\n");
-    asm("CMP R9, R7\n");    // if (count > (R9)(180)) this is hardcoded number, so have  to change to proper value
+    asm("CMP R9, R7\n");    // if (count > (R9)(180)) this is hardcoded number,
+                            // so have  to change to proper value
     asm("JGE this_Is_TRcal\n");
     // this is data
     asm("this_Is_Data_Bit:\n");
     asm("ADD R8, R7\n");   // count = count + pivot
-    // store bit by shifting carry flag into cmd[bits]=(dest*) and increment dest*  // (5 cycles)
-    asm("ADDC.b @R4+,-1(R4)\n"); // roll left (emulated by adding to itself == multiply by 2 + carry)
-    // R6 lets us know when we have 8 bits, at which point we INC dest*            // (1 cycle)
+    // store bit by shifting carry flag into cmd[bits]=(dest*) and increment
+    // dest*  (5 cycles)
+    asm("ADDC.b @R4+,-1(R4)\n"); // roll left (emulated by adding to itself ==
+                                 // multiply by 2 + carry)
+    // R6 lets us know when we have 8 bits, at which point we INC dest* (1
+    // cycle)
     asm("INC R6\n");
-    asm("CMP #0008,R6\n\n");   // undo increment of dest* (R4) until we have 8 bits
+    asm("CMP #0008,R6\n\n");   // undo increment of dest* (R4) until we have 8
+                               // bits
     asm("JGE out_p\n");
     asm("DEC R4\n");
-    asm("out_p:\n");           // decrement R4 if we haven't gotten 16 bits yet  (3 or 4 cycles)
+    asm("out_p:\n");           // decrement R4 if we haven't gotten 16 bits yet
+                               // (3 or 4 cycles)
     asm("BIC #0008h,R6\n");   // when R6=8, this will set R6=0   (1 cycle)
     asm("INC R5\n");
     asm("RETI");
     // <------------------ end of bit 2 ------------------------------>
 
     asm("this_Is_TRcal:\n");
-    asm("MOV R7, R5\n");    // bits = count. use bits(R5) to assign new value of TRcal
+    asm("MOV R7, R5\n");    // bits = count. use bits(R5) to assign new value of
+                            // TRcal
     TRcal = bits;       // assign new value     (4 cycles)
-    asm("MOV #0003h, R5\n");      // bits = 3..assign 3 to bits, so it will keep track of current bits    (2 cycles)
+    asm("MOV #0003h, R5\n");      // bits = 3..assign 3 to bits, so it will keep
+                                  // track of current bits    (2 cycles)
     asm("CLR R6\n"); // (1 cycle)
     asm("RETI");
 
    // <------------- this is bits >= 3 case ----------------------->
     asm("bit_Is_Over_Three:\n");     // bits >= 3 , so store bits
     asm("ADD R8, R7\n");    // R7(count) = R8(pivot) + R7(count),
-    // store bit by shifting carry flag into cmd[bits]=(dest*) and increment dest*  // (5 cycles)
-    asm("ADDC.b @R4+,-1(R4)\n"); // roll left (emulated by adding to itself == multiply by 2 + carry)
-    // R6 lets us know when we have 8 bits, at which point we INC dest*            // (1 cycle)
+    // store bit by shifting carry flag into cmd[bits]=(dest*) and increment
+    // dest* (5 cycles)
+    asm("ADDC.b @R4+,-1(R4)\n"); // roll left (emulated by adding to itself ==
+                                 // multiply by 2 + carry)
+    // R6 lets us know when we have 8 bits, at which point we INC dest* (1
+    // cycle)
     asm("INC R6\n");
-    asm("CMP #0008,R6\n");   // undo increment of dest* (R4) until we have 8 bits
+    asm("CMP #0008,R6\n");   // undo increment of dest* (R4) until we have 8
+                             // bits
     asm("JGE out_p1\n");
     asm("DEC R4\n");
-    asm("out_p1:\n");           // decrement R4 if we haven't gotten 16 bits yet  (3 or 4 cycles)
+    asm("out_p1:\n");           // decrement R4 if we haven't gotten 16 bits yet
+                                // (3 or 4 cycles)
     asm("BIC #0008h,R6\n");   // when R6=8, this will set R6=0   (1 cycle)
     asm("INC R5\n");              // bits++
     asm("RETI\n");
@@ -1290,17 +1321,19 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
   //TACTL |= TASSEL1 + MC1 + TAIE;
   //TACCTL1 |= SCS + CAP;	//initially, it set up as capturing rising edge.
 
-/**************************************************************************************************
-*   The starting of the transmitting code. Transmitting code must send 4 or 16 of M/LF, then send
-*   010111 preamble before sending data package. TRext determines how many M/LFs are sent.
+/*******************************************************************************
+*   The starting of the transmitting code. Transmitting code must send 4 or 16
+*   of M/LF, then send 010111 preamble before sending data package. TRext
+*   determines how many M/LFs are sent.
 *
 *   Used Register
-*   R4 = CMD address, R5 = bits, R6 = counting 16 bits, R7 = 1 Word data, R9 = temp value for loop
-*   R10 = temp value for the loop, R13 = 16 bits compare, R14 = timer_value for 11, R15 = timer_value for 5
-***************************************************************************************************/
+*   R4 = CMD address, R5 = bits, R6 = counting 16 bits, R7 = 1 Word data, R9 =
+*   temp value for loop R10 = temp value for the loop, R13 = 16 bits compare,
+*   R14 = timer_value for 11, R15 = timer_value for 5
+*******************************************************************************/
 
 
-  //<-------------- The below code will initiate some set up ---------------------->//
+  //<-------- The below code will initiate some set up ---------------------->//
     //asm("MOV #05h, R14");
     //asm("MOV #02h, R15");
     bits = TRext;           // 5 cycles
@@ -1317,13 +1350,17 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 
     //
     asm("otherSetup:");
-    bits = numOfBits;         // (2 cycles).  This value will be adjusted. if numOfBit is constant, it takes 1 cycles
+    bits = numOfBits;         // (2 cycles).  This value will be adjusted. if
+                              // numOfBit is constant, it takes 1 cycles
     asm("NOP");               // (1 cycles), zhangh 0316
     
-    asm("MOV #0bh, R14");     // (2 cycles) R14 is used as timer value 11, it will be 2 us in 3 MHz
-    asm("MOV #05h, R15");     // (2 cycles) R15 is used as tiemr value 5, it will be 1 us in 3 MHz
+    asm("MOV #0bh, R14");     // (2 cycles) R14 is used as timer value 11, it
+                              // will be 2 us in 3 MHz
+    asm("MOV #05h, R15");     // (2 cycles) R15 is used as tiemr value 5, it
+                              // will be 1 us in 3 MHz
     asm("MOV @R4+, R7");      // (2 cycles) Assign data to R7
-    asm("MOV #0010h, R13");   // (2 cycles) Assign decimal 16 to R13, so it will reduce the 1 cycle from below code
+    asm("MOV #0010h, R13");   // (2 cycles) Assign decimal 16 to R13, so it will
+                              // reduce the 1 cycle from below code
     asm("MOV R13, R6");       // (1 cycle)
     asm("SWPB R7");           // (1 cycle)    Swap Hi-byte and Low byte
     asm("NOP");
@@ -1343,12 +1380,16 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     //asm("NOP");   // 9
     // <---------- End of 1 us ------------------------------
     // The below code will create the number of M/LF.  According to the spec,
-    // if the TRext is 0, there are 4 M/LF.  If the TRext is 1, there are 16 M/LF
-    // The upper code executed 1 M/LF, so the count(R9) should be number of M/LF - 1
-    //asm("MOV #000fh, R9");    // 2 cycles    *** this will chagne to right value
+    // if the TRext is 0, there are 4 M/LF.  If the TRext is 1, there are 16
+    // M/LF
+    // The upper code executed 1 M/LF, so the count(R9) should be number of M/LF
+    // - 1
+    //asm("MOV #000fh, R9");    // 2 cycles  *** this will chagne to right value
     asm("MOV #0001h, R10");   // 1 cycles, zhangh?
-    // The below code will create the number base encoding waveform., so the number of count(R9) should be times of M
-    // For example, if M = 2 and TRext are 1(16, the number of count should be 32.
+    // The below code will create the number base encoding waveform., so the
+    // number of count(R9) should be times of M
+    // For example, if M = 2 and TRext are 1(16, the number of count should be
+    // 32.
     asm("M_LF_Count:");
     asm("NOP");   // 1
     asm("NOP");   // 2
@@ -1375,13 +1416,15 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("JMP M_LF_Count");      // 2 cycles
 
     asm("M_LF_Count_End:");
-    // this code is preamble for 010111 , but for the loop, it will only send 01011
+    // this code is preamble for 010111 , but for the loop, it will only send
+    // 01011
     asm("MOV #5c00h, R9");      // 2 cycles
     asm("MOV #0006h, R10");     // 2 cycles
     
     asm("NOP");                   // 1 cycle zhangh 0316, 2
     
-    // this should be counted as 0. Therefore, Assembly DEC line should be 1 after executing
+    // this should be counted as 0. Therefore, Assembly DEC line should be 1
+    // after executing
     asm("Preamble_Loop:");
     asm("DEC R10");               // 1 cycle
     asm("JZ last_preamble_set");          // 2 cycle
@@ -1468,7 +1511,8 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     //<------------- end of initial set up
 
 /***********************************************************************
-*   The main loop code for transmitting data in 3 MHz.  This will transmit data in real time.
+*   The main loop code for transmitting data in 3 MHz.  This will transmit data
+*   in real time.
 *   R5(bits) and R6(word count) must be 1 bigger than desired value.
 *   Ex) if you want to send 16 bits, you have to store 17 to R5.
 ************************************************************************/
@@ -1493,7 +1537,8 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     
     asm("DEC R6");                              // 1 cycle  ..10
     asm("JNZ bit_Count_Is_Not_16");              // 2 cycle    .. 12
-    // This code will assign new data from reply and then swap bytes.  After that, update R6 with 16 bits
+    // This code will assign new data from reply and then swap bytes.  After
+    // that, update R6 with 16 bits
     //asm("MOV @R4+, R7");
 #if USE_2618
     asm("MOV R15, TACCR0");                   // 3 cycles   .. 15
@@ -1530,7 +1575,8 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     // bit count is 16
     asm("DEC R5");                      // 1 cycle   .. 10
     asm("JEQ Thirteen_Cycle_Loop_End");     // 2 cycle   .. 12
-    // This code will assign new data from reply and then swap bytes.  After that, update R6 with 16 bits
+    // This code will assign new data from reply and then swap bytes.  After
+    // that, update R6 with 16 bits
     asm("MOV @R4+,R7");                 // 2 cycles     14
     asm("SWPB R7");                     // 1 cycle      15
     asm("MOV R13, R6");                 // 1 cycles     16
@@ -1650,8 +1696,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 
 
 /**
- * This code comes from the Open Tag Systems Protocol Reference Guide version 1.1
- * dated 3/23/2004. (http://www.opentagsystems.com/pdfs/downloads/OTS_Protocol_v11.pdf)
+ * This code comes from the Open Tag Systems Protocol Reference Guide version
+ * 1.1 dated 3/23/2004.
+ * (http://www.opentagsystems.com/pdfs/downloads/OTS_Protocol_v11.pdf)
  * No licensing information accompanied the code snippet.
  **/
 unsigned short crc16_ccitt(volatile unsigned char *data, unsigned short n) {
@@ -1679,8 +1726,10 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
   
   // shift everything over by 1 to accomodate leading "0" bit.
   // first, grab address of beginning of array
-  readReply[numDataBytes + 2] = 0; // clear out this spot for the loner bit of handle
-  readReply[numDataBytes + 4] = 0; // clear out this spot for the loner bit of crc
+  readReply[numDataBytes + 2] = 0; // clear out this spot for the loner bit of
+                                   // handle
+  readReply[numDataBytes + 4] = 0; // clear out this spot for the loner bit of
+                                   // crc
   bits = (unsigned short) &readReply[0];
   // shift all bytes and later use only data + handle
   asm("RRC.b @R5+");
@@ -1710,7 +1759,9 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
   readReplyCRC = crc16_ccitt(&readReply[0], numDataBytes + 2);
   readReply[numDataBytes + 4] = readReply[numDataBytes + 2];
   // XOR the MSB of CRC with loner bit.
-  readReply[numDataBytes + 4] ^= __swap_bytes(readReplyCRC); // XOR happens with MSB of lower nibble
+  readReply[numDataBytes + 4] ^= __swap_bytes(readReplyCRC); // XOR happens with
+                                                             // MSB of lower
+                                                             // nibble
   // Just take the resulting bit, not the whole byte
   readReply[numDataBytes + 4] &= 0x80;
   
@@ -1723,7 +1774,8 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
   readReplyCRC ^= mask;
   
   readReply[numDataBytes + 3] = (unsigned char) readReplyCRC;
-  readReply[numDataBytes + 2] |= (unsigned char) (__swap_bytes(readReplyCRC) & 0x7F);
+  readReply[numDataBytes + 2] |= (unsigned char) (__swap_bytes(readReplyCRC) &
+          0x7F);
 }
 
 #if 0
@@ -1754,7 +1806,8 @@ unsigned char crc5(volatile unsigned char *buf, unsigned short numOfBits)
 void lfsr()
 { 
     // calculate LFSR
-    rn16 = (rn16 << 1) | (((rn16 >> 15) ^ (rn16 >> 13) ^ (rn16 >> 9) ^ (rn16 >> 8)) & 1);
+    rn16 = (rn16 << 1) | (((rn16 >> 15) ^ (rn16 >> 13) ^
+                (rn16 >> 9) ^ (rn16 >> 8)) & 1);
     rn16 = rn16 & 0xFFFF;
     
     // fit 2^Q-1
@@ -1825,9 +1878,10 @@ void handle_session_timeout()
 #endif
 
 #if ENABLE_SESSIONS
-// compare two chunks of memory, starting at given bit offsets (relative to the starting byte, that is).
-// startingBitX is a range from 7 (MSbit) to 0 (LSbit). Len is number of bits. Returns a
-// 1 if they match and a 0 if they don't match.
+// compare two chunks of memory, starting at given bit offsets (relative to the
+// starting byte, that is).
+// startingBitX is a range from 7 (MSbit) to 0 (LSbit). Len is number of bits.
+// Returns a 1 if they match and a 0 if they don't match.
 int bitCompare(unsigned char *startingByte1, unsigned short startingBit1,
 		unsigned char *startingByte2, unsigned short startingBit2,
 		unsigned short len) {
