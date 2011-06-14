@@ -1,5 +1,4 @@
-// Pin definitions: these bit definitions are specific to Moo 1.0
-// UMass Moo 1.0
+// Pin definitions: these bit definitions are specific to Moo 1.0, 1.1
 // (derived from WISP 4.1 DL ["Blue WISP"] definitions)
 
 // MSP430F2618
