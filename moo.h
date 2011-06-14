@@ -1,11 +1,14 @@
 /* See license.txt for license information. */
 
-#ifndef PINS_H
-#define PINS_H
+#ifndef MOO_H
+#define MOO_H
 
-// Pin definitions for Moo 1.0 and 1.1 (MSP430F2618)
+// Hardware definitions for Moo 1.0 and 1.1 (MSP430F2618)
 // (derived from Intel WISP 4.1 DL ["Blue WISP"] definitions)
-// See the schematics/ directory for diagrams.
+// See the schematics/ directory for pinouts and diagrams.
+
+#include <msp430x26x.h>
+#define USE_2618  1
 
 // Port 1
 #define TEMP_POWER     BIT0       // output
@@ -104,4 +107,4 @@
 #define DEBUG_PIN5_LOW                
 #endif
 
-#endif // PINS_H
+#endif // MOO_H
