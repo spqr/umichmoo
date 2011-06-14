@@ -1773,7 +1773,7 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\hw_Moo1.1.c</name>
+    <name>$PROJ_DIR$\moo.c</name>
   </file>
 </project>
 
