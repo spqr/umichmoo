@@ -276,7 +276,7 @@ int main(void)
   //state = STATE_ARBITRATE;
   state = STATE_READY;
 
-#if MONITOR_DEBUG_ON  
+#if MONITOR_DEBUG_ON
   // for monitor - set STATE READY debug line - 00000 - 0
   P1OUT |= moo_debug_1;
   P1OUT &= ~moo_debug_1;
@@ -286,16 +286,16 @@ int main(void)
   setup_to_receive();
 
   while (1)
-  {   
+  {
 
     // TIMEOUT!  reset timer
     if (TAR > 0x256 || delimiterNotFound)   // was 0x1000
-    {  
+    {
       if(!is_power_good()) {
         sleep();
       }
 
-#if MONITOR_DEBUG_ON      
+#if MONITOR_DEBUG_ON
       // for monitor - set TAR OVERFLOW debug line - 00111 - 7
       if (!delimiterNotFound)
       {
@@ -319,7 +319,7 @@ int main(void)
       }
 #else
 #if !(ENABLE_READS)
-    if(!is_power_good()) 
+    if(!is_power_good())
         sleep();
 #endif
     inInventoryRound = 0;
@@ -402,7 +402,7 @@ int main(void)
         // got >= 22 bits, and it's not the beginning of a select. just reset.
         //////////////////////////////////////////////////////////////////////
         else if ( bits >= MAX_NUM_QUERY_BITS && ( ( cmd[0] & 0xF0 ) != 0xA0 ) )
-        { 
+        {
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
@@ -414,11 +414,11 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
-        }   
+        }
         break;
       }
-      case STATE_ARBITRATE:		
-      {     
+      case STATE_ARBITRATE:
+      {
         //////////////////////////////////////////////////////////////////////
         // process the QUERY command
         //////////////////////////////////////////////////////////////////////
@@ -548,7 +548,7 @@ int main(void)
       break;
       }
 
-      case STATE_REPLY:		
+      case STATE_REPLY:
       {
         // this state handles query, query adjust, ack, and select commands
         ///////////////////////////////////////////////////////////////////////
@@ -678,7 +678,7 @@ int main(void)
 #endif
 
           //DEBUG_PIN5_HIGH;
-          handle_select(STATE_READY); 
+          handle_select(STATE_READY);
           //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
 
@@ -703,8 +703,8 @@ int main(void)
         }
         break;
       }
-      case STATE_ACKNOWLEDGED:		
-      {      
+      case STATE_ACKNOWLEDGED:
+      {
         // responds to query, ack, request_rn cmds
         // takes action on queryrep, queryadjust, and select cmds
         /////////////////////////////////////////////////////////////////////
@@ -804,7 +804,7 @@ int main(void)
           // in the acknowledged state, rfid chips don't respond to queryrep
           // commands
           do_nothing();
-          state = STATE_READY; 
+          state = STATE_READY;
           delimiterNotFound = 1;
         } // queryrep command
 
@@ -815,7 +815,7 @@ int main(void)
         {
           //DEBUG_PIN5_HIGH;
           do_nothing();
-          state = STATE_READY; 
+          state = STATE_READY;
           delimiterNotFound = 1;
           //DEBUG_PIN5_LOW;
         } // queryadjust command
@@ -825,10 +825,10 @@ int main(void)
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
           //DEBUG_PIN5_HIGH;
-          handle_select(STATE_READY); 
+          handle_select(STATE_READY);
           delimiterNotFound = 1;
           //DEBUG_PIN5_LOW;
-        } // select command   
+        } // select command
         //////////////////////////////////////////////////////////////////////
         // process the NAK command
         //////////////////////////////////////////////////////////////////////
@@ -837,10 +837,10 @@ int main(void)
         {
           //DEBUG_PIN5_HIGH;
           do_nothing();
-          state = STATE_ARBITRATE; 
+          state = STATE_ARBITRATE;
           delimiterNotFound = 1;
           //DEBUG_PIN5_LOW;
-        } 
+        }
         //////////////////////////////////////////////////////////////////////
         // process the READ command
         //////////////////////////////////////////////////////////////////////
@@ -873,11 +873,11 @@ int main(void)
           state = STATE_ARBITRATE;
           delimiterNotFound = 1 ;
           //DEBUG_PIN5_LOW;
-        }          
+        }
 
 #if 0
         // kills performance ...
-        else if ( bits >= 44 ) 
+        else if ( bits >= 44 )
         {
           do_nothing();
           state = STATE_ARBITRATE;
@@ -886,7 +886,7 @@ int main(void)
 #endif
         break;
       }
-      case STATE_OPEN:		
+      case STATE_OPEN:
       {
         // responds to query, ack, req_rn, read, write, kill, access,
         // blockwrite, and blockerase cmds
@@ -924,7 +924,7 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         // process the QUERYREP command
         //////////////////////////////////////////////////////////////////////
-        else if ( bits == NUM_QUERYREP_BITS && ( ( cmd[0] & 0x06 ) == 0x00 ) ) 
+        else if ( bits == NUM_QUERYREP_BITS && ( ( cmd[0] & 0x06 ) == 0x00 ) )
         {
           //DEBUG_PIN5_HIGH;
           do_nothing();
@@ -961,7 +961,7 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
-          handle_select(STATE_READY); 
+          handle_select(STATE_READY);
           delimiterNotFound = 1;
         } // select command
         //////////////////////////////////////////////////////////////////////
@@ -970,7 +970,7 @@ int main(void)
         //else if ( bits >= NUM_NAK_BITS && ( cmd[0] == 0xC0 ) )
         else if ( bits >= 10 && ( cmd[0] == 0xC0 ) )
         {
-          handle_nak(STATE_ARBITRATE); 
+          handle_nak(STATE_ARBITRATE);
           delimiterNotFound = 1;
         }
 
@@ -978,12 +978,12 @@ int main(void)
       }
 
     case STATE_READ_SENSOR:
-      {      
+      {
 #if SENSOR_DATA_IN_READ_COMMAND
         read_sensor(&readReply[0]);
         // crc is computed in the read state
         RECEIVE_CLOCK;
-        state = STATE_READY;  
+        state = STATE_READY;
         delimiterNotFound = 1; // reset
 #elif SENSOR_DATA_IN_ID
         read_sensor(&ackReply[3]);
@@ -996,7 +996,7 @@ int main(void)
 #endif
 
         break;
-      } // end case  
+      } // end case
     } // end switch
 
   } // while loop
@@ -1093,7 +1093,7 @@ unsigned short is_power_good()
 
 #pragma vector=PORT2_VECTOR
 __interrupt void Port2_ISR(void)   // (5-6 cycles) to enter interrupt
-{  
+{
   P2IFG = 0x00;
   P2IE = 0;       // Interrupt disable
   P1IFG = 0;
@@ -1500,7 +1500,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("NOP");
     asm("NOP");
     asm("NOP");
-    // Here are another 4 cycles. But 3~5 cycles might also work, need to try. 
+    // Here are another 4 cycles. But 3~5 cycles might also work, need to try.
     asm("NOP");
     asm("NOP");
     asm("NOP");
@@ -1589,7 +1589,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 #else
     asm("MOV R14, TACCR0");             // 3 cycles  .. 22
 #endif
-    // Next bit is 0 , it is 00 case	
+    // Next bit is 0 , it is 00 case
     asm("JMP seq_zero");                // 2 cycles .. 24
 
 // <---------this code is 00 case with no 16 bits.
@@ -1749,7 +1749,7 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
   asm("RRC.b @R5+");
   asm("RRC.b @R5+");
   asm("RRC.b @R5+");
-  asm("RRC.b @R5+");  
+  asm("RRC.b @R5+");
   // store loner bit in array[numDataBytes+2] position
   asm("RRC.b @R5+");
   // make first bit 0
@@ -1804,7 +1804,7 @@ unsigned char crc5(volatile unsigned char *buf, unsigned short numOfBits)
 #if ENABLE_SLOTS
 
 void lfsr()
-{ 
+{
     // calculate LFSR
     rn16 = (rn16 << 1) | (((rn16 >> 15) ^ (rn16 >> 13) ^
                 (rn16 >> 9) ^ (rn16 >> 8)) & 1);
@@ -1845,7 +1845,7 @@ inline void mixupRN16()
   swapee_index = RN16[newQ];
   tmp = RN16[shift];
   RN16[Q] = RN16[swapee_index];
-  RN16[swapee_index] = tmp;  
+  RN16[swapee_index] = tmp;
 }
 
 
@@ -1863,7 +1863,7 @@ void initialize_sessions()
         session_table[S2_INDEX] = SESSION_STATE_A;
         session_table[S3_INDEX] = SESSION_STATE_A;
 }
-void handle_session_timeout() 
+void handle_session_timeout()
 {
 #if 0
 	// selected flag is persistent throughout power up state
