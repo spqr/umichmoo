@@ -49,8 +49,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 3: pick protocol features
-// The spec actually requires all these features, but as a practical matter 
-// supporting things like slotting and sessions requires extra power and thus 
+// The spec actually requires all these features, but as a practical matter
+// supporting things like slotting and sessions requires extra power and thus
 // limits range. Another factor is if you are running out of room on flash --
 // e.g., you're using the flash-limited free IAR kickstart compiler -- you probably
 // want to leave these features out unless you really need them.

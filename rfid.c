@@ -23,7 +23,7 @@ volatile unsigned char tid[] = { 0xE2, TID_DESIGNER_ID_AND_MODEL_NUMBER };
 // just a one byte placeholder for now
 volatile unsigned char usermem[] = { 0x00 };
 
-volatile unsigned char readReply[] = { 
+volatile unsigned char readReply[] = {
     // header - 1 bit - 0 if successful, 1 if error code follows
     // memory words - hardcoded to 16 bits of 0xffff for now
     // rn - 16 bits - hardcoded to 0xf00f for now
@@ -74,7 +74,7 @@ void handle_query(volatile short nextState)
   {
     subcarrierNum = 8;
   }
-          
+
   // set up for TRext
   if (cmd[0] & BIT0)
   {
@@ -83,11 +83,11 @@ void handle_query(volatile short nextState)
   {
     TRext = 0;
   }
-  
+
   //DEBUG_PIN5_HIGH;
-  
+
 #if ENABLE_SESSIONS
-  
+
 #if 1
 // command-specific bit masks
 #define QUERY_SEL_MASK		0xC0
@@ -102,11 +102,11 @@ void handle_query(volatile short nextState)
   unsigned short session = (cmd[1] & QUERY_SESSION_MASK) >> 4;
   unsigned short target = cmd[1] & QUERY_TARGET_MASK;
   unsigned short match = 0;
-  
+
   //DEBUG_PIN5_HIGH;
 
 #define TARGETISEQUAL(t,s) \
-  ((t == 0x00 && s == SESSION_STATE_A) || (t == 0x08  && s == SESSION_STATE_B)) 
+  ((t == 0x00 && s == SESSION_STATE_A) || (t == 0x08  && s == SESSION_STATE_B))
 
   // if we are already in an inventory round and the session matches the
   // previous session, invert the session inventory flag
@@ -151,7 +151,7 @@ void handle_query(volatile short nextState)
   // round. save the session to the previous_session variable in case this is a
   // new session.
   previous_session = session;
-  
+
 #else
   //DEBUG_PIN5_HIGH;
   while ( TAR < 140 );
@@ -162,7 +162,7 @@ void handle_query(volatile short nextState)
 
   // we don't care about SL or session inventory flags at all. just proceed
   // as if we have matched on them.
- 
+
 #endif
 
 #if ENABLE_SLOTS
@@ -173,10 +173,10 @@ void handle_query(volatile short nextState)
   Q = (cmd[1] & 0x07)<<1;
   if ((cmd[2] & 0x80) == 0x80)
     Q += 0x01;
-          
+
   // pick Q randomly
   slot_counter = Q >> shift;
-  
+
   // HACK ALERT: the Impinj reader seems to output at least two Queries before
   // it sends along an Ack. If I followed the spec, I might well reply to the
   // first Query but not the second, owing to a nonzero slot counter. In this
@@ -186,33 +186,33 @@ void handle_query(volatile short nextState)
   // respond to a list of QueryReps. Therefore, I will check to see if I'm in an
   // inventory round -- that is, I've already seen a query -- and if I am,
   // pretend my slot counter is zero and respond right away.
-  
+
   // slot counter built and it's 0. we can send a reply!
   if ( inInventoryRound == 1 || slot_counter == 0)
   {
 
     //DEBUG_PIN5_HIGH;
     // compute a RN16
-    loadRN16();   
-    
+    loadRN16();
+
     // compute the CRC
     queryReplyCRC = crc16_ccitt(&queryReply[0],2);
     queryReply[3] = (unsigned char)queryReplyCRC;
     queryReply[2] = (unsigned char)__swap_bytes(queryReplyCRC);
-    
+
 #if ENABLE_HANDLE_CHECKING
     //last_handle_b0 = queryReply[0];
     //last_handle_b1 = queryReply[1];
 #endif
-    
+
     TACCTL1 &= ~CCIE;     // Disable capturing and comparing interrupt
     while ( TAR < 140 );
     TAR = 0;
-    
+
     // send out the packet, and transition to STATE_REPLY
-    sendToReader(&queryReply[0], 17); 
+    sendToReader(&queryReply[0], 17);
     state = nextState;
-    
+
     // mix up the RN16 table a bit for next time
     mixupRN16();
   }
@@ -236,33 +236,33 @@ void handle_query(volatile short nextState)
   //last_handle_b0 = queryReply[0];
   //last_handle_b1 = queryReply[1];
 #endif
-  
+
   // we don't care about slots, so just send the packet and go to STATE_REPLY.
-  sendToReader(&queryReply[0], 17); 
+  sendToReader(&queryReply[0], 17);
   state = nextState;
 
 #endif
   //DEBUG_PIN5_LOW;
-  
+
 }
 
 void handle_queryrep(volatile short nextState)
 {
-   
+
   TAR = 0;
 #if (!ENABLE_SESSIONS)
   while ( TAR < 150 );
 #endif
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
-  TACCTL1 &= ~CCIE; 
+  TACCTL1 &= ~CCIE;
   TAR = 0;
-  
+
 #if ENABLE_SESSIONS
 
 // command-specific bit masks
-#define QUERYREP_UPDNB0_MASK	0x01	
+#define QUERYREP_UPDNB0_MASK	0x01
 #define QUERYREP_UPDNB1_MASK	0x80
-  
+
   // fyi, unless i'm missing something, the impinj reader doesn't always send
   // correct session values. for now i will comment this section out, until
   // i can test against a different reader firmware rev
@@ -282,7 +282,7 @@ void handle_queryrep(volatile short nextState)
 #endif
 
   if ( state == STATE_ACKNOWLEDGED || state == STATE_OPEN ||
-          state == STATE_SECURED ) 
+          state == STATE_SECURED )
   {
 	// invert session's inventory flag
 	if ( session_table[session] == SESSION_STATE_A )
@@ -308,12 +308,12 @@ void handle_queryrep(volatile short nextState)
 
 void handle_queryadjust(volatile short nextState)
 {
-  
+
   TAR = 0;
 #if !(ENABLE_SLOTS) && !(ENABLE_SESSIONS)
   while ( TAR < 300 );
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
-  TACCTL1 &= ~CCIE; 
+  TACCTL1 &= ~CCIE;
   TAR = 0;
 #endif
 
@@ -336,7 +336,7 @@ void handle_queryadjust(volatile short nextState)
   // session flag and transition to STATE_READY to take myself out of this
   // inventory round.
   if ( state == STATE_ACKNOWLEDGED || state == STATE_OPEN ||
-          state == STATE_SECURED ) 
+          state == STATE_SECURED )
   {
 	// invert session's inventory flag
 	if ( session_table[session] == SESSION_STATE_A )
@@ -350,12 +350,12 @@ void handle_queryadjust(volatile short nextState)
   }
 
 #endif
-  
+
 #if ENABLE_SLOTS
 
-#define QUERYADJ_UPDNB0_MASK	0x01	
-#define QUERYADJ_UPDNB1_MASK	0xC0	
-  
+#define QUERYADJ_UPDNB0_MASK	0x01
+#define QUERYADJ_UPDNB1_MASK	0xC0
+
   //DEBUG_PIN5_HIGH;
 
   unsigned char updn = (cmd[0] & QUERYADJ_UPDNB0_MASK) << 2;
@@ -376,25 +376,25 @@ void handle_queryadjust(volatile short nextState)
 
   // pick Q randomly
   slot_counter = Q >> shift;
-          
+
   // slot counter built and it's 0. we can send a reply!
   if (slot_counter == 0)
   {
 	// compute a RN16
-	loadRN16();   
-   
+	loadRN16();
+
 	// compute a CRC
 	queryReplyCRC = crc16_ccitt(&queryReply[0],2);
 	queryReply[3] = (unsigned char)queryReplyCRC;
 	queryReply[2] = (unsigned char)__swap_bytes(queryReplyCRC);
-    
+
 	TACCTL1 &= ~CCIE;     // Disable capturing and comparing interrupt
 	TAR = 0;
-    
+
 	// send out the packet, and transition to STATE_REPLY
-	sendToReader(&queryReply[0], 17); 
+	sendToReader(&queryReply[0], 17);
 	state = nextState;
-    
+
 	// mix up the RN16 table a bit for next time
    	 mixupRN16();
   }
@@ -405,13 +405,13 @@ void handle_queryadjust(volatile short nextState)
 	// we transition to STATE_ARBITRATE.
 	state = STATE_ARBITRATE;
   }
-  
+
   //DEBUG_PIN5_LOW;
-  
+
 #else
 
   // we don't care about slots, so just send the packet and go to STATE_REPLY.
-  sendToReader(&queryReply[0], 17); 
+  sendToReader(&queryReply[0], 17);
   state = nextState;
 #endif
 }
@@ -425,7 +425,7 @@ void handle_queryadjust(volatile short nextState)
 void handle_select(volatile short nextState)
 {
   do_nothing();
-  
+
 //DEBUG_PIN5_HIGH;
 
 #if ENABLE_SESSIONS
@@ -455,15 +455,15 @@ void handle_select(volatile short nextState)
   unsigned short length = (cmd[2] & SELECT_LENGTHB0_MASK) << 4;
   unsigned short length2 = (cmd[3] & SELECT_LENGTHB1_MASK) >> 4;
   length |= length2;
-  
+
   // can only handle length fields > 0 and membanks == 0 are invalid
   if ( length <= 0 || membank == 0x00 )
     return;
-  
+
   unsigned char *mask = (unsigned char *)&cmd[3];
   unsigned short maskbit = 3; // start match attempt at leftmost bit of mask
                               // field
-  
+
   unsigned char *sourcebyte = (unsigned char *)0;
   // OK, this is a little confusing. The pointer parameter is an offset
   // into a buffer, with a value of 0 meaning "the leftmost bit" and
@@ -474,7 +474,7 @@ void handle_select(volatile short nextState)
   unsigned short sourcebyteoffset = ( pointer/8 );
   unsigned short sourcebit = (7 - (pointer % 8)); // pointer->bitCompare
                                                   // translation
-  
+
   if ( membank == 0x01 )
   {
     // match on epc
@@ -483,7 +483,7 @@ void handle_select(volatile short nextState)
   }
   else if ( membank == 0x02 )
   {
-    // matching on tid. 
+    // matching on tid.
     if ( sourcebyteoffset >= 3 ) return;
     sourcebyte = (unsigned char *)&tid[0] + sourcebyteoffset;
   }
@@ -495,9 +495,9 @@ void handle_select(volatile short nextState)
     sourcebit = 7;
     if ( length > 8 ) length = 8;
   }
-  
+
   unsigned short matching = 0;
-  
+
   if ( bitCompare(sourcebyte,sourcebit,mask,maskbit,length) == 1 )
   {
     matching = 1;
@@ -506,7 +506,7 @@ void handle_select(volatile short nextState)
 #define ASSERT(t) { \
 	if (t == SELECT_TARGET_SL) SL = SL_ASSERTED; \
 	else session_table[t] = SESSION_STATE_A; \
-} 
+}
 
 #define DEASSERT(t) { \
 	if (t == SELECT_TARGET_SL) SL = SL_NOT_ASSERTED; \
@@ -556,7 +556,7 @@ void handle_select(volatile short nextState)
   }
 
 #endif
-  
+
   state = nextState;
   DEBUG_PIN5_LOW;
 }
@@ -570,16 +570,16 @@ void handle_ack(volatile short nextState)
   else
     while ( TAR < 400 );          // on the nose for 3.5MHz
   TAR = 0;
-  
+
 #if ENABLE_HANDLE_CHECKING
   //unsigned char ack_b0 = ((last_handle_b0 & 0xFC) >> 2) ;
   //ack_b0 |= 0x40;
   //unsigned char ack_b1 = ((last_handle_b1 & 0xFC) >> 2);
   //ack_b1 = ack_b1 || (last_handle_b0 & 0x03) << 6;
   //unsigned char ack_b2 = ((last_handle_b1 & 0x03) << 6);
-  
+
   //if ( ack_b0 != cmd[0] || ack_b1 != cmd[1] || ack_b2 != (cmd[2] & 0xC0) )
-  //    return; 
+  //    return;
 #endif
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
   // after that sends tagResponse
@@ -617,32 +617,32 @@ void handle_request_rn(volatile short nextState)
 
 void handle_read(volatile short nextState)
 {
-     
+
 #if SENSOR_DATA_IN_READ_COMMAND
-  
+
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
   TACCTL1 &= ~CCIE;
   TAR = 0;
-  
+
   readReply[DATA_LENGTH_IN_BYTES] = queryReply[0]; // remember to restore
                                                    // correct RN before doing
                                                    // crc()
   readReply[DATA_LENGTH_IN_BYTES+1] = queryReply[1]; // because crc() will shift
                                                      // bits to add
   crc16_ccitt_readReply(DATA_LENGTH_IN_BYTES);    // leading "0" bit.
-   
+
   // DATA_LENGTH_IN_BYTES*8 bits for data + 16 bits for the handle + 16 bits for
   // the CRC + leading 0 + add one to number of bits for xmit code
   sendToReader(&readReply[0], ((DATA_LENGTH_IN_BYTES*8)+16+16+1+1));
   state = nextState;
   delimiterNotFound = 1;
-            
+
 #elif SIMPLE_READ_COMMAND
 
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
   TACCTL1 &= ~CCIE;
   TAR = 0;
-  
+
 #define USE_COUNTER 1
 #if USE_COUNTER
   readReply[0] = __swap_bytes(read_counter);
@@ -655,14 +655,14 @@ void handle_read(volatile short nextState)
                                 // crc()
   readReply[3] = queryReply[1];        // because crc() will shift bits to add
   crc16_ccitt_readReply(2);    // leading "0" bit.
-            
+
   // after that sends tagResponse
   // 16 bits for data + 16 bits for the handle + 16 bits for the CRC + leading 0
   // + add one to number of bits for seong's xmit code
   sendToReader(&readReply[0], 50);
   state = nextState;
   delimiterNotFound = 1; // reset
-#endif          
+#endif
 }
 
 void handle_nak(volatile short nextState)

@@ -96,15 +96,15 @@
   P1DIR = TEMP_POWER | ACCEL_POWER | TX_PIN | RX_EN_PIN; \
   P4DIR = CAP_SENSE | LED_POWER | VSENSE_POWER; \
   P5DIR = FLASH_CE | FLASH_SIMO | FLASH_SCK; \
-  P8DIR = CRYSTAL_OUT; 
+  P8DIR = CRYSTAL_OUT;
 
 #define DEBUG_PINS_ENABLED            0
 #if DEBUG_PINS_ENABLED
 #define DEBUG_PIN5_HIGH               P3OUT |= BIT5;
 #define DEBUG_PIN5_LOW                P3OUT &= ~BIT5;
 #else
-#define DEBUG_PIN5_HIGH               
-#define DEBUG_PIN5_LOW                
+#define DEBUG_PIN5_HIGH
+#define DEBUG_PIN5_LOW
 #endif
 
 #endif // MOO_H

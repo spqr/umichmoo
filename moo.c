@@ -19,8 +19,8 @@
 //
 //	This is a partial implementation of the RFID EPCGlobal C1G2 protocol
 //  for the Moo 1.1 hardware platform.
-//	
-//	What's missing: 
+//
+//	What's missing:
 //        - SECURED and KILLED states.
 //        - No support for WRITE, KILL, LOCK, ACCESS, BLOCKWRITE and BLOCKERASE
 //          commands.
@@ -134,7 +134,7 @@ unsigned short TRcal=0;
 #define S0_INDEX		0x00
 #define S1_INDEX		0x01
 #define S2_INDEX		0x02
-#define S3_INDEX		0x03 
+#define S3_INDEX		0x03
 
 #define SL_ASSERTED		1
 #define SL_NOT_ASSERTED		0
@@ -182,23 +182,23 @@ int i;
 int main(void)
 {
   //*******************************Timer setup**********************************
-  WDTCTL = WDTPW + WDTHOLD;            // Stop Watchdog Timer 
-  
+  WDTCTL = WDTPW + WDTHOLD;            // Stop Watchdog Timer
+
   P1SEL = 0;
   P2SEL = 0;
-  
+
   P1IE = 0;
   P1IFG = 0;
   P2IFG = 0;
 
   DRIVE_ALL_PINS // set pin directions correctly and outputs to low.
-  
+
   // Check power on bootup, decide to receive or sleep.
   if(!is_power_good())
     sleep();
-  
+
   RECEIVE_CLOCK;
- 
+
   /*
   // already set.
 #if MONITOR_DEBUG_ON
@@ -221,13 +221,13 @@ int main(void)
   // setup int epc
   epc = ackReply[2]<<8;
   epc |= ackReply[3];
-  
+
   // calculate RN16_1 table
   for (Q = 0; Q < 16; Q++)
   {
     rn16 = epc^Q;
     lfsr();
-    
+
     if (Q > 8)
     {
       RN16[(Q<<1)-9] = __swap_bytes(rn16);
@@ -239,7 +239,7 @@ int main(void)
     }
   }
 #endif
-  
+
   TACTL = 0;
 
 //  P1IES &= ~BIT2; // initial state is POS edge to find start of CW
@@ -247,7 +247,7 @@ int main(void)
 
   asm("MOV #0000h, R9");
   // dest = destorig;
-  
+
 #if READ_SENSOR
   init_sensor();
 #endif
@@ -257,7 +257,7 @@ int main(void)
   queryReply[3] = (unsigned char)queryReplyCRC;
   queryReply[2] = (unsigned char)__swap_bytes(queryReplyCRC);
 #endif
-  
+
 #if SENSOR_DATA_IN_ID
   // this branch is for sensor data in the id
   ackReply[2] = SENSOR_DATA_TYPE_ID;
@@ -272,7 +272,7 @@ int main(void)
 #if ENABLE_SESSIONS
   initialize_sessions();
 #endif
-  
+
   //state = STATE_ARBITRATE;
   state = STATE_READY;
 
@@ -282,12 +282,12 @@ int main(void)
   P1OUT &= ~moo_debug_1;
   P2OUT &= ~moo_debug_2;
 #endif
-  
+
   setup_to_receive();
-  
+
   while (1)
   {   
-    
+
     // TIMEOUT!  reset timer
     if (TAR > 0x256 || delimiterNotFound)   // was 0x1000
     {  
@@ -305,7 +305,7 @@ int main(void)
         P3OUT = 0x31;
       }
 #endif
-      
+
 #if SENSOR_DATA_IN_ID
     // this branch is for sensor data in the id
       if ( timeToSample++ == 10 ) {
@@ -324,30 +324,30 @@ int main(void)
 #endif
     inInventoryRound = 0;
     state = STATE_READY;
-    
+
 #if MONITOR_DEBUG_ON
     // for monitor - set STATE READY debug line - 00000 - 0
     P1OUT |= moo_debug_1;
     P1OUT &= ~moo_debug_1;
     P2OUT &= ~moo_debug_2;
 #endif
-    
+
 #endif
 
 #if ENABLE_SESSIONS
     handle_session_timeout();
 #endif
-    
+
 #if ENABLE_SLOTS
     if (shift < 4)
         shift += 1;
     else
         shift = 0;
 #endif
-       
+
       setup_to_receive();
     }
-    
+
     switch (state)
     {
       case STATE_READY:
@@ -365,10 +365,10 @@ int main(void)
           P2OUT |= moo_debug_2;
           P3OUT = 0x01;
 #endif
-          
+
           //DEBUG_PIN5_HIGH;
           handle_query(STATE_REPLY);
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE REPLY debug line - 00010 - 2
           P1OUT |= moo_debug_1;
@@ -376,7 +376,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x10;
 #endif
-          
+
           setup_to_receive();
         }
         //////////////////////////////////////////////////////////////////////
@@ -385,7 +385,7 @@ int main(void)
         // @ short distance has slight impact on performance
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_ADJ debug line - 01101 - 13
           P1OUT |= moo_debug_1;
@@ -406,7 +406,7 @@ int main(void)
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set debug line - 01110 - 14
           P1OUT |= moo_debug_1;
@@ -431,10 +431,10 @@ int main(void)
           P2OUT |= moo_debug_2;
           P3OUT = 0x01;
 #endif
-          
+
           //DEBUG_PIN5_HIGH;
           handle_query(STATE_REPLY);
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE REPLY debug line - 00010 - 2
           P1OUT |= moo_debug_1;
@@ -442,7 +442,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x10;
 #endif
-          
+
           setup_to_receive();
         }
         //////////////////////////////////////////////////////////////////////
@@ -455,7 +455,7 @@ int main(void)
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -463,7 +463,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
           //DEBUG_PIN5_LOW;
         }
         // this state handles query, queryrep, queryadjust, and select commands.
@@ -484,7 +484,7 @@ int main(void)
           //DEBUG_PIN5_LOW;
           //setup_to_receive();
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -502,7 +502,7 @@ int main(void)
           // do setup_to_receive() rather than dnf =1. not sure that this holds
           // true at distance though - need to recheck @ 2-3 ms.
           //DEBUG_PIN5_HIGH;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set QUERY_ADJ debug line - 01101 - 13
           P1OUT |= moo_debug_1;
@@ -510,7 +510,7 @@ int main(void)
           P2OUT |= moo_debug_2;
           P3OUT = 0x21;
 #endif
-          
+
           handle_queryadjust(STATE_REPLY);
           //DEBUG_PIN5_LOW;
           setup_to_receive();
@@ -529,12 +529,12 @@ int main(void)
           P2OUT |= moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
           //DEBUG_PIN5_HIGH;
           handle_select(STATE_READY);
           //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -542,12 +542,12 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
         } // select command
-       
+
       break;
       }
-    
+
       case STATE_REPLY:		
       {
         // this state handles query, query adjust, ack, and select commands
@@ -619,11 +619,11 @@ int main(void)
           P2OUT |= moo_debug_2;
           P3OUT = 0x20;
 #endif
-          
+
           //DEBUG_PIN5_HIGH;
 	  do_nothing();
 	  state = STATE_ARBITRATE;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set STATE ARBITRATE debug line - 00001 - 1
           P1OUT |= moo_debug_1;
@@ -631,7 +631,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x01;
 #endif
-          
+
           //handle_queryrep(STATE_ARBITRATE);
           //DEBUG_PIN5_LOW;
           setup_to_receive();
@@ -654,7 +654,7 @@ int main(void)
           //DEBUG_PIN5_LOW;
           //setup_to_receive();
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -662,7 +662,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
         } // queryadjust command
         //////////////////////////////////////////////////////////////////////
         // process the SELECT command
@@ -676,12 +676,12 @@ int main(void)
           P2OUT |= moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
           //DEBUG_PIN5_HIGH;
           handle_select(STATE_READY); 
           //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -689,7 +689,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
           //setup_to_receive();
         } // select command
         else if ( bits >= MAX_NUM_QUERY_BITS && ( ( cmd[0] & 0xF0 ) != 0xA0 ) &&
@@ -727,7 +727,7 @@ int main(void)
 #else
           handle_request_rn(STATE_READY);
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -737,7 +737,7 @@ int main(void)
 #endif
 #endif
         }
-        
+
 #if 1
         //////////////////////////////////////////////////////////////////////
         // process the QUERY command
@@ -755,7 +755,7 @@ int main(void)
           handle_query(STATE_REPLY);
           //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
-          
+
 #if MONITOR_DEBUG_ON
           // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
           P1OUT |= moo_debug_1;
@@ -763,7 +763,7 @@ int main(void)
           P2OUT &= ~moo_debug_2;
           P3OUT = 0x30;
 #endif
-          
+
           //setup_to_receive();
         }
         ///////////////////////////////////////////////////////////////////////
@@ -784,7 +784,7 @@ int main(void)
 #endif
           //DEBUG_PIN5_HIGH;
           handle_ack(STATE_ACKNOWLEDGED);
-          
+
 #if MONITOR_DEBUG_ON
               // for monitor - set STATE ACK debug line - 00011 - 3
     P1OUT |= moo_debug_1;
@@ -792,7 +792,7 @@ int main(void)
     P2OUT &= ~moo_debug_2;
     P3OUT = 0x11;
 #endif
-          
+
           //DEBUG_PIN5_LOW;
           setup_to_receive();
         }
@@ -874,7 +874,7 @@ int main(void)
           delimiterNotFound = 1 ;
           //DEBUG_PIN5_LOW;
         }          
-        
+
 #if 0
         // kills performance ...
         else if ( bits >= 44 ) 
@@ -976,7 +976,7 @@ int main(void)
 
         break;
       }
-    
+
     case STATE_READ_SENSOR:
       {      
 #if SENSOR_DATA_IN_READ_COMMAND
@@ -994,11 +994,11 @@ int main(void)
         state = STATE_READY;
         delimiterNotFound = 1; // reset
 #endif
-        
+
         break;
       } // end case  
     } // end switch
-    
+
   } // while loop
 }
 
@@ -1012,9 +1012,9 @@ static inline void setup_to_receive()
   //P4OUT &= ~BIT3;
   _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts
                 // at the same time
-  
+
   P1OUT |= RX_EN_PIN;
-  
+
   delimiterNotFound = 0;
   // setup port interrupt on pin 1.2
   P1SEL &= ~BIT2;  //Disable TimerA2, so port interrupt can be used
@@ -1035,12 +1035,12 @@ static inline void setup_to_receive()
   // clear R6 bits of word counter from prior communications to prevent dest++
   // on 1st port interrupt
   asm("CLR R6");
-  
+
   P1IE = 0;
   P1IES &= ~RX_PIN; // Make positive edge for port interrupt to detect start of
                     // delimiter
   P1IFG = 0;  // Clear interrupt flag
-            
+
   P1IE  |= RX_PIN; // Enable Port1 interrupt
   _BIS_SR(LPM4_bits | GIE);
   return;
@@ -1057,7 +1057,7 @@ inline void sleep()
   P2OUT |= moo_debug_2;
   P3OUT = 0x00;
 #endif
-  
+
   // enable port interrupt for voltage supervisor
   P2IES = 0;
   P2IFG = 0;
@@ -1065,14 +1065,14 @@ inline void sleep()
   P1IE = 0;
   P1IFG = 0;
   TACTL = 0;
-  
+
   _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts
                 // at the same time
   P2IE |= VOLTAGE_SV_PIN; // Enable Port 2 interrupt
-  
+
   if (is_power_good())
     P2IFG = VOLTAGE_SV_PIN;
-  
+
   _BIS_SR(LPM4_bits | GIE);
 
 //  P1OUT |= RX_EN_PIN;
@@ -1130,7 +1130,7 @@ __interrupt void TimerA0_ISR(void)   // (5-6 cycles) to enter interrupt
 #pragma vector=PORT1_VECTOR
 __interrupt void Port1_ISR(void)   // (5-6 cycles) to enter interrupt
 {
-  
+
 
 #if USE_2618
   asm("MOV TAR, R7");  // move TAR to R7(count) register (3 CYCLES)
@@ -1317,7 +1317,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 #if MILLER_4_ENCODING
   BCSCTL2 |= DIVM_1;
 #endif
-  
+
   //TACTL |= TASSEL1 + MC1 + TAIE;
   //TACCTL1 |= SCS + CAP;	//initially, it set up as capturing rising edge.
 
@@ -1353,7 +1353,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     bits = numOfBits;         // (2 cycles).  This value will be adjusted. if
                               // numOfBit is constant, it takes 1 cycles
     asm("NOP");               // (1 cycles), zhangh 0316
-    
+
     asm("MOV #0bh, R14");     // (2 cycles) R14 is used as timer value 11, it
                               // will be 2 us in 3 MHz
     asm("MOV #05h, R15");     // (2 cycles) R15 is used as tiemr value 5, it
@@ -1420,9 +1420,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     // 01011
     asm("MOV #5c00h, R9");      // 2 cycles
     asm("MOV #0006h, R10");     // 2 cycles
-    
+
     asm("NOP");                   // 1 cycle zhangh 0316, 2
-    
+
     // this should be counted as 0. Therefore, Assembly DEC line should be 1
     // after executing
     asm("Preamble_Loop:");
@@ -1534,7 +1534,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 #else
     asm("MOV R14, TACCR0");                   // 3 cycles   ..9
 #endif                // 4 cycles   ..11
-    
+
     asm("DEC R6");                              // 1 cycle  ..10
     asm("JNZ bit_Count_Is_Not_16");              // 2 cycle    .. 12
     // This code will assign new data from reply and then swap bytes.  After
@@ -1545,7 +1545,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 #else
     asm("MOV R15, TACCR0");                   // 3 cycles   .. 15
 #endif
-    
+
     asm("MOV R13, R6");                         // 1 cycle   .. 16
     asm("MOV @R4+, R7");                        // 2 cycles  .. 18
 
@@ -1631,7 +1631,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 #else
     asm("MOV R15, TACCR0");             // 3 cycles   .. 15
 #endif
-    
+
     asm("NOP");                               // 1 cycle .. 16
     asm("NOP");                               // 1 cycle .. 17
     asm("NOP");                               // 1 cycle .. 18
@@ -1723,7 +1723,7 @@ unsigned short crc16_ccitt(volatile unsigned char *data, unsigned short n) {
 
 inline void crc16_ccitt_readReply(unsigned int numDataBytes)
 {
-  
+
   // shift everything over by 1 to accomodate leading "0" bit.
   // first, grab address of beginning of array
   readReply[numDataBytes + 2] = 0; // clear out this spot for the loner bit of
@@ -1754,7 +1754,7 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
   asm("RRC.b @R5+");
   // make first bit 0
   readReply[0] &= 0x7f;
-  
+
   // compute crc on data + handle bytes
   readReplyCRC = crc16_ccitt(&readReply[0], numDataBytes + 2);
   readReply[numDataBytes + 4] = readReply[numDataBytes + 2];
@@ -1764,7 +1764,7 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
                                                              // nibble
   // Just take the resulting bit, not the whole byte
   readReply[numDataBytes + 4] &= 0x80;
-  
+
   unsigned short mask = __swap_bytes(readReply[numDataBytes + 4]);
   mask >>= 3;
   mask |= (mask >> 7);
@@ -1772,7 +1772,7 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
   mask >>= 1;  // this is because the loner bit pushes the CRC to the left by 1
   // but we don't shift the crc because it should get pushed out by 1 anyway
   readReplyCRC ^= mask;
-  
+
   readReply[numDataBytes + 3] = (unsigned char) readReplyCRC;
   readReply[numDataBytes + 2] |= (unsigned char) (__swap_bytes(readReplyCRC) &
           0x7F);
@@ -1809,7 +1809,7 @@ void lfsr()
     rn16 = (rn16 << 1) | (((rn16 >> 15) ^ (rn16 >> 13) ^
                 (rn16 >> 9) ^ (rn16 >> 8)) & 1);
     rn16 = rn16 & 0xFFFF;
-    
+
     // fit 2^Q-1
     rn16 = rn16>>(15-Q);
 }
@@ -1832,7 +1832,7 @@ inline void loadRN16()
     queryReply[0] = 0xf0;
     queryReply[1] = 0x0f;
 #endif
-  
+
 }
 
 inline void mixupRN16()
@@ -1840,7 +1840,7 @@ inline void mixupRN16()
   unsigned short tmp;
   unsigned short newQ = 0;
   unsigned short swapee_index = 0;
-  
+
   newQ = RN16[shift] & 0xF;
   swapee_index = RN16[newQ];
   tmp = RN16[shift];
@@ -1885,7 +1885,7 @@ void handle_session_timeout()
 int bitCompare(unsigned char *startingByte1, unsigned short startingBit1,
 		unsigned char *startingByte2, unsigned short startingBit2,
 		unsigned short len) {
-                  
+
         unsigned char test1, test2;
 
 	while ( len-- ) {
@@ -1914,7 +1914,7 @@ int bitCompare(unsigned char *startingByte1, unsigned short startingBit1,
 			startingBit2--;
 
 	}
-        
+
         return 1;
 }
 #endif
