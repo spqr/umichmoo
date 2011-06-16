@@ -1775,6 +1775,18 @@
   <file>
     <name>$PROJ_DIR$\moo.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\moo.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\mymoo.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\rfid.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\rfid.h</name>
+  </file>
 </project>
 
 
