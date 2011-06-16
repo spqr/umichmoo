@@ -1,0 +1,2 @@
+C:\Documents and Settings\rprasad\Desktop\LTKNetv1\LTKNetv1\LLRPVendorExt\obj\Debug\ResolveAssemblyReference.cache
+C:\moxo\Intel\LLRP\dev\LTKNetv9\LLRPVendorExt\obj\Debug\ResolveAssemblyReference.cache

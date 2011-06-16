@@ -1,0 +1,102 @@
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Temp 1.7\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Copy of Impinj Reader App 1.9\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.0\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.1\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Impinj Reader App\Impinj Reader App 2.2\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Impinj Reader App\Impinj Reader App 2.3\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.4\ReaderLibrary\obj\Debug\ReaderLibrary.SettingsForm.resources
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\obj\Debug\ReaderLibrary.SettingsForm.resources
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 2.4b\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\bin\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\bin\Debug\ReaderLibrary.pdb
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\bin\Debug\LLRP.dll
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\bin\Debug\LLRP.pdb
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\obj\Debug\ReaderLibrary.Properties.Resources.resources
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\obj\Debug\ReaderLibrary.SettingsForm.resources
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\obj\Debug\ReaderLibrary.csproj.GenerateResource.Cache
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\obj\Debug\ReaderLibrary.dll
+C:\local\Reader Apps\Impinj Reader App 3.0a\ReaderLibrary\obj\Debug\ReaderLibrary.pdb
