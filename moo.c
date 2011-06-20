@@ -62,22 +62,22 @@
 #if SIMPLE_QUERY_ACK
 #define ENABLE_READS                  0
 #define READ_SENSOR                   0
-#warning "compiling simple query-ack application"
+#pragma message ("compiling simple query-ack application")
 #endif
 #if SENSOR_DATA_IN_ID
 #define ENABLE_READS                  0
 #define READ_SENSOR                   1
-#warning "compiling sensor data in id application"
+#pragma message ("compiling sensor data in id application")
 #endif
 #if SIMPLE_READ_COMMAND
 #define ENABLE_READS                  1
 #define READ_SENSOR                   0
-#warning "compiling simple read command application"
+#pragma message ("compiling simple read command application")
 #endif
 #if SENSOR_DATA_IN_READ_COMMAND
 #define ENABLE_READS                  1
 #define READ_SENSOR                   1
-#warning "compiling sensor data in read command application"
+#pragma message ("compiling sensor data in read command application")
 #endif
 
 // pick only one
