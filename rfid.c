@@ -92,8 +92,6 @@ void handle_query(volatile short nextState)
     TRext = 0;
   }
 
-  //DEBUG_PIN5_HIGH;
-
 #if ENABLE_SESSIONS
 
 #if 1
@@ -110,8 +108,6 @@ void handle_query(volatile short nextState)
   unsigned short session = (cmd[1] & QUERY_SESSION_MASK) >> 4;
   unsigned short target = cmd[1] & QUERY_TARGET_MASK;
   unsigned short match = 0;
-
-  //DEBUG_PIN5_HIGH;
 
 #define TARGETISEQUAL(t,s) \
   ((t == 0x00 && s == SESSION_STATE_A) || (t == 0x08  && s == SESSION_STATE_B))
@@ -151,7 +147,6 @@ void handle_query(volatile short nextState)
 	TACCTL1 &= ~CCIE;     // Disable capturing and comparing interrupt
 	TAR = 0;
 	state = STATE_READY;
-        //DEBUG_PIN5_LOW;
 	return;
   }
 
@@ -161,7 +156,6 @@ void handle_query(volatile short nextState)
   previous_session = session;
 
 #else
-  //DEBUG_PIN5_HIGH;
   while ( TAR < 140 );
   TAR = 0;
 #endif
@@ -199,7 +193,6 @@ void handle_query(volatile short nextState)
   if ( inInventoryRound == 1 || slot_counter == 0)
   {
 
-    //DEBUG_PIN5_HIGH;
     // compute a RN16
     loadRN16();
 
@@ -207,11 +200,6 @@ void handle_query(volatile short nextState)
     queryReplyCRC = crc16_ccitt(&queryReply[0],2);
     queryReply[3] = (unsigned char)queryReplyCRC;
     queryReply[2] = (unsigned char)__swap_bytes(queryReplyCRC);
-
-#if ENABLE_HANDLE_CHECKING
-    //last_handle_b0 = queryReply[0];
-    //last_handle_b1 = queryReply[1];
-#endif
 
     TACCTL1 &= ~CCIE;     // Disable capturing and comparing interrupt
     while ( TAR < 140 );
@@ -230,7 +218,6 @@ void handle_query(volatile short nextState)
   // we transition to STATE_ARBITRATE.
   else
   {
-    //DEBUG_PIN5_HIGH;
     TACCTL1 &= ~CCIE;     // Disable capturing and comparing interrupt
     TAR = 0;
     state = STATE_ARBITRATE;
@@ -240,17 +227,11 @@ void handle_query(volatile short nextState)
 
 #else
 
-#if ENABLE_HANDLE_CHECKING
-  //last_handle_b0 = queryReply[0];
-  //last_handle_b1 = queryReply[1];
-#endif
-
   // we don't care about slots, so just send the packet and go to STATE_REPLY.
   sendToReader(&queryReply[0], 17);
   state = nextState;
 
 #endif
-  //DEBUG_PIN5_LOW;
 
 }
 
@@ -364,8 +345,6 @@ void handle_queryadjust(volatile short nextState)
 #define QUERYADJ_UPDNB0_MASK	0x01
 #define QUERYADJ_UPDNB1_MASK	0xC0
 
-  //DEBUG_PIN5_HIGH;
-
   unsigned char updn = (cmd[0] & QUERYADJ_UPDNB0_MASK) << 2;
   unsigned char tmp = (cmd[1] & QUERYADJ_UPDNB1_MASK) >> 6;
   updn |= tmp;
@@ -414,8 +393,6 @@ void handle_queryadjust(volatile short nextState)
 	state = STATE_ARBITRATE;
   }
 
-  //DEBUG_PIN5_LOW;
-
 #else
 
   // we don't care about slots, so just send the packet and go to STATE_REPLY.
@@ -434,8 +411,6 @@ void handle_select(volatile short nextState)
 {
   do_nothing();
 
-//DEBUG_PIN5_HIGH;
-
 #if ENABLE_SESSIONS
 // command-specific bit masks
 #define SELECT_TARGET_MASK		0x0E
@@ -447,7 +422,6 @@ void handle_select(volatile short nextState)
 #define SELECT_LENGTHB0_MASK            0x0F
 #define SELECT_LENGTHB1_MASK            0xF0
 #define SELECT_MASK_MASK                0x0F
-//#define SELECT_TRUNCATE_MASK
 
 // command-specific bit flags
 #define SELECT_TARGET_SL		0x04
@@ -566,7 +540,6 @@ void handle_select(volatile short nextState)
 #endif
 
   state = nextState;
-  DEBUG_PIN5_LOW;
 }
 
 void handle_ack(volatile short nextState)
