@@ -14,8 +14,6 @@
 //             P2.0 = Supervisor In
 //             P4.0 = Supervisor In
 //
-//	       Tested against Impinj v 3.0.2 reader, Miller-4 encodings
-//	       Alien reader code is out of date
 //
 //	This is a partial implementation of the RFID EPCGlobal C1G2 protocol
 //  for the Moo 1.1 hardware platform.
@@ -97,8 +95,6 @@
 #define SEND_CLOCK  \
   BCSCTL1 = XT2OFF + RSEL3 + RSEL0 ; \
     DCOCTL = DCO2 + DCO1 ;
-  //BCSCTL1 = XT2OFF + RSEL3 + RSEL1 ; \
-  //DCOCTL = 0;
 #define RECEIVE_CLOCK \
   BCSCTL1 = XT2OFF + RSEL3 + RSEL1 + RSEL0; \
   DCOCTL = 0; \
@@ -199,18 +195,6 @@ int main(void)
 
   RECEIVE_CLOCK;
 
-  /*
-  // already set.
-#if MONITOR_DEBUG_ON
-    // for monitor - pin direction
-  P1DIR |= moo_debug_1;
-  P2DIR |= moo_debug_2;
-  P3DIR |= moo_debug_3;
-  P3DIR |= moo_debug_4;
-  P3DIR |= moo_debug_5;
-#endif
-  */
-
 #if DEBUG_PINS_ENABLED
 #if USE_2618
   DEBUG_PIN5_LOW;
@@ -242,9 +226,6 @@ int main(void)
 
   TACTL = 0;
 
-//  P1IES &= ~BIT2; // initial state is POS edge to find start of CW
-//  P1IFG = 0x00;       // clear interrupt flag after changing edge trigger
-
   asm("MOV #0000h, R9");
   // dest = destorig;
 
@@ -273,15 +254,7 @@ int main(void)
   initialize_sessions();
 #endif
 
-  //state = STATE_ARBITRATE;
   state = STATE_READY;
-
-#if MONITOR_DEBUG_ON
-  // for monitor - set STATE READY debug line - 00000 - 0
-  P1OUT |= moo_debug_1;
-  P1OUT &= ~moo_debug_1;
-  P2OUT &= ~moo_debug_2;
-#endif
 
   setup_to_receive();
 
@@ -294,17 +267,6 @@ int main(void)
       if(!is_power_good()) {
         sleep();
       }
-
-#if MONITOR_DEBUG_ON
-      // for monitor - set TAR OVERFLOW debug line - 00111 - 7
-      if (!delimiterNotFound)
-      {
-        P1OUT |= moo_debug_1;
-        P1OUT &= ~moo_debug_1;
-        P2OUT &= ~moo_debug_2;
-        P3OUT = 0x31;
-      }
-#endif
 
 #if SENSOR_DATA_IN_ID
     // this branch is for sensor data in the id
@@ -324,13 +286,6 @@ int main(void)
 #endif
     inInventoryRound = 0;
     state = STATE_READY;
-
-#if MONITOR_DEBUG_ON
-    // for monitor - set STATE READY debug line - 00000 - 0
-    P1OUT |= moo_debug_1;
-    P1OUT &= ~moo_debug_1;
-    P2OUT &= ~moo_debug_2;
-#endif
 
 #endif
 
@@ -358,25 +313,7 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         if ( bits == NUM_QUERY_BITS  && ( ( cmd[0] & 0xF0 ) == 0x80 ) )
         {
-#if MONITOR_DEBUG_ON
-            // for monitor - set QUERY PKT debug line - 01001 - 9
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x01;
-#endif
-
-          //DEBUG_PIN5_HIGH;
           handle_query(STATE_REPLY);
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set STATE REPLY debug line - 00010 - 2
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x10;
-#endif
-
           setup_to_receive();
         }
         //////////////////////////////////////////////////////////////////////
@@ -385,17 +322,7 @@ int main(void)
         // @ short distance has slight impact on performance
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY_ADJ debug line - 01101 - 13
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x30;
-#endif
-          //DEBUG_PIN5_HIGH;
           handle_select(STATE_READY);
-          //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
         } // select command
         //////////////////////////////////////////////////////////////////////
@@ -406,14 +333,6 @@ int main(void)
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set debug line - 01110 - 14
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
         }
         break;
       }
@@ -424,25 +343,7 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         if ( bits == NUM_QUERY_BITS  && ( ( cmd[0] & 0xF0 ) == 0x80 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY PKT debug line - 01001 - 9
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x01;
-#endif
-
-          //DEBUG_PIN5_HIGH;
           handle_query(STATE_REPLY);
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set STATE REPLY debug line - 00010 - 2
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x10;
-#endif
-
           setup_to_receive();
         }
         //////////////////////////////////////////////////////////////////////
@@ -451,20 +352,9 @@ int main(void)
         //else if ( bits >= NUM_QUERY_BITS )
         else if ( bits >= MAX_NUM_QUERY_BITS && ( ( cmd[0] & 0xF0 ) != 0xA0 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
-          //DEBUG_PIN5_LOW;
         }
         // this state handles query, queryrep, queryadjust, and select commands.
         //////////////////////////////////////////////////////////////////////
@@ -472,49 +362,16 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_QUERYREP_BITS && ( ( cmd[0] & 0x06 ) == 0x00 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY_REP debug line - 01100 - 12
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x20;
-#endif
-          //DEBUG_PIN5_HIGH;
           handle_queryrep(STATE_REPLY);
-          //DEBUG_PIN5_LOW;
-          //setup_to_receive();
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
         } // queryrep command
         //////////////////////////////////////////////////////////////////////
         // process the QUERYADJUST command
         //////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_QUERYADJ_BITS  && ( ( cmd[0] & 0xF8 ) == 0x48 ) )
         {
-          // at short distance, you get better performance (~52 t/s) if you
-          // do setup_to_receive() rather than dnf =1. not sure that this holds
-          // true at distance though - need to recheck @ 2-3 ms.
-          //DEBUG_PIN5_HIGH;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY_ADJ debug line - 01101 - 13
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x21;
-#endif
-
           handle_queryadjust(STATE_REPLY);
-          //DEBUG_PIN5_LOW;
           setup_to_receive();
-          //delimiterNotFound = 1;
         } // queryadjust command
         //////////////////////////////////////////////////////////////////////
         // process the SELECT command
@@ -522,27 +379,8 @@ int main(void)
         // @ short distance has slight impact on performance
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set SELECT debug line - 01110 - 14
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
-          //DEBUG_PIN5_HIGH;
           handle_select(STATE_READY);
-          //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
         } // select command
 
       break;
@@ -556,16 +394,8 @@ int main(void)
         ///////////////////////////////////////////////////////////////////////
         if ( bits == NUM_ACK_BITS  && ( ( cmd[0] & 0xC0 ) == 0x40 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set ACK PKT debug line - 01010 - 10
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x10;
-#endif
 #if ENABLE_READS
           handle_ack(STATE_ACKNOWLEDGED);
-
           setup_to_receive();
 #elif SENSOR_DATA_IN_ID
           handle_ack(STATE_ACKNOWLEDGED);
@@ -576,35 +406,18 @@ int main(void)
           //delimiterNotFound = 1; // reset
           setup_to_receive();
 #endif
-#if MONITOR_DEBUG_ON
-          // for monitor - set STATE ACK debug line - 00011 - 3
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x11;
-#endif
         }
         //////////////////////////////////////////////////////////////////////
         // process the QUERY command
         //////////////////////////////////////////////////////////////////////
         if ( bits == NUM_QUERY_BITS  && ( ( cmd[0] & 0xF0 ) == 0x80 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY PKT debug line - 01001 - 9
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x01;
-#endif
           // i'm supposed to stay in state_reply when I get this, but if I'm
           // running close to 1.8v then I really need to reset and get in the
           // sleep, which puts me back into state_arbitrate. this is complete
           // a violation of the protocol, but it sure does make everything
           // work better. - polly 8/9/2008
-          //DEBUG_PIN5_HIGH;
           handle_query(STATE_REPLY);
-          //DEBUG_PIN5_LOW;
-          //delimiterNotFound = 1;
           setup_to_receive();
         }
         //////////////////////////////////////////////////////////////////////
@@ -612,94 +425,32 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_QUERYREP_BITS && ( ( cmd[0] & 0x06 ) == 0x00 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY_REP debug line - 01100 - 12
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x20;
-#endif
-
-          //DEBUG_PIN5_HIGH;
-	  do_nothing();
-	  state = STATE_ARBITRATE;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set STATE ARBITRATE debug line - 00001 - 1
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x01;
-#endif
-
-          //handle_queryrep(STATE_ARBITRATE);
-          //DEBUG_PIN5_LOW;
-          setup_to_receive();
-          //delimiterNotFound = 1; // reset
+			do_nothing();
+			state = STATE_ARBITRATE;
+			setup_to_receive();
         } // queryrep command
         //////////////////////////////////////////////////////////////////////
         // process the QUERYADJUST command
         //////////////////////////////////////////////////////////////////////
           else if ( bits == NUM_QUERYADJ_BITS  && ( ( cmd[0] & 0xF8 ) == 0x48 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set QUERY_ADJ debug line - 01101 - 13
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x21;
-#endif
-          //DEBUG_PIN5_HIGH;
           handle_queryadjust(STATE_REPLY);
-          //DEBUG_PIN5_LOW;
-          //setup_to_receive();
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
         } // queryadjust command
         //////////////////////////////////////////////////////////////////////
         // process the SELECT command
         //////////////////////////////////////////////////////////////////////
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
-#if MONITOR_DEBUG_ON
-          // for monitor - set SELECT debug line - 01110 - 14
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT |= moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
-          //DEBUG_PIN5_HIGH;
           handle_select(STATE_READY);
-          //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
-          //setup_to_receive();
         } // select command
         else if ( bits >= MAX_NUM_QUERY_BITS && ( ( cmd[0] & 0xF0 ) != 0xA0 ) &&
                 ( ( cmd[0] & 0xF0 ) != 0x80 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-          //DEBUG_PIN5_LOW;
         }
         break;
       }
@@ -713,28 +464,11 @@ int main(void)
         if ( bits >= NUM_REQRN_BITS && ( cmd[0] == 0xC1 ) )
         {
 #if 1
-#if MONITOR_DEBUG_ON
-          // for monitor - set REQ_RN debug line - 01011 - 11
-    P1OUT |= moo_debug_1;
-    P1OUT &= ~moo_debug_1;
-    P2OUT |= moo_debug_2;
-    P3OUT = 0x11;
-#endif
-          DEBUG_PIN5_HIGH;
           handle_request_rn(STATE_OPEN);
-          DEBUG_PIN5_LOW;
           setup_to_receive();
 #else
           handle_request_rn(STATE_READY);
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
 #endif
         }
 
@@ -744,27 +478,8 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         if ( bits == NUM_QUERY_BITS  && ( ( cmd[0] & 0xF0 ) == 0x80 ) )
         {
-#if MONITOR_DEBUG_ON
-              // for monitor - set QUERY PKT debug line - 01001 - 9
-    P1OUT |= moo_debug_1;
-    P1OUT &= ~moo_debug_1;
-    P2OUT |= moo_debug_2;
-    P3OUT = 0x01;
-#endif
-          //DEBUG_PIN5_HIGH;
           handle_query(STATE_REPLY);
-          //DEBUG_PIN5_LOW;
           delimiterNotFound = 1;
-
-#if MONITOR_DEBUG_ON
-          // for monitor - set DELIMITER NOT FOUND debug line - 00110 - 6
-          P1OUT |= moo_debug_1;
-          P1OUT &= ~moo_debug_1;
-          P2OUT &= ~moo_debug_2;
-          P3OUT = 0x30;
-#endif
-
-          //setup_to_receive();
         }
         ///////////////////////////////////////////////////////////////////////
         // process the ACK command
@@ -775,25 +490,7 @@ int main(void)
         //else if ( bits == 20  && ( ( cmd[0] & 0xC0 ) == 0x40 ) )
         else if ( bits == NUM_ACK_BITS  && ( ( cmd[0] & 0xC0 ) == 0x40 ) )
         {
-#if MONITOR_DEBUG_ON
-              // for monitor - set ACK PKT debug line - 01010 - 10
-    P1OUT |= moo_debug_1;
-    P1OUT &= ~moo_debug_1;
-    P2OUT |= moo_debug_2;
-    P3OUT = 0x10;
-#endif
-          //DEBUG_PIN5_HIGH;
           handle_ack(STATE_ACKNOWLEDGED);
-
-#if MONITOR_DEBUG_ON
-              // for monitor - set STATE ACK debug line - 00011 - 3
-    P1OUT |= moo_debug_1;
-    P1OUT &= ~moo_debug_1;
-    P2OUT &= ~moo_debug_2;
-    P3OUT = 0x11;
-#endif
-
-          //DEBUG_PIN5_LOW;
           setup_to_receive();
         }
         //////////////////////////////////////////////////////////////////////
@@ -813,33 +510,26 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_QUERYADJ_BITS  && ( ( cmd[0] & 0xF8 ) == 0x48 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-          //DEBUG_PIN5_LOW;
         } // queryadjust command
         //////////////////////////////////////////////////////////////////////
         // process the SELECT command
         //////////////////////////////////////////////////////////////////////
         else if ( bits >= 44  && ( ( cmd[0] & 0xF0 ) == 0xA0 ) )
         {
-          //DEBUG_PIN5_HIGH;
           handle_select(STATE_READY);
           delimiterNotFound = 1;
-          //DEBUG_PIN5_LOW;
         } // select command
         //////////////////////////////////////////////////////////////////////
         // process the NAK command
         //////////////////////////////////////////////////////////////////////
         else if ( bits >= 10 && ( cmd[0] == 0xC0 ) )
-        //else if ( bits >= NUM_NAK_BITS && ( cmd[0] == 0xC0 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_ARBITRATE;
           delimiterNotFound = 1;
-          //DEBUG_PIN5_LOW;
         }
         //////////////////////////////////////////////////////////////////////
         // process the READ command
@@ -847,11 +537,9 @@ int main(void)
         // warning: won't work for read addrs > 127d
         if ( bits == NUM_READ_BITS && ( cmd[0] == 0xC2 ) )
         {
-          //DEBUG_PIN5_HIGH;
           handle_read(STATE_ARBITRATE);
           state = STATE_ARBITRATE;
           delimiterNotFound = 1 ;
-          //DEBUG_PIN5_LOW;
         }
         // FIXME: need write, kill, lock, blockwrite, blockerase
         //////////////////////////////////////////////////////////////////////
@@ -859,20 +547,15 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         if ( bits >= 56  && ( cmd[0] == 0xC6 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_ARBITRATE;
           delimiterNotFound = 1 ;
-          //DEBUG_PIN5_LOW;
         }
 #endif
         else if ( bits >= MAX_NUM_READ_BITS )
         {
-          //DEBUG_PIN5_HIGH;
-          //do_nothing();
           state = STATE_ARBITRATE;
           delimiterNotFound = 1 ;
-          //DEBUG_PIN5_LOW;
         }
 
 #if 0
@@ -897,20 +580,16 @@ int main(void)
         // warning: won't work for read addrs > 127d
         if ( bits == NUM_READ_BITS  && ( cmd[0] == 0xC2 ) )
         {
-          //DEBUG_PIN5_HIGH;
           handle_read(STATE_OPEN);
-          //DEBUG_PIN5_LOW;
           // note: setup_to_receive() et al handled in handle_read
         }
         //////////////////////////////////////////////////////////////////////
         // process the REQUEST_RN command
         //////////////////////////////////////////////////////////////////////
         else if ( bits >= NUM_REQRN_BITS  && ( cmd[0] == 0xC1 ) )
-          //else if ( bits >= 30  && ( cmd[0] == 0xC1 ) )
         {
           handle_request_rn(STATE_OPEN);
           setup_to_receive();
-          //delimiterNotFound = 1; // more bad reads??
          }
         //////////////////////////////////////////////////////////////////////
         // process the QUERY command
@@ -918,7 +597,6 @@ int main(void)
         if ( bits == NUM_QUERY_BITS  && ( ( cmd[0] & 0xF0 ) == 0x80 ) )
         {
           handle_query(STATE_REPLY);
-          //setup_to_receive();
           delimiterNotFound = 1;
         }
         //////////////////////////////////////////////////////////////////////
@@ -926,35 +604,26 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_QUERYREP_BITS && ( ( cmd[0] & 0x06 ) == 0x00 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_READY;
-          //delimiterNotFound = 1;
           setup_to_receive();
-          //DEBUG_PIN5_LOW;
         } // queryrep command
         //////////////////////////////////////////////////////////////////////
         // process the QUERYADJUST command
         //////////////////////////////////////////////////////////////////////
-        //else if ( bits == NUM_QUERYADJ_BITS  && ( ( cmd[0] & 0xF0 ) == 0x90 ) )
           else if ( bits == 9  && ( ( cmd[0] & 0xF8 ) == 0x48 ) )
         {
-          //DEBUG_PIN5_HIGH;
           do_nothing();
           state = STATE_READY;
           delimiterNotFound = 1;
-          //DEBUG_PIN5_LOW;
         } // queryadjust command
         ///////////////////////////////////////////////////////////////////////
         // process the ACK command
         ///////////////////////////////////////////////////////////////////////
         else if ( bits == NUM_ACK_BITS  && ( ( cmd[0] & 0xC0 ) == 0x40 ) )
         {
-          //DEBUG_PIN5_HIGH;
           handle_ack(STATE_OPEN);
-          //setup_to_receive();
           delimiterNotFound = 1;
-          //DEBUG_PIN5_LOW;
         }
         //////////////////////////////////////////////////////////////////////
         // process the SELECT command
@@ -967,7 +636,6 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         // process the NAK command
         //////////////////////////////////////////////////////////////////////
-        //else if ( bits >= NUM_NAK_BITS && ( cmd[0] == 0xC0 ) )
         else if ( bits >= 10 && ( cmd[0] == 0xC0 ) )
         {
           handle_nak(STATE_ARBITRATE);
@@ -1009,7 +677,6 @@ int main(void)
 //       to change things in both places.
 static inline void setup_to_receive()
 {
-  //P4OUT &= ~BIT3;
   _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts
                 // at the same time
 
@@ -1049,15 +716,6 @@ static inline void setup_to_receive()
 inline void sleep()
 {
   P1OUT &= ~RX_EN_PIN;
-
-#if MONITOR_DEBUG_ON
-  // for monitor - set SLEEP debug line - 01000 - 8
-  P1OUT |= moo_debug_1;
-  P1OUT &= ~moo_debug_1;
-  P2OUT |= moo_debug_2;
-  P3OUT = 0x00;
-#endif
-
   // enable port interrupt for voltage supervisor
   P2IES = 0;
   P2IFG = 0;
@@ -1075,7 +733,6 @@ inline void sleep()
 
   _BIS_SR(LPM4_bits | GIE);
 
-//  P1OUT |= RX_EN_PIN;
   return;
 }
 
@@ -1305,7 +962,6 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
   dest = data;
   // Setup timer
   P1SEL |= TX_PIN; //  select TIMER_A0
-//  P1DIR |= TX_PIN; // already set.
   TACTL |= TACLR;   //reset timer A
   TACTL = TASSEL1 + MC0;     // up mode
 
@@ -1317,9 +973,6 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 #if MILLER_4_ENCODING
   BCSCTL2 |= DIVM_1;
 #endif
-
-  //TACTL |= TASSEL1 + MC1 + TAIE;
-  //TACCTL1 |= SCS + CAP;	//initially, it set up as capturing rising edge.
 
 /*******************************************************************************
 *   The starting of the transmitting code. Transmitting code must send 4 or 16
