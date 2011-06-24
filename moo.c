@@ -1141,6 +1141,25 @@ __interrupt void Port1_ISR(void)   // (5-6 cycles) to enter interrupt
   TAR = 0;            // 4 cycles
   LPM4_EXIT;
 
+  /**** beep on query ****/
+#define COUNTERLEN 500 // ~440 Hz
+#define NUMCYCLES 250
+#define P36 0x40 // 0b01000000, pin 3.6
+  unsigned i, cyc;
+
+  // Stop watchdog timer to prevent time out reset
+  WDTCTL = WDTPW + WDTHOLD;
+
+  P3DIR |= P36; // P3.6 is an output pin; all others are inputs
+
+  for (cyc = 0; cyc != NUMCYCLES; ++cyc) {
+    P3OUT ^= P36; // toggle P3.6
+    i = COUNTERLEN;
+    do { --i; } while (i != 0);
+  }
+  asm("RETI");
+  /**** end beep on query ****/
+
   asm("CMP #0000h, R5\n");          // if (bits == 0) (1 cycle)
   asm("JEQ bit_Is_Zero_In_Port_Int\n");                // 2 cycles
   // bits != 0:
