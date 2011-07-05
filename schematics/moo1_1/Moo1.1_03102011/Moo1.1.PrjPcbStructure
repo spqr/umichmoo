@@ -1,4 +1,0 @@
-Record=SheetSymbol|SourceDocument=Moo_Top.SchDoc|Designator=AFE|SchDesignator=AFE|FileName=Moo_AFE.SchDoc|SymbolType=Normal|RawFileName=Moo_AFE.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol
-Record=SheetSymbol|SourceDocument=Moo_Top.SchDoc|Designator=Digital_1|SchDesignator=Digital_1|FileName=Moo_Digital.SchDoc|SymbolType=Normal|RawFileName=Moo_Digital.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol
-Record=SheetSymbol|SourceDocument=Moo_Top.SchDoc|Designator=Sensors|SchDesignator=Sensors|FileName=Moo_Sensors.SchDoc|SymbolType=Normal|RawFileName=Moo_Sensors.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol
-Record=TopLevelDocument|FileName=Moo_Top.SchDoc
