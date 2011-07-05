@@ -1,0 +1,2 @@
+Removed Pin From Net: NetName=TRANSMIT_RFID Pin=P3-11
+Added Pin To Net: NetName=P67_A7 Pin=P3-11
