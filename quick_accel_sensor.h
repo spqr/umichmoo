@@ -25,7 +25,8 @@ void read_sensor(unsigned char volatile *target)
   P1OUT &= ~RX_EN_PIN;
 
   // slow down clock
-  BCSCTL1 = XT2OFF + RSEL1; // select internal resistor (still has effect when DCOR=1)
+  BCSCTL1 = XT2OFF + RSEL1; // select internal resistor (still has effect when
+                            // DCOR=1)
   DCOCTL = DCO1+DCO0; // set DCO step.
 
   if(!is_power_good())

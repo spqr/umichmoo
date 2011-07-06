@@ -6,18 +6,18 @@ October 11, 2010, Rev. 1.0
 
 ABOUT THE SOFTWARE
 This application note provides software driver examples for SST25WF040,
-Serial Flash. Extensive comments are included in each routine to describe 
-the function of each routine.  The interface coding uses polling method 
+Serial Flash. Extensive comments are included in each routine to describe
+the function of each routine.  The interface coding uses polling method
 rather than the SPI protocol to interface with these serial devices.  The
 functions are differentiated below in terms of the communication protocols
-(uses Mode 0) and specific device operation instructions. This code has been 
+(uses Mode 0) and specific device operation instructions. This code has been
 designed to compile using the Keil compiler.
 
 
 ABOUT THE SST25WF040
 
-Companion product datasheets for the SST25WF040 should be reviewed in 
-conjunction with this application note for a complete understanding 
+Companion product datasheets for the SST25WF040 should be reviewed in
+conjunction with this application note for a complete understanding
 of the device.
 
 
@@ -26,11 +26,12 @@ Device Communication Protocol(pinout related) functions:
 Functions                    		Function
 ------------------------------------------------------------------
 init					Initializes clock to set up mode 0.
-Send_Byte				Sends one byte using SI pin to send and 
+Send_Byte				Sends one byte using SI pin to send and
 					shift out 1-bit per clock rising edge
-Get_Byte				Receives one byte using SO pin to receive and shift 
+Get_Byte				Receives one byte using SO pin to receive and shift
 					in 1-bit per clock falling edge
-Poll_SO					Used in the polling for RY/BY# of SO during AAI programming
+Poll_SO					Used in the polling for RY/BY# of SO during AAI
+                        programming
 CE_High					Sets Chip Enable pin of the serial flash to high
 CE_Low					Clears Chip Enable of the serial flash to low
 Reset_Hold_Low			Clears Hold/Reset pin to make serial flash hold	or reset
@@ -38,9 +39,10 @@ UnReset_Hold			Dereset/Unholds the serial flash
 WP_Low					Clears WP pin to make serial flash write protected
 UnWP					Disables write protection pin
 
-Note:  The pin names of the SST25WF040 are used in this application note. The associated test code
-will not compile unless these pinouts (SCK, SI, SO, SO, CE, WP, Reset_Hold) are pre-defined on your
-software which should reflect your hardware interfaced. 	 
+Note:  The pin names of the SST25WF040 are used in this application note. The
+associated test code will not compile unless these pinouts (SCK, SI, SO, SO, CE,
+WP, Reset_Hold) are pre-defined on your software which should reflect your
+hardware interfaced.
 
 
 Device Operation Instruction functions:
@@ -49,22 +51,27 @@ Functions                    		Function
 ------------------------------------------------------------------
 Read_Status_Register			Reads the status register of the serial flash
 EWSR					Enables the Write Status Register
-WRSR					Performs a write to the Status Register 
+WRSR					Performs a write to the Status Register
 WREN					Write enables the serial flash
 WRDI					Write disables the serial flash
 EBSY					Enable SO to output RY/BY# status during AAI programming
-DBSY					Disable SO to output RY/BY# status during AAI programming
+DBSY					Disable SO to output RY/BY# status during AAI
+                        programming
 Read_ID					Reads the manufacturer ID and device ID
 Jedec_ID_Read				Reads the Jedec ID
-Read					Reads one byte from the serial flash and returns byte(max of 20 MHz CLK frequency)
+Read					Reads one byte from the serial flash and returns byte
+                        (max of 20 MHz CLK frequency)
 Read_Cont				Reads multiple bytes(max of 20 MHz CLK frequency)
-HighSpeed_Read				Reads one byte from the serial flash and returns byte(max of 40 MHz CLK frequency)
+HighSpeed_Read			Reads one byte from the serial flash and returns byte
+                        (max of 40 MHz CLK frequency)
 HighSpeed_Read_Cont			Reads multiple bytes(max of 40 MHz CLK frequency)
 Byte_Program				Program one byte to the serial flash
 Auto_Add_IncA				Initial Auto Address Increment process
-Auto_Add_IncB				Successive Auto_Address_Increment process after AAI initiation
+Auto_Add_IncB				Successive Auto_Address_Increment process after AAI
+                            initiation
 Auto_Add_IncA_EBSY			Initial Auto Address Increment process with EBSY
-Auto_Add_IncB_EBSY			Successive Auto_Address_Increment process after AAI initiation with EBSY
+Auto_Add_IncB_EBSY			Successive Auto_Address_Increment process after AAI
+                            initiation with EBSY
 Chip_Erase				Erases entire serial flash
 Sector_Erase				Erases one sector (4 KB) of the serial flash
 Block_Erase_32K				Erases 32 KByte block memory of the serial flash
@@ -73,15 +80,15 @@ Wait_Busy				Polls status register until busy bit is low
 EHLD					Enables Hold# pin functionality of the RST#/HOLD# pin
 */
 
-                                                                     
-//"C" LANGUAGE DRIVERS 
+
+//"C" LANGUAGE DRIVERS
 
 /********************************************************************/
 /* Copyright Microchip Technology Inc.  1994-2010	                */
 /* Example "C" language Driver of SST25WF040 Serial Flash	        */
 /* Hardik Patel, Microchip Technology Inc.                          */
 /*                                                                  */
-/* Revision 1.0, October 11, 2010			  	                    */   
+/* Revision 1.0, October 11, 2010			  	                    */
 /*                                                                  */
 /*								                                    */
 /********************************************************************/
@@ -89,7 +96,7 @@ EHLD					Enables Hold# pin functionality of the RST#/HOLD# pin
 #define CE    0x01
 #define SIMO  0x02
 #define SOMI  0x04
-#define SCK   0x08  
+#define SCK   0x08
 
 /* Function Prototypes */
 
@@ -112,15 +119,16 @@ void EBSY();
 void DBSY();
 void EHLD();
 unsigned char Read_ID(unsigned char ID_addr);
-unsigned long Jedec_ID_Read(); 
+unsigned long Jedec_ID_Read();
 unsigned char Read(unsigned long Dst);
 void Read_Cont(unsigned long Dst, unsigned long no_bytes);
-unsigned char HighSpeed_Read(unsigned long Dst); 
+unsigned char HighSpeed_Read(unsigned long Dst);
 void HighSpeed_Read_Cont(unsigned long Dst, unsigned long no_bytes);
 void Byte_Program(unsigned long Dst, unsigned char byte);
 void Auto_Add_IncA(unsigned long Dst, unsigned char byte1, unsigned char byte2);
 void Auto_Add_IncB(unsigned char byte1, unsigned char byte2);
-void Auto_Add_IncA_EBSY(unsigned long Dst, unsigned char byte1, unsigned char byte2);
+void Auto_Add_IncA_EBSY(unsigned long Dst, unsigned char byte1,
+        unsigned char byte2);
 void Auto_Add_IncB_EBSY(unsigned char byte1, unsigned char byte2);
 void Chip_Erase();
 void Sector_Erase(unsigned long Dst);
@@ -243,7 +251,7 @@ void Poll_SO()
 /*		CE							*/
 /*									*/
 /************************************************************************/
-void CE_High() 
+void CE_High()
 {
 	P5OUT |= CE;			/* set CE high */
 }
@@ -260,7 +268,7 @@ void CE_High()
 /*		CE							*/
 /*									*/
 /************************************************************************/
-void CE_Low() 
+void CE_Low()
 {	
 	P5OUT &= ~CE;			/* clear CE low */
 }
@@ -510,7 +518,7 @@ unsigned char Read_ID(unsigned char ID_addr)
 /*		 and Device ID (04h)					*/
 /*									*/
 /************************************************************************/
-unsigned long Jedec_ID_Read() 
+unsigned long Jedec_ID_Read()
 {
 	unsigned long temp;
 	
@@ -563,7 +571,7 @@ void EHLD()
 /*		byte							*/
 /*									*/
 /************************************************************************/
-unsigned char Read(unsigned long Dst) 
+unsigned char Read(unsigned long Dst)
 {
 	unsigned char byte = 0;	
 
@@ -623,7 +631,7 @@ void Read_Cont(unsigned long Dst, unsigned long no_bytes)
 /*		byte							*/
 /*									*/
 /************************************************************************/
-unsigned char HighSpeed_Read(unsigned long Dst) 
+unsigned char HighSpeed_Read(unsigned long Dst)
 {
 	unsigned char byte = 0;	
 
@@ -803,7 +811,8 @@ void Auto_Add_IncB(unsigned char byte1, unsigned char byte2)
 /*		Nothing							*/
 /*									*/
 /************************************************************************/
-void Auto_Add_IncA_EBSY(unsigned long Dst, unsigned char byte1, unsigned char byte2)
+void Auto_Add_IncA_EBSY(unsigned long Dst, unsigned char byte1,
+        unsigned char byte2)
 {
 	EBSY();					/* enable RY/BY# status for SO in AAI */	
 
@@ -961,7 +970,7 @@ void Block_Erase_64K(unsigned long Dst)
 /************************************************************************/
 void Wait_Busy()
 {
-	while ((Read_Status_Register()& 0x01) == 0x01)	/* waste time until not busy */
+	while ((Read_Status_Register()& 0x01) == 0x01)	/* waste time until !busy */
 		Read_Status_Register();
 }
 
@@ -978,9 +987,9 @@ void Wait_Busy()
 /************************************************************************/
 void Wait_Busy_AAI()
 {
-	while ((Read_Status_Register()& 0x41) == 0x41)	/* waste time until not busy */
+	while ((Read_Status_Register()& 0x41) == 0x41)	/* waste time until !busy */
 		Read_Status_Register();
 }
 
 
- 
+

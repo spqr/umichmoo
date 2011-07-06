@@ -11,15 +11,16 @@
 #define SENSOR_DATA_IN_ID             1
 // support read commands. returns one word of counter data
 #define SIMPLE_READ_COMMAND           0
-// return sampled sensor data in a read command. returns three words of accel data
+// return sampled sensor data in a read command. returns three words of accel
+// data
 #define SENSOR_DATA_IN_READ_COMMAND   0
 ////////////////////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 1A: pick a sensor type
-// If you're not using the SENSOR_DATA_IN_ID or SENSOR_DATA_IN_READ_COMMAND apps,
-// then this is a don't care.
+// If you're not using the SENSOR_DATA_IN_ID or SENSOR_DATA_IN_READ_COMMAND
+// apps, then this is a don't care.
 // Choices:
 // use "0C" - static data - for test purposes only
 #define SENSOR_NULL                   0
@@ -52,8 +53,8 @@
 // The spec actually requires all these features, but as a practical matter
 // supporting things like slotting and sessions requires extra power and thus
 // limits range. Another factor is if you are running out of room on flash --
-// e.g., you're using the flash-limited free IAR kickstart compiler -- you probably
-// want to leave these features out unless you really need them.
+// e.g., you're using the flash-limited free IAR kickstart compiler -- you
+// probably want to leave these features out unless you really need them.
 //
 // You only need ENABLE_SLOTS when you're working with more than one Moo. The
 // code will run fine without ENABLE_SLOTS if you're using one Moo with
@@ -73,7 +74,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Step 4: set EPC and TID identifiers (optional)
 #define MOO_ID 0x00, 0x08
-#define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, MOO_VERSION, MOO_ID
+#define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, \
+    MOO_VERSION, MOO_ID
 #define TID_DESIGNER_ID_AND_MODEL_NUMBER  0xFF, 0xF0, 0x01
 ////////////////////////////////////////////////////////////////////////////////
 

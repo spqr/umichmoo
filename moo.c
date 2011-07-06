@@ -100,7 +100,7 @@
   DCOCTL = 0; \
   BCSCTL2 = 0; // Rext = ON
 
-volatile unsigned char* destorig = &cmd[0];         // pointer to beginning of cmd
+volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 
 // #pragma data_alignment=2 is important in sendResponse() when the words are
 // copied into arrays.  Sometimes the compiler puts reply[0] on an odd address,
@@ -432,7 +432,7 @@ int main(void)
         //////////////////////////////////////////////////////////////////////
         // process the QUERYADJUST command
         //////////////////////////////////////////////////////////////////////
-          else if ( bits == NUM_QUERYADJ_BITS  && ( ( cmd[0] & 0xF8 ) == 0x48 ) )
+        else if ( bits == NUM_QUERYADJ_BITS  && ( ( cmd[0] & 0xF8 ) == 0x48 ) )
         {
           handle_queryadjust(STATE_REPLY);
           delimiterNotFound = 1;
