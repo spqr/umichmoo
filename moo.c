@@ -44,61 +44,17 @@
 //            is reset to 'A' with every reset at the top of the while loop.
 //******************************************************************************
 
+#if(MOO_VERSION != MOO1_1)
+  #error "Moo version not supported"
+#endif
+
+#include "moo.h"
+#include "rfid.h"
+
 /*******************************************************************************
  ****************  Edit mymoo.h to configure this Moo  *************************
  ******************************************************************************/
 #include "mymoo.h"
-
-/* Other header files */
-#include "rfid.h"
-
-#if(MOO_VERSION != MOO1_1)
-  #error "Moo version not supported"
-#endif
-#include "moo.h"
-
-#if SIMPLE_QUERY_ACK
-#define ENABLE_READS                  0
-#define READ_SENSOR                   0
-#pragma message ("compiling simple query-ack application")
-#endif
-#if SENSOR_DATA_IN_ID
-#define ENABLE_READS                  0
-#define READ_SENSOR                   1
-#pragma message ("compiling sensor data in id application")
-#endif
-#if SIMPLE_READ_COMMAND
-#define ENABLE_READS                  1
-#define READ_SENSOR                   0
-#pragma message ("compiling simple read command application")
-#endif
-#if SENSOR_DATA_IN_READ_COMMAND
-#define ENABLE_READS                  1
-#define READ_SENSOR                   1
-#pragma message ("compiling sensor data in read command application")
-#endif
-
-// pick only one
-#define MILLER_2_ENCODING             0             // not tested ... use ayor
-#define MILLER_4_ENCODING             1
-
-// as per mapping in monitor code
-#define moo_debug_1                  DEBUG_1_5   // P1.5
-#define moo_debug_2                  DEBUG_2_1   // P2.1
-#define moo_debug_3                  CLK_A       // P3.0
-#define moo_debug_4                  TX_A        // P3.4
-#define moo_debug_5                  RX_A        // P3.5
-#define MONITOR_DEBUG_ON                 0
-
-// ------------------------------------------------------------------------
-
-#define SEND_CLOCK  \
-  BCSCTL1 = XT2OFF + RSEL3 + RSEL0 ; \
-    DCOCTL = DCO2 + DCO1 ;
-#define RECEIVE_CLOCK \
-  BCSCTL1 = XT2OFF + RSEL3 + RSEL1 + RSEL0; \
-  DCOCTL = 0; \
-  BCSCTL2 = 0; // Rext = ON
 
 volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 
@@ -115,15 +71,6 @@ volatile __no_init __regvar unsigned char* dest @ 4;
 // count of bits received from reader
 volatile __no_init __regvar unsigned short bits @ 5;
 unsigned short TRcal=0;
-
-#define STATE_READY               0
-#define STATE_ARBITRATE           1
-#define STATE_REPLY               2
-#define STATE_ACKNOWLEDGED        3
-#define STATE_OPEN                4
-#define STATE_SECURED             5
-#define STATE_KILLED              6
-#define STATE_READ_SENSOR         7
 
 #if ENABLE_SESSIONS
 // selected and session inventory flags
@@ -145,22 +92,6 @@ unsigned char session_table[] = {
 };
 #endif // ENABLE_SESSIONS
 int i;
-
-#if READ_SENSOR
-  #if (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
-    #include "quick_accel_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_ACCEL)
-    #include "accel_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_INTERNAL_TEMP)
-    #include "int_temp_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_EXTERNAL_TEMP)
-	#error "SENSOR_EXTERNAL_TEMP not yet implemented"
-  #elif (ACTIVE_SENSOR == SENSOR_NULL)
-    #include "null_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_COMM_STATS)
-	#error "SENSOR_COMM_STATS not yet implemented"
-  #endif
-#endif
 
 int main(void)
 {

@@ -98,6 +98,23 @@
   P5DIR = FLASH_CE | FLASH_SIMO | FLASH_SCK; \
   P8DIR = CRYSTAL_OUT;
 
+#define SEND_CLOCK  \
+  BCSCTL1 = XT2OFF + RSEL3 + RSEL0 ; \
+    DCOCTL = DCO2 + DCO1 ;
+#define RECEIVE_CLOCK \
+  BCSCTL1 = XT2OFF + RSEL3 + RSEL1 + RSEL0; \
+  DCOCTL = 0; \
+  BCSCTL2 = 0; // Rext = ON
+
+#define STATE_READY               0
+#define STATE_ARBITRATE           1
+#define STATE_REPLY               2
+#define STATE_ACKNOWLEDGED        3
+#define STATE_OPEN                4
+#define STATE_SECURED             5
+#define STATE_KILLED              6
+#define STATE_READ_SENSOR         7
+
 #define DEBUG_PINS_ENABLED            0
 #if DEBUG_PINS_ENABLED
 #define DEBUG_PIN5_HIGH               P3OUT |= BIT5;
