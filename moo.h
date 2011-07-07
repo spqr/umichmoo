@@ -107,4 +107,20 @@
 #define DEBUG_PIN5_LOW
 #endif
 
+#if ENABLE_SESSIONS
+void initialize_sessions();
+void handle_session_timeout();
+int bitCompare(unsigned char *, unsigned short, unsigned char *,
+               unsigned short, unsigned short);
+#endif // ENABLE_SESSIONS
+void setup_to_receive();
+void sleep();
+unsigned short is_power_good();
+#if ENABLE_SLOTS
+void lfsr();
+void loadRN16(), mixupRN16();
+#endif // ENABLE_SLOTS
+void crc16_ccitt_readReply(unsigned int);
+void crc16_ccitt_readReply(unsigned int);
+
 #endif // MOO_H

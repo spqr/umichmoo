@@ -143,20 +143,7 @@ unsigned char session_table[] = {
     SESSION_STATE_A, SESSION_STATE_A,
     SESSION_STATE_A, SESSION_STATE_A
 };
-void initialize_sessions();
-void handle_session_timeout();
-inline int bitCompare(unsigned char *startingByte1, unsigned short startingBit1,
-        unsigned char *startingByte2, unsigned short startingBit2, unsigned
-        short len);
-#endif
-void setup_to_receive();
-void sleep();
-unsigned short is_power_good();
-#if ENABLE_SLOTS
-void lfsr();
-inline void loadRN16(), mixupRN16();
-#endif
-void crc16_ccitt_readReply(unsigned int);
+#endif // ENABLE_SESSIONS
 int i;
 
 #if READ_SENSOR
@@ -1535,9 +1522,11 @@ void handle_session_timeout()
 // starting byte, that is).
 // startingBitX is a range from 7 (MSbit) to 0 (LSbit). Len is number of bits.
 // Returns a 1 if they match and a 0 if they don't match.
-int bitCompare(unsigned char *startingByte1, unsigned short startingBit1,
-		unsigned char *startingByte2, unsigned short startingBit2,
-		unsigned short len) {
+inline int bitCompare(unsigned char *startingByte1,
+		      unsigned short startingBit1,
+		      unsigned char *startingByte2,
+		      unsigned short startingBit2,
+		      unsigned short len) {
 
         unsigned char test1, test2;
 
