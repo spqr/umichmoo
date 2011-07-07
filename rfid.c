@@ -2,6 +2,7 @@
 
 #include "moo.h"
 #include "rfid.h"
+#include "mymoo.h"
 
 unsigned short Q = 0;
 unsigned short slot_counter = 0;

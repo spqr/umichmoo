@@ -3,8 +3,6 @@
 #ifndef RFID_H
 #define RFID_H
 
-#include "mymoo.h"
-
 // the bit count will be different from the spec, because we don't adjust it for
 // processing frame-syncs/rtcal/trcals. however, the cmd buffer will contain
 // pure packet data.
