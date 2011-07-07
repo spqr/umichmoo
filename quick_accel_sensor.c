@@ -1,4 +1,5 @@
 #include "moo.h"
+#include "rfid.h"
 #include "quick_accel_sensor.h"
 
 unsigned char sensor_busy = 0;

@@ -1,5 +1,3 @@
-#include "rfid.h"
-
 // these bit definitions are specific to Moo 1.0
 
 #define SENSOR_DATA_TYPE_ID       0x0B
