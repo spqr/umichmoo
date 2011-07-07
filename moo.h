@@ -138,6 +138,5 @@ void lfsr();
 void loadRN16(), mixupRN16();
 #endif // ENABLE_SLOTS
 void crc16_ccitt_readReply(unsigned int);
-void crc16_ccitt_readReply(unsigned int);
 
 #endif // MOO_H
