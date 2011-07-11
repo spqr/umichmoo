@@ -2,6 +2,7 @@
 
 #include "moo.h"
 #include "rfid.h"
+#include "mymoo.h"
 
 unsigned short Q = 0;
 unsigned short slot_counter = 0;
@@ -15,7 +16,7 @@ unsigned char subcarrierNum = 0;
 unsigned char timeToSample = 0;
 unsigned short inInventoryRound = 0;
 volatile short state;
-volatile unsigned char cmd[BUFFER_SIZE+1];          // stored cmd from reader
+volatile unsigned char cmd[CMD_BUFFER_SIZE+1]; // stored command from reader
 
 volatile unsigned char queryReply[]= { 0x00, 0x03, 0x00, 0x00};
 

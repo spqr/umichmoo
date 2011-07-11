@@ -11,15 +11,16 @@
 #define SENSOR_DATA_IN_ID             1
 // support read commands. returns one word of counter data
 #define SIMPLE_READ_COMMAND           0
-// return sampled sensor data in a read command. returns three words of accel data
+// return sampled sensor data in a read command. returns three words of accel
+// data
 #define SENSOR_DATA_IN_READ_COMMAND   0
 ////////////////////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 1A: pick a sensor type
-// If you're not using the SENSOR_DATA_IN_ID or SENSOR_DATA_IN_READ_COMMAND apps,
-// then this is a don't care.
+// If you're not using the SENSOR_DATA_IN_ID or SENSOR_DATA_IN_READ_COMMAND
+// apps, then this is a don't care.
 // Choices:
 // use "0C" - static data - for test purposes only
 #define SENSOR_NULL                   0
@@ -52,8 +53,8 @@
 // The spec actually requires all these features, but as a practical matter
 // supporting things like slotting and sessions requires extra power and thus
 // limits range. Another factor is if you are running out of room on flash --
-// e.g., you're using the flash-limited free IAR kickstart compiler -- you probably
-// want to leave these features out unless you really need them.
+// e.g., you're using the flash-limited free IAR kickstart compiler -- you
+// probably want to leave these features out unless you really need them.
 //
 // You only need ENABLE_SLOTS when you're working with more than one Moo. The
 // code will run fine without ENABLE_SLOTS if you're using one Moo with
@@ -73,8 +74,50 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Step 4: set EPC and TID identifiers (optional)
 #define MOO_ID 0x00, 0x08
-#define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, MOO_VERSION, MOO_ID
+#define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, \
+    MOO_VERSION, MOO_ID
 #define TID_DESIGNER_ID_AND_MODEL_NUMBER  0xFF, 0xF0, 0x01
 ////////////////////////////////////////////////////////////////////////////////
+
+// Step 5: pick either Miller-2 or Miller-4 encoding
+#define MILLER_2_ENCODING 0 // not tested ... use ayor
+#define MILLER_4_ENCODING 1
+
+#if SIMPLE_QUERY_ACK
+#define ENABLE_READS                  0
+#define READ_SENSOR                   0
+#pragma message ("compiling simple query-ack application")
+#endif
+#if SENSOR_DATA_IN_ID
+#define ENABLE_READS                  0
+#define READ_SENSOR                   1
+#pragma message ("compiling sensor data in id application")
+#endif
+#if SIMPLE_READ_COMMAND
+#define ENABLE_READS                  1
+#define READ_SENSOR                   0
+#pragma message ("compiling simple read command application")
+#endif
+#if SENSOR_DATA_IN_READ_COMMAND
+#define ENABLE_READS                  1
+#define READ_SENSOR                   1
+#pragma message ("compiling sensor data in read command application")
+#endif
+
+#if READ_SENSOR
+  #if (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
+    #include "quick_accel_sensor.h"
+  #elif (ACTIVE_SENSOR == SENSOR_ACCEL)
+    #include "accel_sensor.h"
+  #elif (ACTIVE_SENSOR == SENSOR_INTERNAL_TEMP)
+    #include "int_temp_sensor.h"
+  #elif (ACTIVE_SENSOR == SENSOR_EXTERNAL_TEMP)
+	#error "SENSOR_EXTERNAL_TEMP not yet implemented"
+  #elif (ACTIVE_SENSOR == SENSOR_NULL)
+    #include "null_sensor.h"
+  #elif (ACTIVE_SENSOR == SENSOR_COMM_STATS)
+	#error "SENSOR_COMM_STATS not yet implemented"
+  #endif
+#endif
 
 #endif // MYMOO_H

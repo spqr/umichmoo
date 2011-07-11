@@ -98,6 +98,23 @@
   P5DIR = FLASH_CE | FLASH_SIMO | FLASH_SCK; \
   P8DIR = CRYSTAL_OUT;
 
+#define SEND_CLOCK  \
+  BCSCTL1 = XT2OFF + RSEL3 + RSEL0 ; \
+    DCOCTL = DCO2 + DCO1 ;
+#define RECEIVE_CLOCK \
+  BCSCTL1 = XT2OFF + RSEL3 + RSEL1 + RSEL0; \
+  DCOCTL = 0; \
+  BCSCTL2 = 0; // Rext = ON
+
+#define STATE_READY               0
+#define STATE_ARBITRATE           1
+#define STATE_REPLY               2
+#define STATE_ACKNOWLEDGED        3
+#define STATE_OPEN                4
+#define STATE_SECURED             5
+#define STATE_KILLED              6
+#define STATE_READ_SENSOR         7
+
 #define DEBUG_PINS_ENABLED            0
 #if DEBUG_PINS_ENABLED
 #define DEBUG_PIN5_HIGH               P3OUT |= BIT5;
@@ -106,5 +123,20 @@
 #define DEBUG_PIN5_HIGH
 #define DEBUG_PIN5_LOW
 #endif
+
+#if ENABLE_SESSIONS
+void initialize_sessions();
+void handle_session_timeout();
+int bitCompare(unsigned char *, unsigned short, unsigned char *,
+               unsigned short, unsigned short);
+#endif // ENABLE_SESSIONS
+void setup_to_receive();
+void sleep();
+unsigned short is_power_good();
+#if ENABLE_SLOTS
+void lfsr();
+void loadRN16(), mixupRN16();
+#endif // ENABLE_SLOTS
+void crc16_ccitt_readReply(unsigned int);
 
 #endif // MOO_H

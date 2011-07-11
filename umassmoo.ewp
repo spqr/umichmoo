@@ -1787,6 +1787,12 @@
   <file>
     <name>$PROJ_DIR$\rfid.h</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\quick_accel_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\quick_accel_sensor.h</name>
+  </file>
 </project>
 
 
