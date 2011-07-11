@@ -50,7 +50,7 @@ extern unsigned char timeToSample;
 extern unsigned short inInventoryRound;
 extern unsigned char last_handle_b0, last_handle_b1;
 
-/* XXX.  If BUFFER_SIZE is 16 instead of 32, we don't seem to parse READ
+/* XXX.  If CMD_BUFFER_SIZE is 16 instead of 32, we don't seem to parse READ
  * commands correctly in at least {SIMPLE,SENSOR_DATA_IN}_READ_COMMAND modes.
  * What is the maximum length in bytes of the READ command? */
 #define CMD_BUFFER_SIZE 32 // max of 32 bytes rec. from reader
