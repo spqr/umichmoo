@@ -1,3 +1,5 @@
+/* See license.txt for license information. */
+
 #include "moo.h"
 #include "rfid.h"
 #include "quick_accel_sensor.h"
