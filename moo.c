@@ -1349,29 +1349,6 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
           0x7F);
 }
 
-#if 0
-// not used now, but will need for later
-unsigned char crc5(volatile unsigned char *buf, unsigned short numOfBits)
-{
-  register unsigned char shift;
-  register unsigned char data, val;
-  register unsigned short i;
-  shift = 0x48;
-  for (i = 0; i < numOfBits; i++)
-  {
-    if ( (i%8) == 0)
-      data = *buf++;
-    val = shift ^ data;
-    shift = shift << 1;
-    data = data << 1;
-    if (val&0x80)
-      shift = shift ^ POLY5;
-  }
-  shift = shift >>3;
-  return (unsigned char)(shift);
-}
-#endif
-
 #if ENABLE_SLOTS
 
 void lfsr()
