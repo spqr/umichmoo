@@ -1782,16 +1782,22 @@
     <name>$PROJ_DIR$\mymoo.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\quick_accel_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\quick_accel_sensor.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\rfid.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\rfid.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\quick_accel_sensor.c</name>
+    <name>$PROJ_DIR$\sessions.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\quick_accel_sensor.h</name>
+    <name>$PROJ_DIR$\sessions.h</name>
   </file>
 </project>
 
