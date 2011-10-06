@@ -72,25 +72,6 @@ volatile __no_init __regvar unsigned char* dest @ 4;
 volatile __no_init __regvar unsigned short bits @ 5;
 unsigned short TRcal=0;
 
-#if ENABLE_SESSIONS
-// selected and session inventory flags
-#define S0_INDEX		0x00
-#define S1_INDEX		0x01
-#define S2_INDEX		0x02
-#define S3_INDEX		0x03
-
-#define SL_ASSERTED		1
-#define SL_NOT_ASSERTED		0
-#define SESSION_STATE_A		0
-#define SESSION_STATE_B		1
-
-unsigned char SL;
-unsigned char previous_session = 0x00;
-unsigned char session_table[] = {
-    SESSION_STATE_A, SESSION_STATE_A,
-    SESSION_STATE_A, SESSION_STATE_A
-};
-#endif // ENABLE_SESSIONS
 int i;
 
 int main(void)
@@ -1349,29 +1330,6 @@ inline void crc16_ccitt_readReply(unsigned int numDataBytes)
           0x7F);
 }
 
-#if 0
-// not used now, but will need for later
-unsigned char crc5(volatile unsigned char *buf, unsigned short numOfBits)
-{
-  register unsigned char shift;
-  register unsigned char data, val;
-  register unsigned short i;
-  shift = 0x48;
-  for (i = 0; i < numOfBits; i++)
-  {
-    if ( (i%8) == 0)
-      data = *buf++;
-    val = shift ^ data;
-    shift = shift << 1;
-    data = data << 1;
-    if (val&0x80)
-      shift = shift ^ POLY5;
-  }
-  shift = shift >>3;
-  return (unsigned char)(shift);
-}
-#endif
-
 #if ENABLE_SLOTS
 
 void lfsr()
@@ -1420,74 +1378,4 @@ inline void mixupRN16()
 }
 
 
-#endif
-
-#if ENABLE_SESSIONS
-// initialize sessions for power-on
-void initialize_sessions()
-{
-
-	SL = SL_NOT_ASSERTED;	// selected flag powers up deasserted
-	// all inventory flags power up in state 'A'
-	session_table[S0_INDEX] = SESSION_STATE_A;
-        session_table[S1_INDEX] = SESSION_STATE_A;
-        session_table[S2_INDEX] = SESSION_STATE_A;
-        session_table[S3_INDEX] = SESSION_STATE_A;
-}
-void handle_session_timeout()
-{
-#if 0
-	// selected flag is persistent throughout power up state
-	// S0 inventory flag is persistent throughout power up state
-	// S1 is reset, unless it is in the middle of an inventory round
-	if ( ! inInventoryRound ) session_table[S1_INDEX] = SESSION_STATE_A;
-	// S2 and S3 are always refreshed
-	session_table[S2_INDEX] = SESSION_STATE_A;
-	session_table[S3_INDEX] = SESSION_STATE_A;
-#endif
-}
-#endif
-
-#if ENABLE_SESSIONS
-// compare two chunks of memory, starting at given bit offsets (relative to the
-// starting byte, that is).
-// startingBitX is a range from 7 (MSbit) to 0 (LSbit). Len is number of bits.
-// Returns a 1 if they match and a 0 if they don't match.
-inline int bitCompare(unsigned char *startingByte1,
-		      unsigned short startingBit1,
-		      unsigned char *startingByte2,
-		      unsigned short startingBit2,
-		      unsigned short len) {
-
-        unsigned char test1, test2;
-
-	while ( len-- ) {
-
-		test1 = (*startingByte1) & ( 1 << startingBit1 );
-		test2 = (*startingByte2) & ( 1 << startingBit2 );
-
-		if ( (test1 == 0 && test2 != 0) || ( test1 != 0 && test2 == 0 ) ) {
-			return 0;
-		}
-
-		if ( len == 0 ) return 1;
-
-		if ( startingBit1 == 0 ) {
-			startingByte1++;
-			startingBit1 = 7;
-		}
-		else
-			startingBit1--;
-
-		if ( startingBit2 == 0 ) {
-			startingByte2++;
-			startingBit2 = 7;
-		}
-		else
-			startingBit2--;
-
-	}
-
-        return 1;
-}
 #endif
