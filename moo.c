@@ -1131,16 +1131,13 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     // that, update R6 with 16 bits
     asm("MOV @R4+,R7");                 // 2 cycles     14
     asm("SWPB R7");                     // 1 cycle      15
-    asm("MOV R13, R6");                 // 1 cycles     16
     // End of assigning new data byte
-    asm("RLC R7");		        // 1 cycles     17
-    asm("JC nextBitIs1");	        // 2 cycles  .. 19
+    asm("RLC R7");		        // 1 cycles     16
+    // specific code path every 16 bits for respecting timing
+    asm("JC nextBitIs11");	        // 2 cycles  .. 18
     // bit is 0
-#if USE_2618
-    asm("MOV R14, TACCR0");             // 3 cycles  .. 22
-#else
-    asm("MOV R14, TACCR0");             // 3 cycles  .. 22
-#endif
+    asm("MOV R14, TACCR0");             // 3 cycles  .. 21
+    asm("MOV R13, R6");                 // 1 cycles     23
     // Next bit is 0 , it is 00 case
     asm("JMP seq_zero");                // 2 cycles .. 24
 
@@ -1176,6 +1173,22 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("NOP");
     asm("NOP");
     asm("JMP bit_is_one");  // end of bit 0 .. 6
+
+    // begin: every 16 bits, delay for timing purposes
+    asm("nextBitIs11:");  // 18
+    asm("MOV R13, R6");                 // 1 cycles
+    asm("NOP");
+    asm("NOP");
+    asm("NOP");
+    asm("NOP");
+    asm("NOP");       // 24
+
+    asm("NOP");
+    asm("NOP");
+    asm("NOP");
+    asm("NOP");
+    asm("JMP bit_is_one");  // end of bit 0 .. 6
+    // end delay for timing purposes
 
     asm("bit_Count_Is_Not_16:");       // up to here 14
 #if USE_2618
