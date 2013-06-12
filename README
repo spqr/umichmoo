@@ -13,3 +13,6 @@ Kickstart (code size limited) edition available from TI.
 * ThingMagic Mercury 5e
 * ThingMagic Mercury 6
 * Michael Buettner's GNU Radio gen2_rfid reader (YMMV)
+
+This branch is for Moo Concrete Deployment in Home
+toggling between temperature sensor and accelerometer sensors
