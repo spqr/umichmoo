@@ -4,7 +4,7 @@
 #include "rfid.h"
 #include "temp_sensor.h"
 
-unsigned int rpc_get_temperature(void) {
+unsigned int get_temperature(void) {
     unsigned int i, adcval;
 
     // setup ADC to read external analog temperature sensor
