@@ -15,7 +15,8 @@ void init_sensor(unsigned char sensor_data_type_id) {
     case 0x0E:
       SENSOR_DATA_TYPE_ID = 0x0E;
       DATA_LENGTH_IN_WORDS = 1;
-      DATA_LENGTH_IN_BYTES = (DATA_LENGTH_IN_WORDS*2);      
+      DATA_LENGTH_IN_BYTES = (DATA_LENGTH_IN_WORDS*2);
+      break;      
     // Accelerometer.
     case 0x0B:
       // Fall through to default.
@@ -24,6 +25,7 @@ void init_sensor(unsigned char sensor_data_type_id) {
       DATA_LENGTH_IN_WORDS = 3;
       DATA_LENGTH_IN_BYTES = (DATA_LENGTH_IN_WORDS*2);
   }
+  ackReply[2] = SENSOR_DATA_TYPE_ID;
   return;
 }
 
@@ -51,11 +53,18 @@ void read_sensor() {
       while (ADC12CTL1 & ADC12BUSY); // busy-wait for ADC to sample 
       ackReply[4] = (ADC12MEM0 & 0xff);        // grab that data.
       ackReply[3] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
+      //zero out unused 4 Bytes of EPC
+      ackReply[5] = 0;
+      ackReply[6] = 0;
+      ackReply[7] = 0;
+      ackReply[8] = 0;
+      
       ADC12CTL0 = ADC12CTL1 = 0;               // turn off ADC
       P1OUT &= ~TEMP_POWER;          // turn off temperature sensor
       
       // Reenable interrupts.
       _BIS_SR(GIE);      
+      break;
       
     // Accelerometer.
     case 0x0B:

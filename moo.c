@@ -556,12 +556,14 @@ int main(void)
 #elif SENSOR_DATA_IN_ID
         // We need to specify which sensor by passing its ID.
         // 0x0B for accel, 0x0E for temp.
-        unsigned int select_id = sensor_counter % 2;
-        if(select_id == 0) {
+        
+        if((sensor_counter % 2) == 0) {
           init_sensor(0x0B);
-        } else if(select_id == 1) {
+        } else if((sensor_counter % 2) == 1) {
           init_sensor(0x0E);
         }
+        
+        
         
         // TODO: Read sensor on &ackReply[3] never used.
         read_sensor();
