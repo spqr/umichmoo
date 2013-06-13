@@ -9,7 +9,7 @@ unsigned int SENSOR_DATA_TYPE_ID = 0;
 unsigned int DATA_LENGTH_IN_WORDS = 0;
 unsigned int DATA_LENGTH_IN_BYTES = 0;
 
-void init_sensor(unsigned int sensor_data_type_id) {
+void init_sensor(unsigned char sensor_data_type_id) {
   switch(sensor_data_type_id) {  
     // Temperature.    
     case 0x0E:
@@ -27,7 +27,8 @@ void init_sensor(unsigned int sensor_data_type_id) {
   return;
 }
 
-void read_sensor(unsigned char volatile *target) {
+// TODO: unsigned char volatile *target
+void read_sensor() {
   unsigned int i;
   // We will assume that init is always called prior to read.
   switch(SENSOR_DATA_TYPE_ID) {

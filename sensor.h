@@ -11,6 +11,6 @@ extern unsigned char sensor_busy;
 // init_sensor has been expanded to one parameter. This parameter will
 // adjust the above globals to the specification provided by sensor_data_type_id.
 // Allowable ids: 0x0B for accel, 0x0E for external temp.
-void init_sensor(unsigned int sensor_data_type_id);
+void init_sensor(unsigned char sensor_data_type_id);
 
-void read_sensor(unsigned char volatile *);
+void read_sensor();

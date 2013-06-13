@@ -35,9 +35,11 @@
 #define SENSOR_EXTERNAL_TEMP          4
 // use "0A" comm statistics
 #define SENSOR_COMM_STATS             5
+// For getting both temp and accel.
+#define SENSOR_EXT_TEMP_AND_ACCEL     6
 
 // Choose Active Sensor:
-#define ACTIVE_SENSOR                 SENSOR_ACCEL_QUICK
+#define ACTIVE_SENSOR                 SENSOR_EXT_TEMP_AND_ACCEL
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +118,8 @@
     #include "int_temp_sensor.h"
   #elif (ACTIVE_SENSOR == SENSOR_EXTERNAL_TEMP)
     #include "temp_sensor.h"
+  #elif (ACTIVE_SENSOR == SENSOR_EXT_TEMP_AND_ACCEL)
+    #include "sensor.h"
   #elif (ACTIVE_SENSOR == SENSOR_NULL)
     #include "null_sensor.h"
   #elif (ACTIVE_SENSOR == SENSOR_COMM_STATS)

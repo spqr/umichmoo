@@ -129,9 +129,8 @@ int main(void)
   // dest = destorig;
 
 #if READ_SENSOR
-  // We need to specify which sensor by passing its ID.
-  // 0x0B for accel, 0x0E for temp.
-  init_sensor(0x0B);
+  // Not using anymore.
+  //init_sensor();
 #endif
 
 #if !(ENABLE_SLOTS)
@@ -555,7 +554,17 @@ int main(void)
         state = STATE_READY;
         delimiterNotFound = 1; // reset
 #elif SENSOR_DATA_IN_ID
-        read_sensor(&ackReply[3]);
+        // We need to specify which sensor by passing its ID.
+        // 0x0B for accel, 0x0E for temp.
+        unsigned int select_id = sensor_counter % 2;
+        if(select_id == 0) {
+          init_sensor(0x0B);
+        } else if(select_id == 1) {
+          init_sensor(0x0E);
+        }
+        
+        // TODO: Read sensor on &ackReply[3] never used.
+        read_sensor();
         RECEIVE_CLOCK;
         ackReplyCRC = crc16_ccitt(&ackReply[0], 14);
         ackReply[15] = (unsigned char)ackReplyCRC;
