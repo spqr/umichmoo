@@ -129,7 +129,9 @@ int main(void)
   // dest = destorig;
 
 #if READ_SENSOR
-  init_sensor();
+  // We need to specify which sensor by passing its ID.
+  // 0x0B for accel, 0x0E for temp.
+  init_sensor(0x0B);
 #endif
 
 #if !(ENABLE_SLOTS)
