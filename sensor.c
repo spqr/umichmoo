@@ -42,18 +42,25 @@ void read_sensor() {
       ADC12CTL0 = ADC12ON + SHT0_2 + REFON + REF2_5V; // Turn on and set up ADC12
       ADC12CTL1 = SHP;                                // Use sampling timer
       ADC12MCTL0 = INCH_TEMP_EXT_IN + SREF_1;         // Vr+=Vref+
-    
+
+      
+      
       // turn on temperature sensor and allow it at least 0.7-0.8 ms to stabilize
       P1DIR |= TEMP_POWER;
       P1OUT |= TEMP_POWER;
-      for (i = 0; i != 100; ++i);
+      //for (i = 0; i != 100; ++i);
+      for (i = 0; i != 300; ++i);   //increase settling time to stabilize temp reading -Miran
     
+      
+      
       ADC12CTL0 |= ENC | ADC12SC;    // enable and start conversion
       _BIC_SR(GIE);                  // disable interrupts while busy-waiting on ADC
       while (ADC12CTL1 & ADC12BUSY); // busy-wait for ADC to sample 
       ackReply[4] = (ADC12MEM0 & 0xff);        // grab that data.
       ackReply[3] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
       //zero out unused 4 Bytes of EPC
+      
+      
       ackReply[5] = 0;
       ackReply[6] = 0;
       ackReply[7] = 0;
@@ -96,7 +103,7 @@ void read_sensor() {
       for(int i = 0; i < 225; i++);
       RECEIVE_CLOCK;
 
-      // GRAB DATA
+      // GRAB DATA - X direction
       ADC12CTL0 &= ~ENC; // make sure this is off otherwise settings are locked.
       ADC12CTL0 = ADC12ON + SHT0_1;                     // Turn on and set up ADC12
       ADC12CTL1 = SHP;                                  // Use sampling timer
@@ -105,10 +112,10 @@ void read_sensor() {
       ADC12CTL0 |= ENC;
       ADC12CTL0 |= ADC12SC;
       while (ADC12CTL1 & ADC12BUSY);           // wait while ADC finished work
-      ackReply[4] = (ADC12MEM0 & 0xff);
-      ackReply[3] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
+      ackReply[6] = (ADC12MEM0 & 0xff);
+      ackReply[5] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
 
-      // GRAB DATA
+      // GRAB DATA - Y direction
       ADC12CTL0 &= ~ENC; // make sure this is off otherwise settings are locked.
       ADC12CTL0 = ADC12ON + SHT0_1;
       ADC12CTL1 = SHP;                                  // Use sampling timer
@@ -116,10 +123,10 @@ void read_sensor() {
       ADC12CTL0 |= ENC;
       ADC12CTL0 |= ADC12SC;
       while (ADC12CTL1 & ADC12BUSY);           // wait while ADC finished work
-      ackReply[6] = (ADC12MEM0 & 0xff);
-      ackReply[5] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
+      ackReply[4] = (ADC12MEM0 & 0xff);
+      ackReply[3] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
     
-      // GRAB DATA
+      // GRAB DATA - Z direction
       ADC12CTL0 &= ~ENC; // make sure this is off otherwise settings are locked.
       ADC12CTL0 = ADC12ON + SHT0_1;
       ADC12CTL1 = SHP;
