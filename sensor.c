@@ -35,11 +35,14 @@ void read_sensor() {
   // We will assume that init is always called prior to read.
   switch(SENSOR_DATA_TYPE_ID) {
     // Temperature.
-    case 0x0E:  
+    case 0x0E:
+      if(!is_power_good())    //-Miran
+        sleep();
+      
       // setup ADC to read external analog temperature sensor
       ADC12CTL0 &= ~ENC;                              // make sure this is off otherwise settings are locked.
       P6SEL |= TEMP_EXT_IN;                           // Enable A/D channel A4
-      ADC12CTL0 = ADC12ON + SHT0_2 + REFON + REF2_5V; // Turn on and set up ADC12
+      ADC12CTL0 = ADC12ON + SHT0_2 + REFON; // Turn on and set up ADC12...Set Vref = 1.5V instead of 2.5V -Miran
       ADC12CTL1 = SHP;                                // Use sampling timer
       ADC12MCTL0 = INCH_TEMP_EXT_IN + SREF_1;         // Vr+=Vref+
 
