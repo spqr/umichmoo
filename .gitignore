@@ -3,3 +3,7 @@ settings/
 *.dep
 *.ewd
 path.txt
+[Tt]humbs.db
+*.DS_Store
+.project
+.settings/
