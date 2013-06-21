@@ -787,7 +787,7 @@ int deleteAllROSpecs (void)
  **  - <ROReportSpec><N>1</N></ROReportSpec>
  **  - <ROReportTrigger>Upon_N_Tags_Or_End_Of_AISpec</ROReportTrigger>
  **  - <AISpec><AISpecStopTrigger>Duration</AISpecStopTrigger></AISpec>
- **  - <AISpec><Duration>1000</Duration></AISpec>
+ **  - <AISpec><Duration>100</Duration></AISpec>
  **  -
  **  -
  **  - 
@@ -872,12 +872,11 @@ int addROSpec (void)
         .pROSpecStartTrigger    = &ROSpecStartTrigger,
         .pROSpecStopTrigger     = &ROSpecStopTrigger,
     };
-    llrp_u16_t                  AntennaIDs[1] = { 1 };  /* All */
+    llrp_u16_t                  AntennaIDs[1] = { 0 };  /* All */
     LLRP_tSAISpecStopTrigger    AISpecStopTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpecStopTrigger,
-
         .eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Duration,
-        .DurationTrigger        = 1000,
+        .DurationTrigger        = 100,
         //.eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
     };
     LLRP_tSInventoryParameterSpec InventoryParameterSpec = {
