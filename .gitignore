@@ -7,3 +7,4 @@ path.txt
 *.DS_Store
 .project
 .settings/
+.cproject

@@ -66,6 +66,11 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <errno.h>
 #include "ltkc.h"
 
 
@@ -352,7 +357,7 @@ int run (const char *pReaderHostName)
 				if(0 == addROSpec())
 				{
 					rc = 4;
-	
+
 					// This is going to look like a real hack job. Apologies.
 					if(0 == enableROSpec())
 					{
@@ -360,12 +365,43 @@ int run (const char *pReaderHostName)
 						
 						strftime(time_str_out, sizeof(time_str_out), "%D,%T", timeinfo);
 						printf("INFO: Starting %s \n", time_str_out);
-	 
+
 						strftime(time_str_file, sizeof(time_str_file), "%a_%b_%d_%G__%Hh_%Mm_%Ss", timeinfo);
 						startROSpec();
-						char* filename = strcat(time_str_file,".csv");
-						FILE *fp; 
+
+						char filename[100];
+
+						// If the user is root, say rc.d called it on startup, then we want to write the file to /var/log/moo/
+						uid_t uid=getuid();
+						if (uid == 0) {
+							strcpy(filename, "/var/log/moo/");
+							int e;
+							struct stat sb;
+
+							e = stat(filename, &sb);
+							if(e != 0) {
+								if (errno = ENOENT) {
+									printf("The /var/log/moo direectory doesn't exist... creating.\n\n");
+
+									e = mkdir(filename, 0644);
+									if (e != 0)
+									{
+										// If you're running as root and this fails, that just sucks. Write to /.
+										printf("ERROR %d: Cannot create directory as root. Falling back to /.\n", errno);
+										strcpy(filename,"");
+									}
+								}
+							}
+
+						}
+						strcat(filename, strcat(time_str_file,".csv"));
+
+						FILE *fp;
 						fp=fopen(filename, "a");
+
+						// fopen doesn't support permission bits but open does. Portability versus simplicity.
+						syscall(SYS_chmod, filename, 0644);
+
 						fprintf(fp, "%s\n", time_str_out);
 						// Not the cleanest way to do this... you will still have Antenna Popping up in between.
 						fprintf(fp, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", "Date", "Time", "EPC", "SensorID", "Data", "Temp or Y", "X", "Z", "Sensor Counter", "HW Revision", "Serial Number");
@@ -465,8 +501,7 @@ int checkConnectionStatus (void)
     /*
      * Expect the notification within 10 seconds (10000ms)
      * It is suppose to be the very first message sent.
-
-     * Incase the reader goes down... let's wait indefinitely.
+     * In case the reader goes down... let's wait indefinitely.
      */
     pMessage = recvMessage(-1);
 
