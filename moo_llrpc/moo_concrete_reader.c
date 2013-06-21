@@ -406,16 +406,12 @@ int run (const char *pReaderHostName)
 						// Not the cleanest way to do this... you will still have Antenna Popping up in between.
 						fprintf(fp, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", "Date", "Time", "EPC", "SensorID", "Data", "Temp or Y", "X", "Z", "Sensor Counter", "HW Revision", "Serial Number");
 						fflush(fp);
-						while(1)
-						{
-							if(0 != awaitAndPrintReport(fp))
-							{
-								/* already tattled */
-								break;
-							}
-							// We have to flush the buffer, so why not here.
-							fflush(fp);                        
-						}
+
+						awaitAndPrintReport(fp);
+
+						// We have to flush the buffer, so why not here.
+						fflush(fp);
+
 						// This would be the point where we would close the file. But that won't actually happen cleanly (ever).
 						fclose(fp);
 					}
@@ -712,9 +708,9 @@ int resetConfigurationToFactoryDefaults (void)
 
 int deleteAllROSpecs (void)
 {
-    LLRP_tSDELETE_ROSPEC *      pCmd;
-    LLRP_tSMessage *            pCmdMsg;
-    LLRP_tSMessage *            pRspMsg;
+    LLRP_tSDELETE_ROSPEC *        pCmd;
+    LLRP_tSMessage *              pCmdMsg;
+    LLRP_tSMessage *              pRspMsg;
     LLRP_tSDELETE_ROSPEC_RESPONSE *pRsp;
 
     /*
@@ -1192,7 +1188,7 @@ int awaitAndPrintReport (FILE *fp)
             pNtf = (LLRP_tSRO_ACCESS_REPORT *) pMessage;
 
             printTagReportData(pNtf, fp);
-            bDone = 1;
+            bDone = 0;
             retVal = 0;
         }
 
