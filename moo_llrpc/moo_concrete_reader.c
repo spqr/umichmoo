@@ -353,7 +353,7 @@ int run (const char *pReaderHostName)
         if(0 == scrubConfiguration())
         {
             rc = 3;
-            if(!g_Cleaning) {            
+            if(!g_Cleaning) {
 				if(0 == addROSpec())
 				{
 					rc = 4;
@@ -419,7 +419,7 @@ int run (const char *pReaderHostName)
         	} else {
         		// Just fall through.
         	}
-  
+
             /*
              * After we're done, try to leave the reader
              * in a clean state for next use. This is best
@@ -785,7 +785,11 @@ int deleteAllROSpecs (void)
  **
  ** Moo Concrete Changes:
  **  - <ROReportSpec><N>1</N></ROReportSpec>
- **  - <AISpec><AISpecStopTrigger>Null</AISpecStopTrigger></AISpec>
+ **  - <ROReportTrigger>Upon_N_Tags_Or_End_Of_AISpec</ROReportTrigger>
+ **  - <AISpec><AISpecStopTrigger>Duration</AISpecStopTrigger></AISpec>
+ **  - <AISpec><Duration>1000</Duration></AISpec>
+ **  -
+ **  -
  **  - 
  **
  ** This example is deliberately streamlined.
@@ -868,13 +872,13 @@ int addROSpec (void)
         .pROSpecStartTrigger    = &ROSpecStartTrigger,
         .pROSpecStopTrigger     = &ROSpecStopTrigger,
     };
-    llrp_u16_t                  AntennaIDs[1] = { 0 };  /* All */
+    llrp_u16_t                  AntennaIDs[1] = { 1 };  /* All */
     LLRP_tSAISpecStopTrigger    AISpecStopTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpecStopTrigger,
 
-        //.eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Duration,
-        //.DurationTrigger        = 5000,
-        .eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
+        .eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Duration,
+        .DurationTrigger        = 1000,
+        //.eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
     };
     LLRP_tSInventoryParameterSpec InventoryParameterSpec = {
         .hdr.elementHdr.pType   = &LLRP_tdInventoryParameterSpec,
@@ -910,7 +914,7 @@ int addROSpec (void)
         .hdr.elementHdr.pType   = &LLRP_tdROReportSpec,
 
         .eROReportTrigger       =
-                      LLRP_ROReportTriggerType_Upon_N_Tags_Or_End_Of_ROSpec,
+                      LLRP_ROReportTriggerType_Upon_N_Tags_Or_End_Of_AISpec,
         //.N                      = 0,
         .N                      = 1,
         .pTagReportContentSelector = &TagReportContentSelector,
