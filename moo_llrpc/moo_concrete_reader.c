@@ -802,17 +802,19 @@ int addROSpec (void) {
 			.hdr.elementHdr.pType = &LLRP_tdRFTransmitter,
 			.HopTableID = 1,
 			.ChannelIndex = 0,
-			.TransmitPower = 1,
+			.TransmitPower = 71,
 	};
+	// Tari was 25 on Wisp demo.
 	LLRP_tSC1G2RFControl C1G2RFControl = {
 			.hdr.elementHdr.pType = &LLRP_tdC1G2RFControl,
 			.ModeIndex = 2,
 			.Tari = 25,
 	};
+	// TagPopulation 32, default session is 0.
 	LLRP_tSC1G2SingulationControl C1G2SingulationControl = {
 			.hdr.elementHdr.pType = &LLRP_tdC1G2SingulationControl,
-			//.Session = 2,
-			.TagPopulation = 1,
+			.Session = 1,
+			.TagPopulation = 32,
 			.TagTransitTime = 0,
 	};
 	LLRP_tSC1G2InventoryCommand C1G2InventoryCommand = {
