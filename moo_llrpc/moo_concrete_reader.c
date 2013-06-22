@@ -4,6 +4,11 @@
  * moo_concrete_reader.c was derived from example1.c of the libltkc. As
  * such, the license below is still applicable.
  *
+ * Additional features include:
+ *     - getopt for advanced configuration.
+ *     - Removal of 5x1 second bursts.
+ *     - ROSpec now includes an Antenna Configuration.
+ *
  ***************************************************************************
  */
 
@@ -63,7 +68,6 @@
  **
  *****************************************************************************/
 
-
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
@@ -73,71 +77,40 @@
 #include <errno.h>
 #include "ltkc.h"
 
-
-/*
- * BEGIN forward declarations
- */
+// BEGIN forward declarations
 int main (int ac, char *av[]);
-
 void usage (char *pProgName);
-
 int run (const char *pReaderHostName);
-
 int checkConnectionStatus (void);
-
 int scrubConfiguration (void);
-
 int resetConfigurationToFactoryDefaults (void);
-
 int deleteAllROSpecs (void);
-
 int addROSpec (void);
-
 int enableROSpec (void);
-
 int startROSpec (void);
-
 int awaitAndPrintReport (FILE *fp);
-
 void printTagReportData (LLRP_tSRO_ACCESS_REPORT *pRO_ACCESS_REPORT, FILE *fp);
-
 void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp);
-
 void handleReaderEventNotification (LLRP_tSReaderEventNotificationData *pNtfData, FILE *fp);
-
 void handleAntennaEvent (LLRP_tSAntennaEvent *pAntennaEvent, FILE *fp);
-
 void handleReaderExceptionEvent (LLRP_tSReaderExceptionEvent *pReaderExceptionEvent);
-
 int scrubConfiguration (void);
-
 int checkLLRPStatus (LLRP_tSLLRPStatus *pLLRPStatus, char *pWhatStr);
 
 LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg);
-
 LLRP_tSMessage *recvMessage (int nMaxMS);
 
 int sendMessage (LLRP_tSMessage *pSendMsg);
-
 void freeMessage (LLRP_tSMessage *pMessage);
-
 void printXMLMessage (LLRP_tSMessage *pMessage);
+// END forward declarations
 
-/*
- * END forward declarations
- */
-
-
-/*
- * Global variables
- */
-/** Verbose level, incremented by each -v on command line */
+// Global variables
 int g_Verbose=0;
 int g_Cleaning=0;
 
-/** Connection to the LLRP reader */
+// Connection to the LLRP reader
 LLRP_tSConnection *g_pConnectionToReader;
-
 
 
 /**
@@ -155,27 +128,22 @@ LLRP_tSConnection *g_pConnectionToReader;
  **
  *****************************************************************************/
 
-int main (int ac, char *av[])
-{
-    char *                      pReaderHostName;
-    int                         rc;
+int main (int ac, char *av[]) {
+    char * pReaderHostName;
+    int rc;
 
     /*
      * Process comand arguments, determine reader name
      * and verbosity level. void usage (char *pProgName);
      */
-    if(ac == 2)
-    {
+    if(ac == 2) {
         pReaderHostName = av[1];
     }
-    else if(ac == 3)
-    {
-        char *                  p = av[1];
+    else if(ac == 3) {
+        char * p = av[1];
 
-        while(*p)
-        {
-            switch(*p++)
-            {
+        while(*p) {
+            switch(*p++) {
             case '-':   /* linux conventional option warn char */
             case '/':   /* Windows/DOS conventional option warn char */
                 break;
@@ -196,29 +164,22 @@ int main (int ac, char *av[])
         }
 
         pReaderHostName = av[2];
-    }
-    else
-    {
+    } else {
         usage(av[0]);
-        /* no return */
     }
 
-    /*
-     * Run application, capture return value for exit status
-     */
+
+    // Run application, capture return value for exit status
+
     rc = run(pReaderHostName);
 
     printf("INFO: Done\n");
 
-    /*
-     * Exit with the right status.
-     */
-    if(0 == rc)
-    {
+
+    // Exit with the right status.
+    if(0 == rc) {
         exit(0);
-    }
-    else
-    {
+    } else {
         exit(2);
     }
     /*NOTREACHED*/
@@ -241,7 +202,7 @@ void usage (char *pProgName)
     printf("Usage: %s [-v] -c READERHOSTNAME\n", pProgName);
     printf("\n");
     printf("-v(vv): Additional v increases verbosity level.\n");
-    printf("-c: Cleaning the house, clear the current reader configuration.");
+    printf("-c: Cleaning the house, clear the current reader configuration.\n\n");
     exit(1);
 }
 
@@ -277,8 +238,7 @@ void usage (char *pProgName)
  **              5              Something went wrong running the ROSpec
  **
  *****************************************************************************/
-int run (const char *pReaderHostName)
-{
+int run (const char *pReaderHostName) {
     time_t rawtime;
     struct tm * timeinfo;
     time ( &rawtime );
@@ -295,8 +255,7 @@ int run (const char *pReaderHostName)
      * by the connection to decode.
      */
     pTypeRegistry = LLRP_getTheTypeRegistry();
-    if(NULL == pTypeRegistry)
-    {
+    if(NULL == pTypeRegistry) {
         printf("ERROR: getTheTypeRegistry failed\n");
         return -1;
     }
@@ -308,8 +267,7 @@ int run (const char *pReaderHostName)
      * but not actually connected to the reader yet.
      */
     pConn = LLRP_Conn_construct(pTypeRegistry, 32u*1024u);
-    if(NULL == pConn)
-    {
+    if(NULL == pConn) {
         printf("ERROR: Conn_construct failed\n");
         return -2;
     }
@@ -317,14 +275,12 @@ int run (const char *pReaderHostName)
     /*
      * Open the connection to the reader
      */
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: Connecting to %s....\n", pReaderHostName);
     }
 
     rc = LLRP_Conn_openConnectionToReader(pConn, pReaderHostName);
-    if(0 != rc)
-    {
+    if(0 != rc) {
         printf("ERROR: connect: %s (%d)\n", pConn->pConnectErrorStr, rc);
         LLRP_Conn_destruct(pConn);
         return -3;
@@ -336,8 +292,7 @@ int run (const char *pReaderHostName)
      */
     g_pConnectionToReader = pConn;
 
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: Connected, checking status....\n");
     }
 
@@ -347,22 +302,19 @@ int run (const char *pReaderHostName)
      * Each routine prints messages per verbose level.
      */
     rc = 1;
-    if(0 == checkConnectionStatus())
-    {
+    if(0 == checkConnectionStatus()) {
         rc = 2;
-        if(0 == scrubConfiguration())
-        {
-            rc = 3;
-            if(!g_Cleaning) {
-				if(0 == addROSpec())
-				{
-					rc = 4;
+        if(!g_Cleaning) {
+            if(0 == scrubConfiguration()) {
+                rc = 3;
 
-					// This is going to look like a real hack job. Apologies.
-					if(0 == enableROSpec())
-					{
-						rc = 5;
-						
+                if(0 == addROSpec()) {
+                    rc = 5;
+
+                    // This is going to look like a real hack job. Apologies.
+                    if(0 == enableROSpec()) {
+						rc = 6;
+
 						strftime(time_str_out, sizeof(time_str_out), "%D,%T", timeinfo);
 						printf("INFO: Starting %s \n", time_str_out);
 
@@ -416,21 +368,21 @@ int run (const char *pReaderHostName)
 						fclose(fp);
 					}
 				}
-        	} else {
-        		// Just fall through.
-        	}
+			}
+		} else {
+			// Just fall through.
+		}
 
-            /*
-             * After we're done, try to leave the reader
-             * in a clean state for next use. This is best
-             * effort and no checking of the result is done.
-             */
-            if(g_Verbose)
-            {
-                printf("INFO: Clean up reader configuration...\n");
-            }
-            scrubConfiguration();
-        }
+		/*
+		 * After we're done, try to leave the reader
+		 * in a clean state for next use. This is best
+		 * effort and no checking of the result is done.
+		 */
+		if(g_Verbose)
+		{
+			printf("INFO: Clean up reader configuration...\n");
+		}
+		scrubConfiguration();
     }
 
     if(g_Verbose)
@@ -487,8 +439,7 @@ int run (const char *pReaderHostName)
  **
  *****************************************************************************/
 
-int checkConnectionStatus (void)
-{
+int checkConnectionStatus (void) {
     LLRP_tSMessage *            pMessage;
     LLRP_tSREADER_EVENT_NOTIFICATION *pNtf;
     LLRP_tSReaderEventNotificationData *pNtfData;
@@ -504,8 +455,7 @@ int checkConnectionStatus (void)
     /*
      * recvMessage() returns NULL if something went wrong.
      */
-    if(NULL == pMessage)
-    {
+    if(NULL == pMessage) {
         /* recvMessage() already tattled. */
         goto fail;
     }
@@ -515,8 +465,7 @@ int checkConnectionStatus (void)
      * The type label (pointer) in the message should be
      * the type descriptor for READER_EVENT_NOTIFICATION.
      */
-    if(&LLRP_tdREADER_EVENT_NOTIFICATION != pMessage->elementHdr.pType)
-    {
+    if(&LLRP_tdREADER_EVENT_NOTIFICATION != pMessage->elementHdr.pType) {
         goto fail;
     }
 
@@ -526,8 +475,7 @@ int checkConnectionStatus (void)
      */
     pNtf = (LLRP_tSREADER_EVENT_NOTIFICATION *) pMessage;
     pNtfData = pNtf->pReaderEventNotificationData;
-    if(NULL == pNtfData)
-    {
+    if(NULL == pNtfData) {
         goto fail;
     }
 
@@ -535,8 +483,7 @@ int checkConnectionStatus (void)
      * The ConnectionAttemptEvent parameter must be present.
      */
     pEvent = pNtfData->pConnectionAttemptEvent;
-    if(NULL == pEvent)
-    {
+    if(NULL == pEvent) {
         goto fail;
     }
 
@@ -544,8 +491,7 @@ int checkConnectionStatus (void)
      * The status in the ConnectionAttemptEvent parameter
      * must indicate connection success.
      */
-    if(LLRP_ConnectionAttemptStatusType_Success != pEvent->eStatus)
-    {
+    if(LLRP_ConnectionAttemptStatusType_Success != pEvent->eStatus) {
         goto fail;
     }
 
@@ -554,14 +500,10 @@ int checkConnectionStatus (void)
      */
     freeMessage(pMessage);
 
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: Connection status OK\n");
     }
 
-    /*
-     * Victory.
-     */
     return 0;
 
   fail:
@@ -590,15 +532,12 @@ int checkConnectionStatus (void)
  **
  *****************************************************************************/
 
-int scrubConfiguration (void)
-{
-    if(0 != resetConfigurationToFactoryDefaults())
-    {
+int scrubConfiguration (void) {
+    if(0 != resetConfigurationToFactoryDefaults()) {
         return -1;
     }
 
-    if(0 != deleteAllROSpecs())
-    {
+    if(0 != deleteAllROSpecs()) {
         return -2;
     }
 
@@ -626,59 +565,41 @@ int scrubConfiguration (void)
  **
  *****************************************************************************/
 
-int resetConfigurationToFactoryDefaults (void)
-{
+int resetConfigurationToFactoryDefaults (void) {
     LLRP_tSSET_READER_CONFIG    Cmd = {
         .hdr.elementHdr.pType   = &LLRP_tdSET_READER_CONFIG,
         .hdr.MessageID          = 101,
-
         .ResetToFactoryDefault  = 1
     };
     LLRP_tSMessage *            pRspMsg;
     LLRP_tSSET_READER_CONFIG_RESPONSE *pRsp;
 
-    /*
-     * Send the message, expect the response of certain type
-     */
+    // Send the message, expect the response of certain type
     pRspMsg = transact(&Cmd.hdr);
-    if(NULL == pRspMsg)
-    {
+    if(NULL == pRspMsg) {
         /* transact already tattled */
         return -1;
     }
 
-    /*
-     * Cast to a SET_READER_CONFIG_RESPONSE message.
-     */
+    // Cast to a SET_READER_CONFIG_RESPONSE message.
     pRsp = (LLRP_tSSET_READER_CONFIG_RESPONSE *) pRspMsg;
 
-    /*
-     * Check the LLRPStatus parameter.
-     */
+    // Check the LLRPStatus parameter.
     if(0 != checkLLRPStatus(pRsp->pLLRPStatus,
-                            "resetConfigurationToFactoryDefaults"))
-    {
-        /* checkLLRPStatus already tattled */
+                            "resetConfigurationToFactoryDefaults")) {
+        // checkLLRPStatus already tattled
         freeMessage(pRspMsg);
         return -1;
     }
 
-    /*
-     * Done with the response message.
-     */
+    // Done with the response message.
     freeMessage(pRspMsg);
 
-    /*
-     * Tattle progress, maybe
-     */
-    if(g_Verbose)
-    {
-        printf("INFO: Configuration reset to factory defaults\n");
+    // Tattle progress, maybe
+    if(g_Verbose) {
+        printf("INFO: Configuration reset to factory defaults.\n");
     }
 
-    /*
-     * Victory.
-     */
     return 0;
 }
 
@@ -706,8 +627,7 @@ int resetConfigurationToFactoryDefaults (void)
  **
  *****************************************************************************/
 
-int deleteAllROSpecs (void)
-{
+int deleteAllROSpecs (void) {
     LLRP_tSDELETE_ROSPEC *        pCmd;
     LLRP_tSMessage *              pCmdMsg;
     LLRP_tSMessage *              pRspMsg;
@@ -734,8 +654,7 @@ int deleteAllROSpecs (void)
     /*
      * transact() returns NULL if something went wrong.
      */
-    if(NULL == pRspMsg)
-    {
+    if(NULL == pRspMsg) {
         /* transact already tattled */
         return -1;
     }
@@ -748,8 +667,7 @@ int deleteAllROSpecs (void)
     /*
      * Check the LLRPStatus parameter.
      */
-    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "deleteAllROSpecs"))
-    {
+    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "deleteAllROSpecs")) {
         /* checkLLRPStatus already tattled */
         freeMessage(pRspMsg);
         return -1;
@@ -763,14 +681,10 @@ int deleteAllROSpecs (void)
     /*
      * Tattle progress, maybe
      */
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: All ROSpecs are deleted\n");
     }
 
-    /*
-     * Victory.
-     */
     return 0;
 }
 
@@ -780,81 +694,83 @@ int deleteAllROSpecs (void)
  **
  ** @brief  Add our ROSpec using ADD_ROSPEC message
  **
- ** This ROSpec waits for a START_ROSPEC message,
- ** then takes inventory on all antennas for 5000 seconds.
+ ** TODO: Describe what this ROSpec is doing.
  **
- ** Moo Concrete Changes:
- **  - <ROReportSpec><N>1</N></ROReportSpec>
- **  - <ROReportTrigger>Upon_N_Tags_Or_End_Of_AISpec</ROReportTrigger>
- **  - <AISpec><AISpecStopTrigger>Duration</AISpecStopTrigger></AISpec>
- **  - <AISpec><Duration>100</Duration></AISpec>
- **  -
- **  -
- **  - 
- **
- ** This example is deliberately streamlined.
- ** Nothing here configures the antennas, RF, or Gen2.
- ** The current defaults are used. Remember we just reset
- ** the reader to factory defaults (above). Normally an
- ** application would be more precise in configuring the
- ** reader and in its ROSpecs.
- **
- ** Experience suggests that typical ROSpecs are about
- ** double this in size.
- **
- ** The message is
- **
- **     <ADD_ROSPEC MessageID='201'>
- **       <ROSpec>
- **         <ROSpecID>123</ROSpecID>
- **         <Priority>0</Priority>
- **         <CurrentState>Disabled</CurrentState>
- **         <ROBoundarySpec>
- **           <ROSpecStartTrigger>
- **             <ROSpecStartTriggerType>Null</ROSpecStartTriggerType>
- **           </ROSpecStartTrigger>
- **           <ROSpecStopTrigger>
- **             <ROSpecStopTriggerType>Null</ROSpecStopTriggerType>
- **             <DurationTriggerValue>0</DurationTriggerValue>
- **           </ROSpecStopTrigger>
- **         </ROBoundarySpec>
- **         <AISpec>
- **           <AntennaIDs>0</AntennaIDs>
- **           <AISpecStopTrigger>
- **             <AISpecStopTriggerType>Duration</AISpecStopTriggerType>
- **             <DurationTrigger>1000</DurationTrigger>
- **           </AISpecStopTrigger>
- **           <InventoryParameterSpec>
- **             <InventoryParameterSpecID>1234</InventoryParameterSpecID>
- **             <ProtocolID>EPCGlobalClass1Gen2</ProtocolID>
- **           </InventoryParameterSpec>
- **         </AISpec>
- **         <ROReportSpec>
- **           <ROReportTrigger>Upon_N_Tags_Or_End_Of_ROSpec</ROReportTrigger>
- **           <N>0</N>
- **           <TagReportContentSelector>
- **             <EnableROSpecID>0</EnableROSpecID>
- **             <EnableSpecIndex>0</EnableSpecIndex>
- **             <EnableInventoryParameterSpecID>0</EnableInventoryParameterSpecID>
- **             <EnableAntennaID>0</EnableAntennaID>
- **             <EnableChannelIndex>0</EnableChannelIndex>
- **             <EnablePeakRSSI>0</EnablePeakRSSI>
- **             <EnableFirstSeenTimestamp>0</EnableFirstSeenTimestamp>
- **             <EnableLastSeenTimestamp>0</EnableLastSeenTimestamp>
- **             <EnableTagSeenCount>0</EnableTagSeenCount>
- **             <EnableAccessSpecID>0</EnableAccessSpecID>
- **           </TagReportContentSelector>
- **         </ROReportSpec>
- **       </ROSpec>
- **     </ADD_ROSPEC>
+ **  <ADD_ROSPEC MessageID='201'
+ **    xmlns:llrp='http://www.llrp.org/ltk/schema/core/encoding/xml/1.0'
+ **    xmlns='http://www.llrp.org/ltk/schema/core/encoding/xml/1.0'>
+ **    <ROSpec>
+ **      <ROSpecID>123</ROSpecID>
+ **      <Priority>0</Priority>
+ **      <CurrentState>Disabled</CurrentState>
+ **      <ROBoundarySpec>
+ **        <ROSpecStartTrigger>
+ **          <ROSpecStartTriggerType>Null</ROSpecStartTriggerType>
+ **        </ROSpecStartTrigger>
+ **        <ROSpecStopTrigger>
+ **          <ROSpecStopTriggerType>Null</ROSpecStopTriggerType>
+ **          <DurationTriggerValue>0</DurationTriggerValue>
+ **        </ROSpecStopTrigger>
+ **      </ROBoundarySpec>
+ **      <AISpec>
+ **        <AntennaIDs>0</AntennaIDs>
+ **        <AISpecStopTrigger>
+ **          <AISpecStopTriggerType>Duration</AISpecStopTriggerType>
+ **          <DurationTrigger>100</DurationTrigger>
+ **        </AISpecStopTrigger>
+ **        <InventoryParameterSpec>
+ **          <InventoryParameterSpecID>1234</InventoryParameterSpecID>
+ **          <ProtocolID>EPCGlobalClass1Gen2</ProtocolID>
+ **          <AntennaConfiguration>
+ **            <AntennaID>0</AntennaID>
+ **            <RFTransmitter>
+ **              <HopTableID>1</HopTableID>
+ **              <ChannelIndex>0</ChannelIndex>
+ **              <TransmitPower>1</TransmitPower>
+ **            </RFTransmitter>
+ **            <C1G2InventoryCommand>
+ **              <TagInventoryStateAware>false</TagInventoryStateAware>
+ **              <!-- reserved 7 bits -->
+ **              <C1G2RFControl>
+ **                <ModeIndex>2</ModeIndex>
+ **                <Tari>25</Tari>
+ **              </C1G2RFControl>
+ **              <C1G2SingulationControl>
+ **                <Session>0</Session>
+ **                <!-- reserved 6 bits -->
+ **                <TagPopulation>1</TagPopulation>
+ **                <TagTransitTime>0</TagTransitTime>
+ **              </C1G2SingulationControl>
+ **            </C1G2InventoryCommand>
+ **          </AntennaConfiguration>
+ **        </InventoryParameterSpec>
+ **      </AISpec>
+ **      <ROReportSpec>
+ **        <ROReportTrigger>Upon_N_Tags_Or_End_Of_AISpec</ROReportTrigger>
+ **        <N>1</N>
+ **        <TagReportContentSelector>
+ **          <EnableROSpecID>false</EnableROSpecID>
+ **          <EnableSpecIndex>false</EnableSpecIndex>
+ **          <EnableInventoryParameterSpecID>false</EnableInventoryParameterSpecID>
+ **          <EnableAntennaID>false</EnableAntennaID>
+ **          <EnableChannelIndex>false</EnableChannelIndex>
+ **          <EnablePeakRSSI>false</EnablePeakRSSI>
+ **          <EnableFirstSeenTimestamp>false</EnableFirstSeenTimestamp>
+ **          <EnableLastSeenTimestamp>false</EnableLastSeenTimestamp>
+ **          <EnableTagSeenCount>false</EnableTagSeenCount>
+ **          <EnableAccessSpecID>false</EnableAccessSpecID>
+ **          <!-- reserved 6 bits -->
+ **        </TagReportContentSelector>
+ **      </ROReportSpec>
+ **    </ROSpec>
+ **  </ADD_ROSPEC>
  **
  ** @return     ==0             Everything OK
  **             !=0             Something went wrong
  **
  *****************************************************************************/
 
-int addROSpec (void)
-{
+int addROSpec (void) {
     LLRP_tSROSpecStartTrigger   ROSpecStartTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdROSpecStartTrigger,
 
@@ -875,15 +791,45 @@ int addROSpec (void)
     llrp_u16_t                  AntennaIDs[1] = { 0 };  /* All */
     LLRP_tSAISpecStopTrigger    AISpecStopTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpecStopTrigger,
-        .eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Duration,
-        .DurationTrigger        = 100,
+        .eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
+        .DurationTrigger        = 3000,
         //.eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
     };
+    // Dense Reader 8 (DR8), M=4 Hi Speed (M4), tari 25ns.
+    // 16.2.1.2.1.2 C1G2RF Control Parameter and see
+    // UHFC1G2RFModeTable.
+	LLRP_tSRFTransmitter RFTransmitter = {
+			.hdr.elementHdr.pType = &LLRP_tdRFTransmitter,
+			.HopTableID = 1,
+			.ChannelIndex = 0,
+			.TransmitPower = 1,
+	};
+	LLRP_tSC1G2RFControl C1G2RFControl = {
+			.hdr.elementHdr.pType = &LLRP_tdC1G2RFControl,
+			.ModeIndex = 2,
+			.Tari = 25,
+	};
+	LLRP_tSC1G2SingulationControl C1G2SingulationControl = {
+			.hdr.elementHdr.pType = &LLRP_tdC1G2SingulationControl,
+			//.Session = 2,
+			.TagPopulation = 1,
+			.TagTransitTime = 0,
+	};
+	LLRP_tSC1G2InventoryCommand C1G2InventoryCommand = {
+			.hdr.elementHdr.pType = &LLRP_tdC1G2InventoryCommand,
+			.pC1G2RFControl = &C1G2RFControl,
+			.pC1G2SingulationControl = &C1G2SingulationControl,
+	};
+	LLRP_tSAntennaConfiguration AntennaConfiguration = {
+			.hdr.elementHdr.pType = &LLRP_tdAntennaConfiguration,
+			.pRFTransmitter = &RFTransmitter,
+			.listAirProtocolInventoryCommandSettings = &C1G2InventoryCommand.hdr,
+	};
     LLRP_tSInventoryParameterSpec InventoryParameterSpec = {
         .hdr.elementHdr.pType   = &LLRP_tdInventoryParameterSpec,
-
         .InventoryParameterSpecID = 1234,
         .eProtocolID            = LLRP_AirProtocols_EPCGlobalClass1Gen2,
+		.listAntennaConfiguration = &AntennaConfiguration,
     };
     LLRP_tSAISpec               AISpec = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpec,
@@ -941,8 +887,7 @@ int addROSpec (void)
      * Send the message, expect the response of certain type
      */
     pRspMsg = transact(&Cmd.hdr);
-    if(NULL == pRspMsg)
-    {
+    if(NULL == pRspMsg) {
         /* transact already tattled */
         return -1;
     }
@@ -955,8 +900,7 @@ int addROSpec (void)
     /*
      * Check the LLRPStatus parameter.
      */
-    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "addROSpec"))
-    {
+    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "addROSpec")) {
         /* checkLLRPStatus already tattled */
         freeMessage(pRspMsg);
         return -1;
@@ -970,14 +914,10 @@ int addROSpec (void)
     /*
      * Tattle progress, maybe
      */
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: ROSpec added\n");
     }
 
-    /*
-     * Victory.
-     */
     return 0;
 }
 
@@ -999,8 +939,7 @@ int addROSpec (void)
  **
  *****************************************************************************/
 
-int enableROSpec (void)
-{
+int enableROSpec (void) {
     LLRP_tSENABLE_ROSPEC        Cmd = {
         .hdr.elementHdr.pType   = &LLRP_tdENABLE_ROSPEC,
         .hdr.MessageID          = 202,
@@ -1014,8 +953,7 @@ int enableROSpec (void)
      * Send the message, expect the response of certain type
      */
     pRspMsg = transact(&Cmd.hdr);
-    if(NULL == pRspMsg)
-    {
+    if(NULL == pRspMsg) {
         /* transact already tattled */
         return -1;
     }
@@ -1028,8 +966,7 @@ int enableROSpec (void)
     /*
      * Check the LLRPStatus parameter.
      */
-    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "enableROSpec"))
-    {
+    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "enableROSpec")) {
         /* checkLLRPStatus already tattled */
         freeMessage(pRspMsg);
         return -1;
@@ -1043,14 +980,10 @@ int enableROSpec (void)
     /*
      * Tattle progress, maybe
      */
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: ROSpec enabled\n");
     }
 
-    /*
-     * Victory.
-     */
     return 0;
 }
 
@@ -1072,8 +1005,7 @@ int enableROSpec (void)
  **
  *****************************************************************************/
 
-int startROSpec (void)
-{
+int startROSpec (void) {
     LLRP_tSSTART_ROSPEC         Cmd = {
         .hdr.elementHdr.pType   = &LLRP_tdSTART_ROSPEC,
         .hdr.MessageID          = 202,
@@ -1087,8 +1019,7 @@ int startROSpec (void)
      * Send the message, expect the response of certain type
      */
     pRspMsg = transact(&Cmd.hdr);
-    if(NULL == pRspMsg)
-    {
+    if(NULL == pRspMsg) {
         /* transact already tattled */
         return -1;
     }
@@ -1101,8 +1032,7 @@ int startROSpec (void)
     /*
      * Check the LLRPStatus parameter.
      */
-    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "startROSpec"))
-    {
+    if(0 != checkLLRPStatus(pRsp->pLLRPStatus, "startROSpec")) {
         /* checkLLRPStatus already tattled */
         freeMessage(pRspMsg);
         return -1;
@@ -1116,14 +1046,10 @@ int startROSpec (void)
     /*
      * Tattle progress, maybe
      */
-    if(g_Verbose)
-    {
+    if(g_Verbose) {
         printf("INFO: ROSpec started\n");
     }
 
-    /*
-     * Victory.
-     */
     return 0;
 }
 
@@ -1143,8 +1069,7 @@ int startROSpec (void)
  **
  *****************************************************************************/
 
-int awaitAndPrintReport (FILE *fp)
-{
+int awaitAndPrintReport (FILE *fp) {
     int                         bDone = 0;
     int                         retVal = 0;
 
@@ -1152,19 +1077,15 @@ int awaitAndPrintReport (FILE *fp)
      * Keep receiving messages until done or until
      * something bad happens.
      */
-    while(!bDone)
-    {
+    while(!bDone) {
         LLRP_tSMessage *        pMessage;
         const LLRP_tSTypeDescriptor *pType;
 
         /*
-         * Wait up to 7 (7000ms) seconds for a message. The report
-         * should occur within 5 seconds.
          * WAITING INDEFINITELY! This is a must!
          */
         pMessage = recvMessage(-1);
-        if(NULL == pMessage)
-        {
+        if(NULL == pMessage) {
             /*
              * Did not receive a message within a reasonable
              * amount of time. recvMessage() already tattled
@@ -1184,8 +1105,7 @@ int awaitAndPrintReport (FILE *fp)
         /*
          * Is it a tag report? If so, print it out.
          */
-        if(&LLRP_tdRO_ACCESS_REPORT == pType)
-        {
+        if(&LLRP_tdRO_ACCESS_REPORT == pType) {
             LLRP_tSRO_ACCESS_REPORT *pNtf;
 
             pNtf = (LLRP_tSRO_ACCESS_REPORT *) pMessage;
@@ -1199,8 +1119,7 @@ int awaitAndPrintReport (FILE *fp)
          * Is it a reader event? This example only recognizes
          * AntennaEvents.
          */
-        else if(&LLRP_tdREADER_EVENT_NOTIFICATION == pType)
-        {
+        else if(&LLRP_tdREADER_EVENT_NOTIFICATION == pType) {
             LLRP_tSREADER_EVENT_NOTIFICATION *pNtf;
             LLRP_tSReaderEventNotificationData *pNtfData;
 
@@ -1210,25 +1129,16 @@ int awaitAndPrintReport (FILE *fp)
                LLRP_READER_EVENT_NOTIFICATION_getReaderEventNotificationData(
                     pNtf);
 
-            if(NULL != pNtfData)
-            {
+            if(NULL != pNtfData) {
                 handleReaderEventNotification(pNtfData, fp);
-            }
-            else
-            {
+            } else {
                 /*
                  * This should never happen. Using continue
                  * to keep indent depth down.
                  */
                 printf("WARNING: READER_EVENT_NOTIFICATION without data\n");
             }
-        }
-
-        /*
-         * Hmmm. Something unexpected. Just tattle and keep going.
-         */
-        else
-        {
+        } else {
             printf("WARNING: Ignored unexpected message during monitor: %s\n",
                 pType->pName);
         }
@@ -1257,8 +1167,7 @@ int awaitAndPrintReport (FILE *fp)
  **
  *****************************************************************************/
 
-void printTagReportData (LLRP_tSRO_ACCESS_REPORT *pRO_ACCESS_REPORT, FILE *fp)
-{
+void printTagReportData (LLRP_tSRO_ACCESS_REPORT *pRO_ACCESS_REPORT, FILE *fp) {
     LLRP_tSTagReportData *      pTagReportData;
 
     /*
@@ -1270,8 +1179,7 @@ void printTagReportData (LLRP_tSRO_ACCESS_REPORT *pRO_ACCESS_REPORT, FILE *fp)
         pTagReportData = pRO_ACCESS_REPORT->listTagReportData;
         NULL != pTagReportData;
         pTagReportData = (LLRP_tSTagReportData *)
-                                    pTagReportData->hdr.pNextSubParameter)
-    {
+                                    pTagReportData->hdr.pNextSubParameter) {
         printOneTagReportData(pTagReportData, fp); 
     }
 }
@@ -1285,8 +1193,7 @@ void printTagReportData (LLRP_tSRO_ACCESS_REPORT *pRO_ACCESS_REPORT, FILE *fp)
  ** @return     void
  **
  *****************************************************************************/
-void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp)
-{
+void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp) {
     const LLRP_tSTypeDescriptor *pType;
     char                    aBuf[64];
 
@@ -1294,23 +1201,19 @@ void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp)
      * Print the EPC. It could be an 96-bit EPC_96 parameter
      * or an variable length EPCData parameter.
      */
-    if(NULL != pTagReportData->pEPCParameter)
-    {
+    if(NULL != pTagReportData->pEPCParameter) {
         char *              p = aBuf;
         llrp_u8_t *         pValue = NULL;
         unsigned int        n, i;
 
         pType = pTagReportData->pEPCParameter->elementHdr.pType;
-        if(&LLRP_tdEPC_96 == pType)
-        {
+        if(&LLRP_tdEPC_96 == pType) {
             LLRP_tSEPC_96 * pE96;
 
             pE96 = (LLRP_tSEPC_96 *) pTagReportData->pEPCParameter;
             pValue = pE96->EPC.aValue;
             n = 12u;
-        }
-        else if(&LLRP_tdEPCData == pType)
-        {
+        } else if(&LLRP_tdEPCData == pType) {
             LLRP_tSEPCData *pEPCData;
 
             pEPCData = (LLRP_tSEPCData *) pTagReportData->pEPCParameter;
@@ -1318,10 +1221,8 @@ void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp)
             n = (pEPCData->EPC.nBit + 7u) / 8u;
         }
 
-        if(NULL != pValue)
-        {
-            for(i = 0; i < n; i++)
-            {
+        if(NULL != pValue) {
+            for(i = 0; i < n; i++) {
                 // Let's get rid of those dashes.
                 //if(0 < i && i%2 == 0)
                 //{
@@ -1330,14 +1231,10 @@ void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp)
                 sprintf(p, "%02X", pValue[i]);
                 while(*p) p++;
             }
-        }
-        else
-        {
+        } else {
             strcpy(aBuf, "---unknown-epc-data-type---");
         }
-    }
-    else
-    {
+    } else {
         strcpy(aBuf, "---missing-epc-data---");
     }
     // Let's parse it out a bit.
@@ -1349,6 +1246,7 @@ void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp)
     strftime(time_str_out, sizeof(time_str_out), "%D,%T", timeinfo);
 
     fprintf(fp, "%s,%s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s\n", time_str_out, aBuf, 2, aBuf+0, 12, aBuf+2, 4, aBuf+2, 4, aBuf+6, 4, aBuf+10, 4, aBuf+14, 2, aBuf+18, 4, aBuf+20);   
+    fflush(fp);
     printf("%-32s", aBuf);
 
     /*
@@ -1371,24 +1269,21 @@ void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp)
  **
  *****************************************************************************/
 
-void handleReaderEventNotification (LLRP_tSReaderEventNotificationData *pNtfData, FILE *fp)
-{
+void handleReaderEventNotification (LLRP_tSReaderEventNotificationData *pNtfData, FILE *fp) {
     LLRP_tSAntennaEvent *       pAntennaEvent;
     LLRP_tSReaderExceptionEvent *pReaderExceptionEvent;
     int                         nReported = 0;
 
     pAntennaEvent =
         LLRP_ReaderEventNotificationData_getAntennaEvent(pNtfData);
-    if(NULL != pAntennaEvent)
-    {
+    if(NULL != pAntennaEvent) {
         handleAntennaEvent(pAntennaEvent, fp);
         nReported++;
     }
     
     pReaderExceptionEvent =
         LLRP_ReaderEventNotificationData_getReaderExceptionEvent(pNtfData);
-    if(NULL != pReaderExceptionEvent)
-    {
+    if(NULL != pReaderExceptionEvent) {
         handleReaderExceptionEvent(pReaderExceptionEvent);
         nReported++;
     }
@@ -1407,8 +1302,7 @@ void handleReaderEventNotification (LLRP_tSReaderEventNotificationData *pNtfData
      *      Custom
      */
 
-    if(0 == nReported)
-    {
+    if(0 == nReported) {
         printf("NOTICE: Unexpected (unhandled) ReaderEvent\n");
     }
 }
@@ -1425,8 +1319,7 @@ void handleReaderEventNotification (LLRP_tSReaderEventNotificationData *pNtfData
  **
  *****************************************************************************/
 
-void handleAntennaEvent (LLRP_tSAntennaEvent *pAntennaEvent, FILE *fp)
-{
+void handleAntennaEvent (LLRP_tSAntennaEvent *pAntennaEvent, FILE *fp) {
     LLRP_tEAntennaEventType     eEventType;
     llrp_u16_t                  AntennaID;
     char *                      pStateStr;
@@ -1434,8 +1327,7 @@ void handleAntennaEvent (LLRP_tSAntennaEvent *pAntennaEvent, FILE *fp)
     eEventType = LLRP_AntennaEvent_getEventType(pAntennaEvent);
     AntennaID = LLRP_AntennaEvent_getAntennaID(pAntennaEvent);
 
-    switch(eEventType)
-    {
+    switch(eEventType) {
     case LLRP_AntennaEventType_Antenna_Disconnected:
         pStateStr = "disconnected";
         break;
@@ -1465,19 +1357,15 @@ void handleAntennaEvent (LLRP_tSAntennaEvent *pAntennaEvent, FILE *fp)
  **
  *****************************************************************************/
 
-void handleReaderExceptionEvent (LLRP_tSReaderExceptionEvent *pReaderExceptionEvent)
-{
+void handleReaderExceptionEvent (LLRP_tSReaderExceptionEvent *pReaderExceptionEvent) {
     llrp_utf8v_t                Message;
 
     Message = LLRP_ReaderExceptionEvent_getMessage(pReaderExceptionEvent);
 
-    if(0 < Message.nValue && NULL != Message.pValue)
-    {
+    if(0 < Message.nValue && NULL != Message.pValue) {
         printf("NOTICE: ReaderException '%.*s'\n",
              Message.nValue, Message.pValue);
-    }
-    else
-    {
+    } else {
         printf("NOTICE: ReaderException but no message\n");
     }
 }
@@ -1501,16 +1389,14 @@ void handleReaderExceptionEvent (LLRP_tSReaderExceptionEvent *pReaderExceptionEv
  **
  *****************************************************************************/
 
-int checkLLRPStatus (LLRP_tSLLRPStatus *pLLRPStatus, char *pWhatStr)
-{
+int checkLLRPStatus (LLRP_tSLLRPStatus *pLLRPStatus, char *pWhatStr) {
     /*
      * The LLRPStatus parameter is mandatory in all responses.
      * If it is missing there should have been a decode error.
      * This just makes sure (remember, this program is a
      * diagnostic and suppose to catch LTKC mistakes).
      */
-    if(NULL == pLLRPStatus)
-    {
+    if(NULL == pLLRPStatus) {
         printf("ERROR: %s missing LLRP status\n", pWhatStr);
         return -1;
     }
@@ -1522,15 +1408,11 @@ int checkLLRPStatus (LLRP_tSLLRPStatus *pLLRPStatus, char *pWhatStr)
      * code. To get that, run this program with -vv
      * and examine the XML output.
      */
-    if(LLRP_StatusCode_M_Success != pLLRPStatus->eStatusCode)
-    {
-        if(0 == pLLRPStatus->ErrorDescription.nValue)
-        {
+    if(LLRP_StatusCode_M_Success != pLLRPStatus->eStatusCode) {
+        if(0 == pLLRPStatus->ErrorDescription.nValue) {
             printf("ERROR: %s failed, no error description given\n",
                 pWhatStr);
-        }
-        else
-        {
+        } else {
             printf("ERROR: %s failed, %.*s\n",
                 pWhatStr,
                 pLLRPStatus->ErrorDescription.nValue,
@@ -1539,9 +1421,6 @@ int checkLLRPStatus (LLRP_tSLLRPStatus *pLLRPStatus, char *pWhatStr)
         return -2;
     }
 
-    /*
-     * Victory. Everything is fine.
-     */
     return 0;
 }
 
@@ -1569,8 +1448,7 @@ int checkLLRPStatus (LLRP_tSLLRPStatus *pLLRPStatus, char *pWhatStr)
  **
  *****************************************************************************/
 
-LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg)
-{
+LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg) {
     LLRP_tSConnection *         pConn = g_pConnectionToReader;
     LLRP_tSMessage *            pRspMsg;
 
@@ -1578,8 +1456,7 @@ LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg)
      * Print the XML text for the outbound message if
      * verbosity is 2 or higher.
      */
-    if(1 < g_Verbose)
-    {
+    if(1 < g_Verbose) {
         printf("\n===================================\n");
         printf("INFO: Transact sending\n");
         printXMLMessage(pSendMsg);
@@ -1591,22 +1468,19 @@ LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg)
      * an error. In that case we try to print the error details.
      */
     pRspMsg = LLRP_Conn_transact(pConn, pSendMsg, 5000);
-    if(NULL == pRspMsg)
-    {
+    if(NULL == pRspMsg) {
         const LLRP_tSErrorDetails *pError = LLRP_Conn_getTransactError(pConn);
 
         printf("ERROR: %s transact failed, %s\n",
             pSendMsg->elementHdr.pType->pName,
             pError->pWhatStr ? pError->pWhatStr : "no reason given");
 
-        if(NULL != pError->pRefType)
-        {
+        if(NULL != pError->pRefType) {
             printf("ERROR: ... reference type %s\n",
                 pError->pRefType->pName);
         }
 
-        if(NULL != pError->pRefField)
-        {
+        if(NULL != pError->pRefField) {
             printf("ERROR: ... reference field %s\n",
                 pError->pRefField->pName);
         }
@@ -1618,8 +1492,7 @@ LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg)
      * Print the XML text for the inbound message if
      * verbosity is 2 or higher.
      */
-    if(1 < g_Verbose)
-    {
+    if(1 < g_Verbose) {
         printf("\n- - - - - - - - - - - - - - - - - -\n");
         printf("INFO: Transact received response\n");
         printXMLMessage(pRspMsg);
@@ -1630,8 +1503,7 @@ LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg)
      * when it can't understand the request), tattle
      * and declare defeat.
      */
-    if(&LLRP_tdERROR_MESSAGE == pRspMsg->elementHdr.pType)
-    {
+    if(&LLRP_tdERROR_MESSAGE == pRspMsg->elementHdr.pType) {
         const LLRP_tSTypeDescriptor *pResponseType;
 
         pResponseType = pSendMsg->elementHdr.pType->pResponseType;
@@ -1670,8 +1542,7 @@ LLRP_tSMessage *transact (LLRP_tSMessage *pSendMsg)
  **
  *****************************************************************************/
 
-LLRP_tSMessage *recvMessage (int nMaxMS)
-{
+LLRP_tSMessage *recvMessage (int nMaxMS) {
     LLRP_tSConnection *         pConn = g_pConnectionToReader;
     LLRP_tSMessage *            pMessage;
 
@@ -1684,21 +1555,18 @@ LLRP_tSMessage *recvMessage (int nMaxMS)
      * If LLRP_Conn_recvMessage() returns NULL then there was
      * an error. In that case we try to print the error details.
      */
-    if(NULL == pMessage)
-    {
+    if(NULL == pMessage) {
         const LLRP_tSErrorDetails *pError = LLRP_Conn_getRecvError(pConn);
 
         printf("ERROR: recvMessage failed, %s\n",
             pError->pWhatStr ? pError->pWhatStr : "no reason given");
 
-        if(NULL != pError->pRefType)
-        {
+        if(NULL != pError->pRefType) {
             printf("ERROR: ... reference type %s\n",
                 pError->pRefType->pName);
         }
 
-        if(NULL != pError->pRefField)
-        {
+        if(NULL != pError->pRefField) {
             printf("ERROR: ... reference field %s\n",
                 pError->pRefField->pName);
         }
@@ -1710,8 +1578,7 @@ LLRP_tSMessage *recvMessage (int nMaxMS)
      * Print the XML text for the inbound message if
      * verbosity is 2 or higher.
      */
-    if(1 < g_Verbose)
-    {
+    if(1 < g_Verbose) {
         printf("\n===================================\n");
         printf("INFO: Message received\n");
         printXMLMessage(pMessage);
@@ -1738,16 +1605,14 @@ LLRP_tSMessage *recvMessage (int nMaxMS)
  **
  *****************************************************************************/
 
-int sendMessage (LLRP_tSMessage *pSendMsg)
-{
+int sendMessage (LLRP_tSMessage *pSendMsg) {
     LLRP_tSConnection *         pConn = g_pConnectionToReader;
 
     /*
      * Print the XML text for the outbound message if
      * verbosity is 2 or higher.
      */
-    if(1 < g_Verbose)
-    {
+    if(1 < g_Verbose) {
         printf("\n===================================\n");
         printf("INFO: Sending\n");
         printXMLMessage(pSendMsg);
@@ -1758,22 +1623,19 @@ int sendMessage (LLRP_tSMessage *pSendMsg)
      * then there was an error. In that case we try to print
      * the error details.
      */
-    if(LLRP_RC_OK != LLRP_Conn_sendMessage(pConn, pSendMsg))
-    {
+    if(LLRP_RC_OK != LLRP_Conn_sendMessage(pConn, pSendMsg)) {
         const LLRP_tSErrorDetails *pError = LLRP_Conn_getSendError(pConn);
 
         printf("ERROR: %s sendMessage failed, %s\n",
             pSendMsg->elementHdr.pType->pName,
             pError->pWhatStr ? pError->pWhatStr : "no reason given");
 
-        if(NULL != pError->pRefType)
-        {
+        if(NULL != pError->pRefType) {
             printf("ERROR: ... reference type %s\n",
                 pError->pRefType->pName);
         }
 
-        if(NULL != pError->pRefField)
-        {
+        if(NULL != pError->pRefField) {
             printf("ERROR: ... reference field %s\n",
                 pError->pRefField->pName);
         }
@@ -1781,9 +1643,6 @@ int sendMessage (LLRP_tSMessage *pSendMsg)
         return -1;
     }
 
-    /*
-     * Victory
-     */
     return 0;
 }
 
@@ -1802,8 +1661,7 @@ int sendMessage (LLRP_tSMessage *pSendMsg)
  **
  *****************************************************************************/
 
-void freeMessage (LLRP_tSMessage *pMessage)
-{
+void freeMessage (LLRP_tSMessage *pMessage) {
     LLRP_Element_destruct(&pMessage->elementHdr);
 }
 
