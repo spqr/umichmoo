@@ -813,7 +813,7 @@ int addROSpec (void) {
 	// TagPopulation 32, default session is 0.
 	LLRP_tSC1G2SingulationControl C1G2SingulationControl = {
 			.hdr.elementHdr.pType = &LLRP_tdC1G2SingulationControl,
-			.Session = 1,
+			.Session = 2,
 			.TagPopulation = 32,
 			.TagTransitTime = 0,
 	};
