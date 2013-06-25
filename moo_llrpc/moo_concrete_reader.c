@@ -197,12 +197,66 @@ int main (int ac, char *av[]) {
  **  time_t rawtime;
  *****************************************************************************/
 
-void usage (char *pProgName)
-{
-    printf("Usage: %s [-v] -c READERHOSTNAME\n", pProgName);
+void usage (char *pProgName) {
+
+    printf("%s 1.0 (https://github.com/spqr/umassmoo.git)\n", pProgName);
+    printf("Usage: %s [-v] [Options] {Reader IP || Hostname}\n\n", pProgName);
+    printf("-v or -vv: Specify stdout verbosity level.\n");
+    printf("-c: Cleaning the house, clear the current reader configuration and exit.\n\n");
+
+    printf("ROSpec\n");
+    printf("  --ROSpecID <value>: .\n");
+    printf("  --Priority <value>: .\n");
+    printf("  --CurrentState <value>: .\n\n");
+
+    printf("  ROBoundarySpec\n");
+    printf("    ROSpecStartTrigger\n");
+    printf("      --ROSpecStartTriggerType <value>: .\n");
+    printf("    ROSpecStopTrigger\n");
+    printf("      --ROSpecStopTriggerType <value>: .\n");
+    printf("      --ROSpecStopTriggerDuration <value>: .\n\n");
+    
+    printf("  AISpec\n");    
+    printf("    --AntennaID <0,1,2,3,4>: .\n");
+    printf("    AISpecStopTrigger\n");
+    printf("      --AISpecStopTriggerType <value>: .\n");
+    printf("      --AISpecStopTriggerDuration <value>: .\n");
+
+    printf("    InventoryParameterSpec\n");
+    printf("      --InvParamSpecID <value>: .\n");
+    printf("      --ProtocolID <value>: .\n");
+
+    printf("      AntennaConfiguration\n");
+    printf("        --AntennaID <value>: .\n");
+    printf("        RFTransmitter\n");
+    printf("          --HopTableID <value>: .\n");
+    printf("          --ChannelIndex <value>: .\n");
+    printf("          --TransmitPower <value>: .\n");
+    printf("        C1G2InventoryCommand\n");
+    printf("          --TagInventoryStateAware <true||false>: ");
+    printf("          C1G2RFControl\n");
+    printf("            --ModeIndex <value>: .");
+    printf("            --Tari <value>: .");
+    printf("          C1G2SingulationControl\n");
+    printf("            --Session <value>: something.\n");
+    printf("            --TagPopulation <value>: .\n");
+    printf("            --TagTransmitTime <value>: .\n\n");
+
+    printf("  ROReportSpec\n");
+    printf("    --ROReportTrigger <value>: .\n");
+    printf("    --N <value>: .\n");
+    printf("    TagReportContentSelector\n");
+    printf("      --EnableROSpecID <true||false>:  .\n");
+    printf("      --EnableSpecIndex <true||false>: .\n");
+    printf("      --EnableInventoryParameterSpecID <true||false>: .\n");
+    printf("      --EnableAntennaID <true||false>: .\n");
+    printf("      --EnableChannelIndex <true||false>: .\n");
+    printf("      --EnablePeakRSSI <true||false>: .\n");
+    printf("      --EnableFirstSeenTimestamp <true||false>: .\n");
+    printf("      --EnableLastSeenTimestamp <true||false>: .\n");
+    printf("      --EnableTagSeenCount <true||false>: .\n");
+    printf("      --EnableAccessSpecID <true||false>: .\n");
     printf("\n");
-    printf("-v(vv): Additional v increases verbosity level.\n");
-    printf("-c: Cleaning the house, clear the current reader configuration.\n\n");
     exit(1);
 }
 
@@ -633,7 +687,57 @@ int deleteAllROSpecs (void) {
     LLRP_tSMessage *              pRspMsg;
     LLRP_tSDELETE_ROSPEC_RESPONSE *pRsp;
 
-    /*
+/**    <ROSpec>
+ **      <ROSpecID>123</ROSpecID>
+ **      <Priority>0</Priority>
+ **      <CurrentState>Disabled</CurrentState>
+ **      <ROBoundarySpec>
+ **        <ROSpecStartTrigger>
+ **          <ROSpecStartTriggerType>Null</ROSpecStartTriggerType>
+ **        </ROSpecStartTrigger>
+ **        <ROSpecStopTrigger>
+ **          <ROSpecStopTriggerType>Null</ROSpecStopTriggerType>
+ **          <DurationTriggerValue>0</DurationTriggerValue>
+ **        </ROSpecStopTrigger>
+ **      </ROBoundarySpec>
+ **      <AISpec>
+ **        <AntennaIDs>0</AntennaIDs>
+ **        <AISpecStopTrigger>
+ **          <AISpecStopTriggerType>Duration</AISpecStopTriggerType>
+ **          <DurationTrigger>100</DurationTrigger>
+ **        </AISpecStopTrigger>
+ **        <InventoryParameterSpec>
+ **          <InventoryParameterSpecID>1234</InventoryParameterSpecID>
+ **          <ProtocolID>EPCGlobalClass1Gen2</ProtocolID>
+ **          <AntennaConfiguration>
+ **            <AntennaID>0</AntennaID>
+ **            <RFTransmitter>
+ **              <HopTableID>1</HopTableID>
+ **              <ChannelIndex>0</ChannelIndex>
+ **              <TransmitPower>1</TransmitPower>
+ **            </RFTransmitter>
+ **            <C1G2InventoryCommand>
+ **              <TagInventoryStateAware>false</TagInventoryStateAware>
+ **              <!-- reserved 7 bits -->
+ **              <C1G2RFControl>
+ **                <ModeIndex>2</ModeIndex>
+ **                <Tari>25</Tari>
+ **              </C1G2RFControl>
+ **              <C1G2SingulationControl>
+ **                <Session>0</Session>
+ **                <!-- reserved 6 bits -->
+ **                <TagPopulation>1</TagPopulation>
+ **                <TagTransitTime>0</TagTransitTime>
+ **              </C1G2SingulationControl>
+ **            </C1G2InventoryCommand>
+ **          </AntennaConfiguration>
+ **        </InventoryParameterSpec>
+ **      </AISpec>
+ **      <ROReportSpec>
+ **        <ROReportTrigger>Upon_N_Tags_Or_End_Of_AISpec</ROReportTrigger>
+ **        <N>1</N>
+ **        <TagReportContentSelector>
+ **          <EnableROSpecID>false</EnableROSpecI
      * Compose the command message
      */
     pCmd = LLRP_DELETE_ROSPEC_construct();
