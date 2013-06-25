@@ -75,6 +75,7 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <errno.h>
+#include <getopt.h>
 #include "ltkc.h"
 
 // BEGIN forward declarations
@@ -128,16 +129,23 @@ LLRP_tSConnection *g_pConnectionToReader;
  **
  *****************************************************************************/
 
-int main (int ac, char *av[]) {
-    char * pReaderHostName;
+int main (int argc, char *argv[]) {
+    char *pReaderHostName;
     int rc;
-
-    /*
-     * Process comand arguments, determine reader name
-     * and verbosity level. void usage (char *pProgName);
-     */
-    if(ac == 2) {
+    
+    if(argc >= 2) {
         pReaderHostName = av[1];
+    } 
+    
+    while ((c=getout(argc,argv,"")) != -1) {
+        switch(c) {
+            
+
+            default:
+                usage(argv[0]);
+                break;
+        }
+
     }
     else if(ac == 3) {
         char * p = av[1];
@@ -162,12 +170,6 @@ int main (int ac, char *av[]) {
                 break;
             }
         }
-
-        pReaderHostName = av[2];
-    } else {
-        usage(av[0]);
-    }
-
 
     // Run application, capture return value for exit status
 
