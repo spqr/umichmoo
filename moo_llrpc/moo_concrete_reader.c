@@ -80,6 +80,7 @@
 
 // BEGIN forward declarations
 int main (int ac, char *av[]);
+void debug_g_ROSpec();
 void usage (char *pProgName);
 int run (const char *pReaderHostName);
 int checkConnectionStatus (void);
@@ -348,6 +349,12 @@ int main (int argc, char *argv[]) {
         usage(argv[0]);
     }
 
+    // If set to debug, let's call a function to print our global struct.
+    if(g_Verbose == 2) {
+    	debug_g_ROSpec();
+    }
+    printf("Verbose: %d", g_Verbose);
+
 
     // Run application, capture return value for exit status
     rc = run(pReaderHostName);
@@ -360,6 +367,84 @@ int main (int argc, char *argv[]) {
     } else {
         exit(2);
     }
+}
+
+
+/**
+ *****************************************************************************
+ **
+ ** @brief  Debug print message to verify our global ROSpec struct.
+ **
+ ** @return     none, exits
+ *****************************************************************************/
+void debug_g_ROSpec() {
+	// Lazily using ints to print out values. Enums printed as ints.
+	printf("\nROSpec Struct:\n"
+           "  ROSpecID: %d\n"
+           "  Priority: %d\n"
+           "  CurrentState: %d\n"
+           "  ROSpecStartTriggerType: %d\n"
+           "  ROSpecStopTriggerType: %d\n"
+           "  ROSpecStopTriggerDuration: %d\n"
+           "  AntennaIDs: %d\n"
+           "  AISpecStopTriggerType: %d\n"
+           "  AISpecStopTriggerDuration: %d\n"
+           "  InvParamSpecID: %d\n"
+           "  ProtocolID: %d\n"
+           "  AntennaID: %d\n"
+           "  HopTableID: %d\n"
+           "  ChannelIndex: %d\n"
+           "  TransmitPower: %d\n"
+           "  ModeIndex: %d\n"
+           "  Tari: %d\n"
+           "  Session: %d\n"
+           "  TagPopulation: %d\n"
+           "  TagTransmitTime: %d\n"
+           "  ROReportTrigger: \n"
+           "  N: %d\n"
+           "  EnableROSpecID: %d\n"
+           "  EnableSpecIndex: %d\n"
+           "  EnableInventoryParameterSpecID: %d\n"
+           "  EnableAntennaID: %d\n"
+           "  EnableChannelIndex: %d\n"
+           "  EnablePeakRSSI: %d\n"
+           "  EnableFirstSeenTimestamp: %d\n"
+           "  EnableLastSeenTimestamp: %d\n"
+           "  EnableTagSeenCount: %d\n"
+           "  EnableAccessSpecID: %d\n",
+           g_ROSPEC.ROSpecID,
+           g_ROSPEC.Priority,
+           g_ROSPEC.CurrentState,
+           g_ROSPEC.ROSpecStartTriggerType,
+           g_ROSPEC.ROSpecStopTriggerType,
+           g_ROSPEC.ROSpecStopTriggerDuration,
+           g_ROSPEC.AntennaIDs,
+           g_ROSPEC.AISpecStopTriggerType,
+           g_ROSPEC.AISpecStopTriggerDuration,
+           g_ROSPEC.InvParamSpecID,
+           g_ROSPEC.ProtocolID,
+           g_ROSPEC.AntennaID,
+           g_ROSPEC.HopTableID,
+           g_ROSPEC.ChannelIndex,
+           g_ROSPEC.TransmitPower,
+           g_ROSPEC.ModeIndex,
+           g_ROSPEC.Tari,
+           g_ROSPEC.Session,
+           g_ROSPEC.TagPopulation,
+           g_ROSPEC.TagTransmitTime,
+           g_ROSPEC.ROReportTrigger,
+           g_ROSPEC.N,
+           g_ROSPEC.EnableROSpecID,
+           g_ROSPEC.EnableSpecIndex,
+           g_ROSPEC.EnableInventoryParameterSpecID,
+           g_ROSPEC.EnableAntennaID,
+           g_ROSPEC.EnableChannelIndex,
+           g_ROSPEC.EnablePeakRSSI,
+           g_ROSPEC.EnableFirstSeenTimestamp,
+           g_ROSPEC.EnableLastSeenTimestamp,
+           g_ROSPEC.EnableTagSeenCount,
+           g_ROSPEC.EnableAccessSpecID
+    );
 }
 
 
@@ -553,6 +638,8 @@ int run (const char *pReaderHostName) {
 						startROSpec();
 
 						char filename[100];
+						// Clear out the null terminated string by setting first byte to 0.
+                        filename[0] = 0;
 
 						// If the user is root, say rc.d called it on startup, then we want to write the file to /var/log/moo/
 						uid_t uid=getuid();
