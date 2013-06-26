@@ -107,8 +107,76 @@ void printXMLMessage (LLRP_tSMessage *pMessage);
 // END forward declarations
 
 // Global variables
-int g_Verbose=0;
-int g_Cleaning=0;
+static int g_Verbose=0;
+static int g_Cleaning=0;
+// TODO: Support all triggers and types (e.g., TagObserver).
+static struct {
+	llrp_u32_t ROSpecID;
+    llrp_u8_t Priority;
+    LLRP_tEROSpecState CurrentState;
+    LLRP_tEROSpecStartTriggerType ROSpecStartTriggerType;
+    LLRP_tEROSpecStopTriggerType ROSpecStopTriggerType;
+    llrp_u32_t ROSpecStopTriggerDuration;
+    llrp_u16v_t AntennaID;
+    LLRP_tEAISpecStopTriggerType AISpecStopTriggerType;
+    llrp_u32_t AISpecStopTriggerDuration;
+    llrp_u16_t InvParamSpecID;
+    LLRP_tEAirProtocols ProtocolID;
+    llrp_u16_t AntennaID;
+    llrp_u16_t HopTableID;
+    llrp_u16_t ChannelIndex;
+    llrp_u16_t TransmitPower;
+    llrp_u16_t ModeIndex;
+    llrp_u16_t Tari;
+    llrp_u2_t Session;
+    llrp_u16_t TagPopulation;
+    llrp_u32_t TagTransmitTime;
+    LLRP_tEROReportTriggerType ROReportTrigger;
+    llrp_u16_t N;
+    llrp_u1_t EnableROSpecID;
+    llrp_u1_t EnableSpecIndex;
+    llrp_u1_t EnableInventoryParameterSpecID;
+    llrp_u1_t EnableAntennaID;
+    llrp_u1_t EnableChannelIndex;
+    llrp_u1_t EnablePeakRSSI;
+    llrp_u1_t EnableFirstSeenTimestamp;
+    llrp_u1_t EnableLastSeenTimestamp;
+    llrp_u1_t EnableTagSeenCount;
+    llrp_u1_t EnableAccessSpecID;
+} g_ROSPEC = {
+    .ROSpecID = 123,
+    .Priority = 0,
+    .CurrentState = LLRP_ROSpecState_Disabled,
+    .ROSpecStartTriggerType = LLRP_ROSpecStartTriggerType_Null,
+    .ROSpecStopTriggerType = LLRP_ROSpecStopTriggerType_Null,
+    .ROSpecStopTriggerDuration = 0,
+    .AntennaID = {0},
+    .AISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
+    .AISpecStopTriggerDuration = 3000,
+    .InvParamSpecID = 1234,
+    .ProtocolID = LLRP_AirProtocols_EPCGlobalClass1Gen2,
+    .AntennaID = ,
+    .HopTableID = 1,
+    .ChannelIndex = 0,
+    .TransmitPower = 71,
+    .ModeIndex = 2,
+    .Tari = 25,
+    .Session = 2,
+    .TagPopulation = 32,
+    .TagTransmitTime = 0,
+    .ROReportTrigger = LLRP_ROReportTriggerType_Upon_N_Tags_Or_End_Of_AISpec,
+    .N = 1,
+    .EnableROSpecID = 0,
+    .EnableSpecIndex = 0,
+    .EnableInventoryParameterSpecID = 0,
+    .EnableAntennaID = 0,
+    .EnableChannelIndex = 0,
+    .EnablePeakRSSI = 0,
+    .EnableFirstSeenTimestamp = 0,
+    .EnableLastSeenTimestamp = 0,
+    .EnableTagSeenCount = 0,
+    .EnableAccessSpecID = 0
+};
 
 // Connection to the LLRP reader
 LLRP_tSConnection *g_pConnectionToReader;
@@ -137,23 +205,119 @@ int main (int argc, char *argv[]) {
         pReaderHostName = av[1];
     } 
     
-    while ((c=getout(argc,argv,"")) != -1) {
+    int c;
+
+    while(1){
+    	static struct option long_options[] = {
+    			{"verbose", no_argument, &g_verbose,                     1},
+    			{"debug", no_argument, &g_verbose,                       2},
+    			{"ROSpecID", required_argument,                       0, 0},
+    			{"Priority", required_argument,                       0, 0},
+    			{"CurrentState", required_argument,                   0, 0},
+    			{"ROSpecStartTriggerType", required_argument,         0, 0},
+    			{"ROSpecStopTriggerType", required_argument,          0, 0},
+    			{"ROSpecStopTriggerDuration", required_argument,      0, 0},
+    			{"AntennaID", required_argument,                      0, 0},
+    			{"AISpecStopTriggerType", required_argument,          0, 0},
+    			{"AISpecStopTriggerDuration", required_argument,      0, 0},
+    			{"InvParamSpecID", required_argument,                 0, 0},
+    			{"ProtocolID", required_argument,                     0, 0},
+    			{"AntennaID", required_argument,                      0, 0},
+    			{"HopTableID", required_argument,                     0, 0},
+    			{"ChannelIndex", required_argument,                   0, 0},
+    			{"TransmitPower", required_argument,                  0, 0},
+    			{"TagInventoryStateAware", required_argument,         0, 0},
+    			{"ModeIndex", required_argument,                      0, 0},
+    			{"Tari", required_argument,                           0, 0},
+    			{"Session", required_argument,                        0, 0},
+    			{"TagPopulation", required_argument,                  0, 0},
+    			{"TagTransmitTime", required_argument,                0, 0},
+    			{"ROReportTrigger", required_argument,                0, 0},
+    			{"N", required_argument,                              0, 0},
+    			{"EnableROSpecID", no_argument, &something,           1},
+    			{"EnableSpecIndex", no_argument, &something,                1},
+    			{"EnableInventoryParameterSpecID", no_argument, &something, 1},
+    			{"EnableAntennaID", no_argument, &something,                1},
+    			{"EnableChannelIndex", no_argument, &something,             1},
+    			{"EnablePeakRSSI", no_argument, &something,                 1},
+    			{"EnableFirstSeenTimestamp", no_argument, &something,       1},
+    			{"EnableLastSeenTimestamp", no_argument, &something,        1},
+    			{"EnableTagSeenCount", no_argument, &something,             1},
+    			{"EnableAccessSpecID", no_argument, &something,             1},
+    			{0, 0, 0, 0}
+    	};
+
+        int option_index = 0;
+        c = getopt_long(argc, argv, "abc:d:f:",
+                         long_options, &option_index);
+        // Break when at the end of supplied options.
+        if(c == -1)
+    	    break;
+
         switch(c) {
-            
-
+            case 'a':
+            	// Nothing.
+            	break;
+            case 'b':
+            	// Nothing.
+            	break;
+            case 'c':
+            	// Nothing.
+            	break;
+            case 'd':
+            	// Nothing.
+            	break;
+            case 'e':
+            	// Nothing.
+            	break;
+            case 'f':
+            	// Nothing.
+            	break;
+            case 'g':
+            	// Nothing.
+            	break;
+            case 'h':
+            	// Nothing.
+            	break;
+            case 'i':
+            	// Nothing.
+            	break;
+            case 'j':
+            	// Nothing.
+            	break;
+            case 'k':
+            	// Nothing.
+            	break;
+            case 'l':
+            	// Nothing.
+            	break;
+            case 'm':
+            	// Nothing.
+            	break;
+            case 'n':
+            	// Nothing.
+            	break;
+            case 'o':
+            	// Nothing.
+            	break;
+            case 'p':
+            	// Nothing.
+            	break;
+            case 'q':
+            	// Nothing.
+            	break;
             default:
-                usage(argv[0]);
-                break;
+        	    usage(argv[0]);
         }
-
     }
-    else if(ac == 3) {
+
+/*    else if(ac == 3) {
         char * p = av[1];
 
         while(*p) {
             switch(*p++) {
-            case '-':   /* linux conventional option warn char */
-            case '/':   /* Windows/DOS conventional option warn char */
+            case '-':   /* linux conventional option warn char *
+            case '/':   /* Windows/DOS conventional option warn char *
                 break;
 
             case 'v':
@@ -166,15 +330,13 @@ int main (int argc, char *argv[]) {
             	break;
             default:
                 usage(av[0]);
-                /* no return */
+                /* no return *
                 break;
             }
-        }
+        }*/
 
     // Run application, capture return value for exit status
-
     rc = run(pReaderHostName);
-
     printf("INFO: Done\n");
 
 
@@ -184,7 +346,6 @@ int main (int argc, char *argv[]) {
     } else {
         exit(2);
     }
-    /*NOTREACHED*/
 }
 
 
@@ -689,57 +850,7 @@ int deleteAllROSpecs (void) {
     LLRP_tSMessage *              pRspMsg;
     LLRP_tSDELETE_ROSPEC_RESPONSE *pRsp;
 
-/**    <ROSpec>
- **      <ROSpecID>123</ROSpecID>
- **      <Priority>0</Priority>
- **      <CurrentState>Disabled</CurrentState>
- **      <ROBoundarySpec>
- **        <ROSpecStartTrigger>
- **          <ROSpecStartTriggerType>Null</ROSpecStartTriggerType>
- **        </ROSpecStartTrigger>
- **        <ROSpecStopTrigger>
- **          <ROSpecStopTriggerType>Null</ROSpecStopTriggerType>
- **          <DurationTriggerValue>0</DurationTriggerValue>
- **        </ROSpecStopTrigger>
- **      </ROBoundarySpec>
- **      <AISpec>
- **        <AntennaIDs>0</AntennaIDs>
- **        <AISpecStopTrigger>
- **          <AISpecStopTriggerType>Duration</AISpecStopTriggerType>
- **          <DurationTrigger>100</DurationTrigger>
- **        </AISpecStopTrigger>
- **        <InventoryParameterSpec>
- **          <InventoryParameterSpecID>1234</InventoryParameterSpecID>
- **          <ProtocolID>EPCGlobalClass1Gen2</ProtocolID>
- **          <AntennaConfiguration>
- **            <AntennaID>0</AntennaID>
- **            <RFTransmitter>
- **              <HopTableID>1</HopTableID>
- **              <ChannelIndex>0</ChannelIndex>
- **              <TransmitPower>1</TransmitPower>
- **            </RFTransmitter>
- **            <C1G2InventoryCommand>
- **              <TagInventoryStateAware>false</TagInventoryStateAware>
- **              <!-- reserved 7 bits -->
- **              <C1G2RFControl>
- **                <ModeIndex>2</ModeIndex>
- **                <Tari>25</Tari>
- **              </C1G2RFControl>
- **              <C1G2SingulationControl>
- **                <Session>0</Session>
- **                <!-- reserved 6 bits -->
- **                <TagPopulation>1</TagPopulation>
- **                <TagTransitTime>0</TagTransitTime>
- **              </C1G2SingulationControl>
- **            </C1G2InventoryCommand>
- **          </AntennaConfiguration>
- **        </InventoryParameterSpec>
- **      </AISpec>
- **      <ROReportSpec>
- **        <ROReportTrigger>Upon_N_Tags_Or_End_Of_AISpec</ROReportTrigger>
- **        <N>1</N>
- **        <TagReportContentSelector>
- **          <EnableROSpecID>false</EnableROSpecI
+    /*
      * Compose the command message
      */
     pCmd = LLRP_DELETE_ROSPEC_construct();
