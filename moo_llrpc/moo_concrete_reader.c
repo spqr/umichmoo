@@ -353,8 +353,6 @@ int main (int argc, char *argv[]) {
     if(g_Verbose == 2) {
     	debug_g_ROSpec();
     }
-    printf("Verbose: %d", g_Verbose);
-
 
     // Run application, capture return value for exit status
     rc = run(pReaderHostName);
@@ -557,8 +555,6 @@ void usage (char *pProgName) {
 int run (const char *pReaderHostName) {
     time_t rawtime;
     struct tm * timeinfo;
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
     char time_str_out[80];
     char time_str_file[80];
 
@@ -631,6 +627,8 @@ int run (const char *pReaderHostName) {
                     if(0 == enableROSpec()) {
 						rc = 6;
 
+					    time ( &rawtime );
+					    timeinfo = localtime ( &rawtime );
 						strftime(time_str_out, sizeof(time_str_out), "%D,%T", timeinfo);
 						printf("INFO: Starting %s \n", time_str_out);
 
