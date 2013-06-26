@@ -117,7 +117,8 @@ static struct {
     LLRP_tEROSpecStartTriggerType ROSpecStartTriggerType;
     LLRP_tEROSpecStopTriggerType ROSpecStopTriggerType;
     llrp_u32_t ROSpecStopTriggerDuration;
-    llrp_u16v_t AntennaID;
+    // Might be llrp_u16v_t struct.
+    llrp_u16_t AntennaIDs;
     LLRP_tEAISpecStopTriggerType AISpecStopTriggerType;
     llrp_u32_t AISpecStopTriggerDuration;
     llrp_u16_t InvParamSpecID;
@@ -145,17 +146,17 @@ static struct {
     llrp_u1_t EnableAccessSpecID;
 } g_ROSPEC = {
     .ROSpecID = 123,
-    .Priority = 0,
+    .Priority = (llrp_u1_t)0,
     .CurrentState = LLRP_ROSpecState_Disabled,
     .ROSpecStartTriggerType = LLRP_ROSpecStartTriggerType_Null,
     .ROSpecStopTriggerType = LLRP_ROSpecStopTriggerType_Null,
     .ROSpecStopTriggerDuration = 0,
-    .AntennaID = {0},
+    .AntennaIDs = 0,
     .AISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
     .AISpecStopTriggerDuration = 3000,
     .InvParamSpecID = 1234,
     .ProtocolID = LLRP_AirProtocols_EPCGlobalClass1Gen2,
-    .AntennaID = ,
+    .AntennaID = 0,
     .HopTableID = 1,
     .ChannelIndex = 0,
     .TransmitPower = 71,
@@ -200,140 +201,147 @@ LLRP_tSConnection *g_pConnectionToReader;
 int main (int argc, char *argv[]) {
     char *pReaderHostName;
     int rc;
-    
-    if(argc >= 2) {
-        pReaderHostName = av[1];
-    } 
-    
     int c;
 
     while(1){
     	static struct option long_options[] = {
-    			{"verbose", no_argument, &g_verbose,                     1},
-    			{"debug", no_argument, &g_verbose,                       2},
-    			{"ROSpecID", required_argument,                       0, 0},
-    			{"Priority", required_argument,                       0, 0},
-    			{"CurrentState", required_argument,                   0, 0},
-    			{"ROSpecStartTriggerType", required_argument,         0, 0},
-    			{"ROSpecStopTriggerType", required_argument,          0, 0},
-    			{"ROSpecStopTriggerDuration", required_argument,      0, 0},
-    			{"AntennaID", required_argument,                      0, 0},
-    			{"AISpecStopTriggerType", required_argument,          0, 0},
-    			{"AISpecStopTriggerDuration", required_argument,      0, 0},
-    			{"InvParamSpecID", required_argument,                 0, 0},
-    			{"ProtocolID", required_argument,                     0, 0},
-    			{"AntennaID", required_argument,                      0, 0},
-    			{"HopTableID", required_argument,                     0, 0},
-    			{"ChannelIndex", required_argument,                   0, 0},
-    			{"TransmitPower", required_argument,                  0, 0},
-    			{"TagInventoryStateAware", required_argument,         0, 0},
-    			{"ModeIndex", required_argument,                      0, 0},
-    			{"Tari", required_argument,                           0, 0},
-    			{"Session", required_argument,                        0, 0},
-    			{"TagPopulation", required_argument,                  0, 0},
-    			{"TagTransmitTime", required_argument,                0, 0},
-    			{"ROReportTrigger", required_argument,                0, 0},
-    			{"N", required_argument,                              0, 0},
-    			{"EnableROSpecID", no_argument, &something,           1},
-    			{"EnableSpecIndex", no_argument, &something,                1},
-    			{"EnableInventoryParameterSpecID", no_argument, &something, 1},
-    			{"EnableAntennaID", no_argument, &something,                1},
-    			{"EnableChannelIndex", no_argument, &something,             1},
-    			{"EnablePeakRSSI", no_argument, &something,                 1},
-    			{"EnableFirstSeenTimestamp", no_argument, &something,       1},
-    			{"EnableLastSeenTimestamp", no_argument, &something,        1},
-    			{"EnableTagSeenCount", no_argument, &something,             1},
-    			{"EnableAccessSpecID", no_argument, &something,             1},
+    			{"verbose", no_argument, &g_Verbose,                              1},
+    			{"debug", no_argument, &g_Verbose,                                2},
+    			{"ROSpecID", required_argument,                                0, 0},
+    			{"Priority", required_argument,                                0, 0},
+    			{"CurrentState", required_argument,                            0, 0},
+    			{"ROSpecStartTriggerType", required_argument,                  0, 0},
+    			{"ROSpecStopTriggerType", required_argument,                   0, 0},
+    			{"ROSpecStopTriggerDuration", required_argument,               0, 0},
+    			{"AntennaIDs", required_argument,                              0, 0},
+    			{"AISpecStopTriggerType", required_argument,                   0, 0},
+    			{"AISpecStopTriggerDuration", required_argument,               0, 0},
+    			{"InvParamSpecID", required_argument,                          0, 0},
+    			{"ProtocolID", required_argument,                              0, 0},
+    			{"AntennaID", required_argument,                               0, 0},
+    			{"HopTableID", required_argument,                              0, 0},
+    			{"ChannelIndex", required_argument,                            0, 0},
+    			{"TransmitPower", required_argument,                           0, 0},
+    			{"ModeIndex", required_argument,                               0, 0},
+    			{"Tari", required_argument,                                    0, 0},
+    			{"Session", required_argument,                                 0, 0},
+    			{"TagPopulation", required_argument,                           0, 0},
+    			{"TagTransmitTime", required_argument,                         0, 0},
+    			{"ROReportTrigger", required_argument,                         0, 0},
+    			{"N", required_argument,                                       0, 0},
+    			{"EnableROSpecID", no_argument,                                0, 0},
+    			{"EnableSpecIndex", no_argument,                               0, 0},
+    			{"EnableInventoryParameterSpecID", no_argument,                0, 0},
+    			{"EnableAntennaID", no_argument,                               0, 0},
+    			{"EnableChannelIndex", no_argument,                            0, 0},
+    			{"EnablePeakRSSI", no_argument,                                0, 0},
+    			{"EnableFirstSeenTimestamp", no_argument,                      0, 0},
+    			{"EnableLastSeenTimestamp", no_argument,                       0, 0},
+    			{"EnableTagSeenCount", no_argument,                            0, 0},
+    			{"EnableAccessSpecID", no_argument,                            0, 0},
     			{0, 0, 0, 0}
     	};
 
         int option_index = 0;
-        c = getopt_long(argc, argv, "abc:d:f:",
-                         long_options, &option_index);
+        c = getopt_long(argc, argv, "0:vdc", long_options, &option_index);
+
         // Break when at the end of supplied options.
         if(c == -1)
     	    break;
 
         switch(c) {
-            case 'a':
-            	// Nothing.
+            // Determine what long_opt was passed.
+            case 0:
+            	if(long_options[option_index].name == "ROSpecID") {
+            		g_ROSPEC.ROSpecID = (llrp_u32_t) atoi(optarg);
+                } else if(long_options[option_index].name == "Priority") {
+                    g_ROSPEC.Priority = (llrp_u8_t) atoi(optarg);
+                } else if(long_options[option_index].name == "CurrentState") {
+                    g_ROSPEC.CurrentState = (LLRP_tEROSpecState) optarg;
+                } else if(long_options[option_index].name == "ROSpecStartTriggerType") {
+                    g_ROSPEC.ROSpecStartTriggerType = (LLRP_tEROSpecStartTriggerType) optarg;
+                } else if(long_options[option_index].name == "ROSpecStopTriggerType") {
+                    g_ROSPEC.ROSpecStopTriggerType = (LLRP_tEROSpecStopTriggerType) optarg;
+                } else if(long_options[option_index].name == "ROSpecStopTriggerDuration") {
+                    g_ROSPEC.ROSpecStopTriggerDuration = (llrp_u32_t) atoi(optarg);
+                } else if(long_options[option_index].name == "AntennaIDs") {
+                    g_ROSPEC.AntennaIDs = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "AISpecStopTriggerType") {
+                    g_ROSPEC.AISpecStopTriggerType = (LLRP_tEAISpecStopTriggerType) optarg;
+                } else if(long_options[option_index].name == "AISpecStopTriggerDuration") {
+                    g_ROSPEC.AISpecStopTriggerDuration = (llrp_u32_t) atoi(optarg);
+                } else if(long_options[option_index].name == "InvParamSpecID") {
+                    g_ROSPEC.InvParamSpecID = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "ProtocolID") {
+                    g_ROSPEC.ProtocolID = (LLRP_tEAirProtocols) atoi(optarg);
+                } else if(long_options[option_index].name == "AntennaID") {
+                    g_ROSPEC.AntennaID = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "HopTableID") {
+                    g_ROSPEC.HopTableID = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "ChannelIndex") {
+                    g_ROSPEC.ChannelIndex = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "TransmitPower") {
+                    g_ROSPEC.TransmitPower = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "ModeIndex") {
+                    g_ROSPEC.ModeIndex = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "Tari") {
+                    g_ROSPEC.Tari = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "Session") {
+                    g_ROSPEC.Session = (llrp_u2_t) atoi(optarg);
+                } else if(long_options[option_index].name == "TagPopulation") {
+                    g_ROSPEC.TagPopulation = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "TagTransmitTime") {
+                    g_ROSPEC.TagTransmitTime = (llrp_u32_t) atoi(optarg);
+                } else if(long_options[option_index].name == "ROReportTrigger") {
+                    g_ROSPEC.ROReportTrigger = (LLRP_tEROReportTriggerType) optarg;
+                } else if(long_options[option_index].name == "N") {
+                    g_ROSPEC.N = (llrp_u16_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableROSpecID") {
+                    g_ROSPEC.EnableROSpecID = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableSpecIndex") {
+                    g_ROSPEC.EnableSpecIndex = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableInventoryParameterSpecID") {
+                    g_ROSPEC.EnableInventoryParameterSpecID = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableAntennaID") {
+                    g_ROSPEC.EnableAntennaID = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableChannelIndex") {
+                    g_ROSPEC.EnableChannelIndex = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnablePeakRSSI") {
+                    g_ROSPEC.EnablePeakRSSI = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableFirstSeenTimestamp") {
+                    g_ROSPEC.EnableFirstSeenTimestamp = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableLastSeenTimestamp") {
+                    g_ROSPEC.EnableLastSeenTimestamp = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableTagSeenCount") {
+                    g_ROSPEC.EnableTagSeenCount = (llrp_u1_t) atoi(optarg);
+                } else if(long_options[option_index].name == "EnableAccessSpecID") {
+                    g_ROSPEC.EnableAccessSpecID = (llrp_u1_t) atoi(optarg);
+                } else {
+                	printf("ERROR: Bad option supplied.\n");
+                	usage(argv[1]);
+                }
             	break;
-            case 'b':
-            	// Nothing.
-            	break;
-            case 'c':
-            	// Nothing.
+            case 'v':
+            	g_Verbose = 1;
             	break;
             case 'd':
-            	// Nothing.
+            	g_Verbose = 2;
             	break;
-            case 'e':
-            	// Nothing.
+            case 'c':
+            	g_Cleaning = 1;
             	break;
-            case 'f':
-            	// Nothing.
-            	break;
-            case 'g':
-            	// Nothing.
-            	break;
-            case 'h':
-            	// Nothing.
-            	break;
-            case 'i':
-            	// Nothing.
-            	break;
-            case 'j':
-            	// Nothing.
-            	break;
-            case 'k':
-            	// Nothing.
-            	break;
-            case 'l':
-            	// Nothing.
-            	break;
-            case 'm':
-            	// Nothing.
-            	break;
-            case 'n':
-            	// Nothing.
-            	break;
-            case 'o':
-            	// Nothing.
-            	break;
-            case 'p':
-            	// Nothing.
-            	break;
-            case 'q':
-            	// Nothing.
-            	break;
+            case '?':
+                // Fall through on opterror.
             default:
-        	    usage(argv[0]);
+        	    usage(argv[1]);
         }
     }
 
-/*    else if(ac == 3) {
-        char * p = av[1];
-
-        while(*p) {
-            switch(*p++) {
-            case '-':   /* linux conventional option warn char *
-            case '/':   /* Windows/DOS conventional option warn char *
-                break;
-
-            case 'v':
-            case 'V':
-                g_Verbose++;
-                break;
-            case 'c':
-            case 'C':
-            	g_Cleaning = 1;
-            	break;
-            default:
-                usage(av[0]);
-                /* no return *
-                break;
-            }
-        }*/
+    // Get the hostname or IP at the end of options.
+    if (optind < argc) {
+        while (optind < argc)
+        	pReaderHostName = argv[optind++];
+    }
 
     // Run application, capture return value for exit status
     rc = run(pReaderHostName);
@@ -363,7 +371,7 @@ int main (int argc, char *argv[]) {
 void usage (char *pProgName) {
 
     printf("%s 1.0 (https://github.com/spqr/umassmoo.git)\n", pProgName);
-    printf("Usage: %s [-v] [Options] {Reader IP || Hostname}\n\n", pProgName);
+    printf("Usage: %s [-v] [Options] -h {Reader IP || Hostname}\n\n", pProgName);
     printf("-v or -vv: Specify stdout verbosity level.\n");
     printf("-c: Cleaning the house, clear the current reader configuration and exit.\n\n");
 
@@ -1041,6 +1049,7 @@ int addROSpec (void) {
 	};
 	LLRP_tSAntennaConfiguration AntennaConfiguration = {
 			.hdr.elementHdr.pType = &LLRP_tdAntennaConfiguration,
+			.AntennaID = 0,
 			.pRFTransmitter = &RFTransmitter,
 			.listAirProtocolInventoryCommandSettings = &C1G2InventoryCommand.hdr,
 	};
