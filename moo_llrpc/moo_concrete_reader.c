@@ -1090,13 +1090,13 @@ int addROSpec (void) {
     LLRP_tSROSpecStartTrigger   ROSpecStartTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdROSpecStartTrigger,
 
-        .eROSpecStartTriggerType = LLRP_ROSpecStartTriggerType_Null,
+        .eROSpecStartTriggerType = g_ROSPEC.ROSpecStartTriggerType,
     };
     LLRP_tSROSpecStopTrigger    ROSpecStopTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdROSpecStopTrigger,
 
-        .eROSpecStopTriggerType = LLRP_ROSpecStopTriggerType_Null,
-        .DurationTriggerValue   = 0     /* n/a */
+        .eROSpecStopTriggerType = g_ROSPEC.ROSpecStopTriggerType,
+        .DurationTriggerValue   = g_ROSPEC.ROSpecStopTriggerDuration     /* n/a */
     };
     LLRP_tSROBoundarySpec       ROBoundarySpec = {
         .hdr.elementHdr.pType   = &LLRP_tdROBoundarySpec,
@@ -1107,8 +1107,8 @@ int addROSpec (void) {
     llrp_u16_t                  AntennaIDs[1] = { 0 };  /* All */
     LLRP_tSAISpecStopTrigger    AISpecStopTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpecStopTrigger,
-        .eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
-        .DurationTrigger        = 3000,
+        .eAISpecStopTriggerType = g_ROSPEC.AISpecStopTriggerType,
+        .DurationTrigger        = g_ROSPEC.AISpecStopTriggerDuration,
         //.eAISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
     };
     // Dense Reader 8 (DR8), M=4 Hi Speed (M4), tari 25ns.
@@ -1116,22 +1116,22 @@ int addROSpec (void) {
     // UHFC1G2RFModeTable.
 	LLRP_tSRFTransmitter RFTransmitter = {
 			.hdr.elementHdr.pType = &LLRP_tdRFTransmitter,
-			.HopTableID = 1,
-			.ChannelIndex = 0,
-			.TransmitPower = 71,
+			.HopTableID = g_ROSPEC.HopTableID,
+			.ChannelIndex = g_ROSPEC.ChannelIndex,
+			.TransmitPower = g_ROSPEC.TransmitPower,
 	};
 	// Tari was 25 on Wisp demo.
 	LLRP_tSC1G2RFControl C1G2RFControl = {
 			.hdr.elementHdr.pType = &LLRP_tdC1G2RFControl,
-			.ModeIndex = 2,
-			.Tari = 25,
+			.ModeIndex = g_ROSPEC.ModeIndex,
+			.Tari = g_ROSPEC.Tari,
 	};
 	// TagPopulation 32, default session is 0.
 	LLRP_tSC1G2SingulationControl C1G2SingulationControl = {
 			.hdr.elementHdr.pType = &LLRP_tdC1G2SingulationControl,
-			.Session = 2,
-			.TagPopulation = 32,
-			.TagTransitTime = 0,
+			.Session = g_ROSPEC.Session,
+			.TagPopulation = g_ROSPEC.TagPopulation,
+			.TagTransitTime = g_ROSPEC.TagTransmitTime,
 	};
 	LLRP_tSC1G2InventoryCommand C1G2InventoryCommand = {
 			.hdr.elementHdr.pType = &LLRP_tdC1G2InventoryCommand,
@@ -1140,14 +1140,14 @@ int addROSpec (void) {
 	};
 	LLRP_tSAntennaConfiguration AntennaConfiguration = {
 			.hdr.elementHdr.pType = &LLRP_tdAntennaConfiguration,
-			.AntennaID = 0,
+			.AntennaID = g_ROSPEC.AntennaID,
 			.pRFTransmitter = &RFTransmitter,
 			.listAirProtocolInventoryCommandSettings = &C1G2InventoryCommand.hdr,
 	};
     LLRP_tSInventoryParameterSpec InventoryParameterSpec = {
         .hdr.elementHdr.pType   = &LLRP_tdInventoryParameterSpec,
-        .InventoryParameterSpecID = 1234,
-        .eProtocolID            = LLRP_AirProtocols_EPCGlobalClass1Gen2,
+        .InventoryParameterSpecID = g_ROSPEC.InvParamSpecID,
+        .eProtocolID            = g_ROSPEC.ProtocolID,
 		.listAntennaConfiguration = &AntennaConfiguration,
     };
     LLRP_tSAISpec               AISpec = {
@@ -1163,32 +1163,30 @@ int addROSpec (void) {
     LLRP_tSTagReportContentSelector TagReportContentSelector = {
         .hdr.elementHdr.pType   = &LLRP_tdTagReportContentSelector,
 
-        .EnableROSpecID         = 0,
-        .EnableSpecIndex        = 0,
-        .EnableInventoryParameterSpecID = 0,
-        .EnableAntennaID        = 0,
-        .EnableChannelIndex     = 0,
-        .EnablePeakRSSI         = 0,
-        .EnableFirstSeenTimestamp = 0,
-        .EnableLastSeenTimestamp = 0,
-        .EnableTagSeenCount     = 0,
-        .EnableAccessSpecID     = 0,
+        .EnableROSpecID         = g_ROSPEC.EnableROSpecID,
+        .EnableSpecIndex        = g_ROSPEC.EnableSpecIndex,
+        .EnableInventoryParameterSpecID = g_ROSPEC.EnableInventoryParameterSpecID,
+        .EnableAntennaID        = g_ROSPEC.EnableAntennaID,
+        .EnableChannelIndex     = g_ROSPEC.EnableChannelIndex,
+        .EnablePeakRSSI         = g_ROSPEC.EnablePeakRSSI,
+        .EnableFirstSeenTimestamp = g_ROSPEC.EnableFirstSeenTimestamp,
+        .EnableLastSeenTimestamp = g_ROSPEC.EnableLastSeenTimestamp,
+        .EnableTagSeenCount     = g_ROSPEC.EnableTagSeenCount,
+        .EnableAccessSpecID     = g_ROSPEC.EnableAccessSpecID,
     };
     LLRP_tSROReportSpec         ROReportSpec = {
         .hdr.elementHdr.pType   = &LLRP_tdROReportSpec,
 
-        .eROReportTrigger       =
-                      LLRP_ROReportTriggerType_Upon_N_Tags_Or_End_Of_AISpec,
-        //.N                      = 0,
-        .N                      = 1,
+        .eROReportTrigger       = g_ROSPEC.ROReportTrigger,
+        .N                      = g_ROSPEC.N,
         .pTagReportContentSelector = &TagReportContentSelector,
     };
     LLRP_tSROSpec               ROSpec = {
         .hdr.elementHdr.pType   = &LLRP_tdROSpec,
 
-        .ROSpecID               = 123,
-        .Priority               = 0,
-        .eCurrentState          = LLRP_ROSpecState_Disabled,
+        .ROSpecID               = g_ROSPEC.ROSpecID,
+        .Priority               = g_ROSPEC.Priority,
+        .eCurrentState          = g_ROSPEC.CurrentState,
         .pROBoundarySpec        = &ROBoundarySpec,
         .listSpecParameter      = &AISpec.hdr,
         .pROReportSpec          = &ROReportSpec,
