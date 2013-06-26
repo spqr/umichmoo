@@ -318,7 +318,7 @@ int main (int argc, char *argv[]) {
                     g_ROSPEC.EnableAccessSpecID = (llrp_u1_t) atoi(optarg);
                 } else {
                 	printf("ERROR: Bad option supplied.\n");
-                	usage(argv[1]);
+                	usage(argv[0]);
                 }
             	break;
             case 'v':
@@ -342,6 +342,12 @@ int main (int argc, char *argv[]) {
         while (optind < argc)
         	pReaderHostName = argv[optind++];
     }
+
+    // Check if host is null.
+    if(pReaderHostName == NULL) {
+        usage(argv[0]);
+    }
+
 
     // Run application, capture return value for exit status
     rc = run(pReaderHostName);
@@ -371,7 +377,7 @@ int main (int argc, char *argv[]) {
 void usage (char *pProgName) {
 
     printf("%s 1.0 (https://github.com/spqr/umassmoo.git)\n", pProgName);
-    printf("Usage: %s [-v] [Options] -h {Reader IP || Hostname}\n\n", pProgName);
+    printf("Usage: %s [-v] [Options] {Reader IP || Hostname}\n\n", pProgName);
     printf("-v or -vv: Specify stdout verbosity level.\n");
     printf("-c: Cleaning the house, clear the current reader configuration and exit.\n\n");
 
