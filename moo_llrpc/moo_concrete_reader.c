@@ -147,7 +147,7 @@ static struct {
     llrp_u1_t EnableAccessSpecID;
 } g_ROSPEC = {
     .ROSpecID = 123,
-    .Priority = (llrp_u1_t)0,
+    .Priority = 0,
     .CurrentState = LLRP_ROSpecState_Disabled,
     .ROSpecStartTriggerType = LLRP_ROSpecStartTriggerType_Null,
     .ROSpecStopTriggerType = LLRP_ROSpecStopTriggerType_Null,
