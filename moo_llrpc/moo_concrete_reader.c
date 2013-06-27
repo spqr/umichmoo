@@ -1261,7 +1261,7 @@ int enableROSpec (void) {
         .hdr.elementHdr.pType   = &LLRP_tdENABLE_ROSPEC,
         .hdr.MessageID          = 202,
 
-        .ROSpecID               = 123,
+        .ROSpecID               = g_ROSPEC.ROSpecID,
     };
     LLRP_tSMessage *            pRspMsg;
     LLRP_tSENABLE_ROSPEC_RESPONSE *pRsp;
@@ -1327,7 +1327,7 @@ int startROSpec (void) {
         .hdr.elementHdr.pType   = &LLRP_tdSTART_ROSPEC,
         .hdr.MessageID          = 202,
 
-        .ROSpecID               = 123,
+        .ROSpecID               = g_ROSPEC.ROSpecID,
     };
     LLRP_tSMessage *            pRspMsg;
     LLRP_tSSTART_ROSPEC_RESPONSE *pRsp;
