@@ -25,6 +25,6 @@ $(TARGET) : moo_concrete_reader.c
 	$(CC) $(CFLAGS) -o moo_concrete_reader moo_concrete_reader.c $(LTKC_LIBS)
 
 clean:
-	-rm -f $(TARGET)
+	-rm -f $(TARGET) Mon_* Tue_* Wed_* Thu_* Fri_* Sat_* Sun_*
 
 .PHONY: clean
