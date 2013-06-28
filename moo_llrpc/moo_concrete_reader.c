@@ -8,6 +8,8 @@
  *     - getopt for advanced configuration.
  *     - Removal of 5x1 second bursts.
  *     - ROSpec now includes an Antenna Configuration.
+ *     - Default configuration operates in dense reader mode m=8... this
+ *       means it will work outside where there is a lot of noise.
  *
  ***************************************************************************
  */
@@ -266,7 +268,8 @@ int main (int argc, char *argv[]) {
                 } else if(long_options[option_index].name == "ROSpecStopTriggerDuration") {
                     g_ROSPEC.ROSpecStopTriggerDuration = (llrp_u32_t) atoi(optarg);
                 } else if(long_options[option_index].name == "AntennaIDs") {
-                    g_ROSPEC.AntennaIDs = (llrp_u16_t) atoi(optarg);
+                	printf("%s", optarg);
+                    //g_ROSPEC.AntennaIDs = (llrp_u16_t) atoi(optarg);
                 } else if(long_options[option_index].name == "AISpecStopTriggerType") {
                     g_ROSPEC.AISpecStopTriggerType = (LLRP_tEAISpecStopTriggerType) optarg;
                 } else if(long_options[option_index].name == "AISpecStopTriggerDuration") {
@@ -1104,7 +1107,6 @@ int addROSpec (void) {
         .pROSpecStartTrigger    = &ROSpecStartTrigger,
         .pROSpecStopTrigger     = &ROSpecStopTrigger,
     };
-    llrp_u16_t                  AntennaIDs[1] = { 0 };  /* All */
     LLRP_tSAISpecStopTrigger    AISpecStopTrigger = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpecStopTrigger,
         .eAISpecStopTriggerType = g_ROSPEC.AISpecStopTriggerType,
@@ -1150,11 +1152,12 @@ int addROSpec (void) {
         .eProtocolID            = g_ROSPEC.ProtocolID,
 		.listAntennaConfiguration = &AntennaConfiguration,
     };
+    llrp_u16_t                  AntennaIDs[] = { 0 };  /* All */
     LLRP_tSAISpec               AISpec = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpec,
 
         .AntennaIDs = {
-            .nValue                 = 1,
+            .nValue                 = sizeof(AntennaIDs)/sizeof(llrp_u16_t),
             .pValue                 = AntennaIDs
         },
         .pAISpecStopTrigger     = &AISpecStopTrigger,
@@ -1657,7 +1660,9 @@ void handleAntennaEvent (LLRP_tSAntennaEvent *pAntennaEvent, FILE *fp) {
         pStateStr = "?unknown-event?";
         break;
     }
-    //printf("NOTICE: Antenna %d is %s\n", AntennaID, pStateStr);
+    if(g_Verbose) {
+        printf("INFO: Antenna %d is %s\n", AntennaID, pStateStr);
+    }
     fprintf(fp, "Antenna %d is %s\n", AntennaID, pStateStr);
 }
 
