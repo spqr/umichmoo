@@ -409,6 +409,13 @@ int main (int argc, char *argv[]) {
         }
     }
 
+    // No AntennaIDs were set, so lets default to 0.
+    if(g_ROSPEC.AntennaIDs == NULL) {
+    	g_ROSPEC._antennaN++;
+    	g_ROSPEC.AntennaIDs = malloc(1*sizeof(llrp_u16_t));
+    	g_ROSPEC.AntennaIDs[0] = 0;
+    }
+
     // Get the hostname or IP at the end of options.
     if (optind < argc) {
         while (optind < argc)
