@@ -82,6 +82,8 @@
 
 // BEGIN forward declarations
 int main (int ac, char *av[]);
+void kr_itoa(int n, char s[]);
+void kr_reverse(char s[]);
 void debug_g_ROSpec();
 void usage (char *pProgName);
 int run (const char *pReaderHostName);
@@ -121,7 +123,7 @@ static struct {
     LLRP_tEROSpecStopTriggerType ROSpecStopTriggerType;
     llrp_u32_t ROSpecStopTriggerDuration;
     // Might be llrp_u16v_t struct.
-    llrp_u16_t AntennaIDs;
+    llrp_u16_t* AntennaIDs;
     LLRP_tEAISpecStopTriggerType AISpecStopTriggerType;
     llrp_u32_t AISpecStopTriggerDuration;
     llrp_u16_t InvParamSpecID;
@@ -147,6 +149,7 @@ static struct {
     llrp_u1_t EnableLastSeenTimestamp;
     llrp_u1_t EnableTagSeenCount;
     llrp_u1_t EnableAccessSpecID;
+    int _antennaN;
 } g_ROSPEC = {
     .ROSpecID = 123,
     .Priority = 0,
@@ -154,7 +157,7 @@ static struct {
     .ROSpecStartTriggerType = LLRP_ROSpecStartTriggerType_Null,
     .ROSpecStopTriggerType = LLRP_ROSpecStopTriggerType_Null,
     .ROSpecStopTriggerDuration = 0,
-    .AntennaIDs = 0,
+    //.AntennaIDs = malloc(sizeof(llrp_u16_t)),
     .AISpecStopTriggerType = LLRP_AISpecStopTriggerType_Null,
     .AISpecStopTriggerDuration = 3000,
     .InvParamSpecID = 1234,
@@ -179,7 +182,8 @@ static struct {
     .EnableFirstSeenTimestamp = 0,
     .EnableLastSeenTimestamp = 0,
     .EnableTagSeenCount = 0,
-    .EnableAccessSpecID = 0
+    .EnableAccessSpecID = 0,
+    ._antennaN = 0
 };
 
 // Connection to the LLRP reader
@@ -268,8 +272,72 @@ int main (int argc, char *argv[]) {
                 } else if(long_options[option_index].name == "ROSpecStopTriggerDuration") {
                     g_ROSPEC.ROSpecStopTriggerDuration = (llrp_u32_t) atoi(optarg);
                 } else if(long_options[option_index].name == "AntennaIDs") {
-                	printf("%s", optarg);
-                    //g_ROSPEC.AntennaIDs = (llrp_u16_t) atoi(optarg);
+                	// Parse the optarg string on commas.
+                	char* parse_string;
+                	parse_string = strtok(optarg,",");
+
+                	g_ROSPEC.AntennaIDs = malloc(1*sizeof(llrp_u16_t));
+                	llrp_u16_t tmp_AIDs[5];
+
+                	int i=0, j=0, num=0;
+                	while(parse_string != NULL) {
+               			tmp_AIDs[i] = atoi(parse_string);
+                        parse_string = strtok(NULL, ",");
+                        i++;
+                        num++;
+                	}
+
+                	// Sort array in ascending order. Do not assume it was passed that way.
+                    for(i=0; i < num; i++){
+                        for(j=i; j < num; j++){
+                            if(tmp_AIDs[i] > tmp_AIDs[j]){
+                            	llrp_u16_t tmp = tmp_AIDs[j];
+                                tmp_AIDs[j]    = tmp_AIDs[i];
+                                tmp_AIDs[i]    = tmp;
+                	        }
+                        }
+                    }
+
+                    // With the array sorted in ascending order, we can validate that 0 was not
+                    // passed. If it was, we break out of for immediately and set the global array.
+                    int foundZero = 0;
+                	for(i=0; i < num; i++) {
+                        if(foundZero) {
+                        	break; // Break out of for loop.
+                        } else {
+                            // Increase size of g_ROSPEC.AntennaIDs by i.
+                        	llrp_u16_t* tmp_AIDsptr = realloc(g_ROSPEC.AntennaIDs, i+1*sizeof(llrp_u16_t));
+                        	if(tmp_AIDsptr != NULL)
+                        		g_ROSPEC.AntennaIDs = tmp_AIDsptr;
+                        }
+
+                		switch(tmp_AIDs[i]) {
+                	        case 0:
+                                foundZero = 1;
+                                g_ROSPEC.AntennaIDs[i] = 0;
+                	    	    break;
+                	        case 1:
+                	        	g_ROSPEC.AntennaIDs[i] = 1;
+                	    	    break;
+                	        case 2:
+                	        	g_ROSPEC.AntennaIDs[i] = 2;
+                	    	    break;
+                	        case 3:
+                	        	g_ROSPEC.AntennaIDs[i] = 3;
+                   	    	    break;
+                	        case 4:
+                	        	g_ROSPEC.AntennaIDs[i] = 4;
+                	    	    break;
+                	        default:
+                	    	    fprintf(stderr, "ERROR: The AntennaIDs you supplied were not of 0 or a subset of 1,2,3,4.\n");
+                                exit(2);
+                	    }
+                    	g_ROSPEC._antennaN++;
+                	}
+                	// Sanity check.
+                	/*for(i=0; i < g_ROSPEC._antennaN; i++) {
+                        printf("%d\n", g_ROSPEC.AntennaIDs[i]);
+                	} exit(0);*/
                 } else if(long_options[option_index].name == "AISpecStopTriggerType") {
                     g_ROSPEC.AISpecStopTriggerType = (LLRP_tEAISpecStopTriggerType) optarg;
                 } else if(long_options[option_index].name == "AISpecStopTriggerDuration") {
@@ -374,12 +442,59 @@ int main (int argc, char *argv[]) {
 /**
  *****************************************************************************
  **
+ ** @brief  Classic K&R implementation of itoa and pure laziness for us!
+ **         http://en.wikibooks.org/wiki/C_Programming/C_Reference/stdlib.h/itoa
+ ** @return     none, exits
+ *****************************************************************************/
+/* itoa:  convert n to characters in s */
+void kr_itoa(int n, char s[]) {
+    int i, sign;
+
+    if ((sign = n) < 0)  /* record sign */
+        n = -n;          /* make n positive */
+    i = 0;
+    do {       /* generate digits in reverse order */
+        s[i++] = n % 10 + '0';   /* get next digit */
+    } while ((n /= 10) > 0);     /* delete it */
+    if (sign < 0)
+        s[i++] = '-';
+    s[i] = '\0';
+    kr_reverse(s);
+}
+/* reverse:  reverse string s in place */
+void kr_reverse(char s[]) {
+    int i, j;
+    char c;
+
+    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
+}
+
+
+/**
+ *****************************************************************************
+ **
  ** @brief  Debug print message to verify our global ROSpec struct.
  **
  ** @return     none, exits
  *****************************************************************************/
 void debug_g_ROSpec() {
 	// Lazily using ints to print out values. Enums printed as ints.
+	char retAIDs[100];
+	retAIDs[0] = 0;
+
+	// Another lazy hack involving K&R itoa implementation for printing out
+	// our antenna ids.
+	char* tmp;
+	int i = 0;
+	for(i=0; i<sizeof(g_ROSPEC.AntennaIDs)/sizeof(llrp_u16_t);i++){
+		kr_itoa(g_ROSPEC.AntennaIDs[i], tmp);
+		strcat(retAIDs, tmp);
+	}
+
 	printf("\nROSpec Struct:\n"
            "  ROSpecID: %d\n"
            "  Priority: %d\n"
@@ -387,7 +502,7 @@ void debug_g_ROSpec() {
            "  ROSpecStartTriggerType: %d\n"
            "  ROSpecStopTriggerType: %d\n"
            "  ROSpecStopTriggerDuration: %d\n"
-           "  AntennaIDs: %d\n"
+           "  AntennaIDs: %s\n"
            "  AISpecStopTriggerType: %d\n"
            "  AISpecStopTriggerDuration: %d\n"
            "  InvParamSpecID: %d\n"
@@ -419,7 +534,7 @@ void debug_g_ROSpec() {
            g_ROSPEC.ROSpecStartTriggerType,
            g_ROSPEC.ROSpecStopTriggerType,
            g_ROSPEC.ROSpecStopTriggerDuration,
-           g_ROSPEC.AntennaIDs,
+           retAIDs,
            g_ROSPEC.AISpecStopTriggerType,
            g_ROSPEC.AISpecStopTriggerDuration,
            g_ROSPEC.InvParamSpecID,
@@ -1152,13 +1267,16 @@ int addROSpec (void) {
         .eProtocolID            = g_ROSPEC.ProtocolID,
 		.listAntennaConfiguration = &AntennaConfiguration,
     };
-    llrp_u16_t                  AntennaIDs[] = { 0 };  /* All */
+
+    // This should allow us to, at runtime, specify the AntennaIDs array.
+    //llrp_u16_t                  AntennaIDs[] = {0,0,0,0};
+    //memcpy(AntennaIDs, g_ROSPEC.AntennaIDs, sizeof(g_ROSPEC.AntennaIDs));
     LLRP_tSAISpec               AISpec = {
         .hdr.elementHdr.pType   = &LLRP_tdAISpec,
 
         .AntennaIDs = {
-            .nValue                 = sizeof(AntennaIDs)/sizeof(llrp_u16_t),
-            .pValue                 = AntennaIDs
+            .nValue                 = g_ROSPEC._antennaN,
+            .pValue                 = g_ROSPEC.AntennaIDs
         },
         .pAISpecStopTrigger     = &AISpecStopTrigger,
         .listInventoryParameterSpec = &InventoryParameterSpec,
