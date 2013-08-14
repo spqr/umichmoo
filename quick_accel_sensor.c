@@ -1,4 +1,6 @@
 /* See license.txt for license information. */
+#include "mymoo.h"
+#if (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
 
 #include "moo.h"
 #include "rfid.h"
@@ -89,3 +91,5 @@ void read_sensor(unsigned char volatile *target)
   // turn on comparator
   P1OUT |= RX_EN_PIN;
 }
+
+#endif // (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)

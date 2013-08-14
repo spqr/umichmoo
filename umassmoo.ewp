@@ -1799,6 +1799,12 @@
   <file>
     <name>$PROJ_DIR$\sessions.h</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\int_temp_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\int_temp_sensor.h</name>
+  </file>
 </project>
 
 
