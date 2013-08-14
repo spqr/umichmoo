@@ -565,6 +565,9 @@ void handle_ack(volatile short nextState)
 #endif
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
   // after that sends tagResponse
+
+  // to change EPC length, edit ackReply[] and set the second argument to
+  // sendToReader to sizeof(ackReply) * 8 + 1 (e.g., ackReply[16] -> 129)
   sendToReader(&ackReply[0], 129);
   state = nextState;
 }
