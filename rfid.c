@@ -21,7 +21,13 @@ volatile unsigned char cmd[CMD_BUFFER_SIZE+1]; // stored command from reader
 volatile unsigned char queryReply[]= { 0x00, 0x03, 0x00, 0x00};
 
 // ackReply:  First two bytes are the preamble.  Last two bytes are the crc.
-volatile unsigned char ackReply[] = { 0x30, 0x00, EPC, 0x00, 0x00};
+volatile unsigned char ackReply[] = {
+    0x30, // first 5 bits of first byte specify length of EPC in 16-bit words.
+          // e.g., 0x30 == 48 == 96-bit EPC.
+    0x00, // various other preamble bits; sec 6.3.2.1.2.2 of v1.2.0 c1g2 std doc
+    EPC,
+    0x00, 0x00 // 16-bit CRC
+};
 
 unsigned short queryReplyCRC, ackReplyCRC, readReplyCRC;
 
