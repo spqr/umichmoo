@@ -2,6 +2,9 @@
 
 // these bit definitions are specific to Moo 1.0
 
+#ifndef __QUICK_ACCEL_SENSOR_
+#define __QUICK_ACCEL_SENSOR_
+
 #define SENSOR_DATA_TYPE_ID       0x0B
 
 #define ACCEL_ENABLE_BIT          BIT4   // 1.4
@@ -18,3 +21,5 @@ extern unsigned char sensor_busy;
 void init_sensor();
 
 void read_sensor(unsigned char volatile *);
+
+#endif
