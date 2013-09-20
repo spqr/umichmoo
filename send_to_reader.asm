@@ -36,6 +36,7 @@
 // Needed for definition of MILLER_4_ENCODING
 #include "mymoo.h"
 
+
         NAME send_to_reader
 
         RTMODEL "__SystemLibrary", "DLib"
@@ -188,10 +189,16 @@ TACCR0:
 sendToReader:
         CFI Block cfiBlock0 Using cfiCommon0
         CFI Function sendToReader
+        // SEND_CLOCK
         MOV.B   #0x89, &0x57
         MOV.B   #0xc0, &0x56
+        // TACTL &= ~TAIE // Disable TA interrupt
         BIC.W   #0x2, &0x160
+
+        // TAR = 0
         MOV.W   #0x0, &0x170
+
+        // dest = data
         MOV.W   R12, R4               // assign data address to dest
         // Setup timer
         BIS.B   #0x2, &0x26           //  select TIMER_A0
