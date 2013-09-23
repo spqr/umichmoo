@@ -36,7 +36,6 @@
 // Needed for definition of MILLER_4_ENCODING
 #include "mymoo.h"
 
-
         NAME send_to_reader
 
         RTMODEL "__SystemLibrary", "DLib"

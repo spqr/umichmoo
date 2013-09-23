@@ -55,7 +55,7 @@
  ****************  Edit mymoo.h to configure this Moo  *************************
  ******************************************************************************/
 #include "mymoo.h"
-#include "sensor_conf.h"
+#include "sensor.h"
 
 volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 
