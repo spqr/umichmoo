@@ -1,5 +1,5 @@
 
-/* 
+/*
  ***************************************************************************
  * moo_concrete_reader.c was derived from example1.c of the libltkc. As
  * such, the license below is still applicable.
@@ -76,6 +76,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
+#include <sys/time.h>
 #include <errno.h>
 #include <getopt.h>
 #include "ltkc.h"
@@ -600,8 +601,8 @@ void usage (char *pProgName) {
     printf("    ROSpecStopTrigger\n");
     printf("      --ROSpecStopTriggerType <value>: .\n");
     printf("      --ROSpecStopTriggerDuration <value>: .\n\n");
-    
-    printf("  AISpec\n");    
+
+    printf("  AISpec\n");
     printf("    --AntennaID <0,1,2,3,4>: .\n");
     printf("    AISpecStopTrigger\n");
     printf("      --AISpecStopTriggerType <value>: .\n");
@@ -1625,7 +1626,7 @@ void printTagReportData (LLRP_tSRO_ACCESS_REPORT *pRO_ACCESS_REPORT, FILE *fp) {
         NULL != pTagReportData;
         pTagReportData = (LLRP_tSTagReportData *)
                                     pTagReportData->hdr.pNextSubParameter) {
-        printOneTagReportData(pTagReportData, fp); 
+        printOneTagReportData(pTagReportData, fp);
     }
 }
 
@@ -1683,14 +1684,16 @@ void printOneTagReportData (LLRP_tSTagReportData *pTagReportData, FILE *fp) {
         strcpy(aBuf, "---missing-epc-data---");
     }
     // Let's parse it out a bit.
-    time_t rawtime;
     struct tm * timeinfo;
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-    char time_str_out[80];
-    strftime(time_str_out, sizeof(time_str_out), "%D,%T", timeinfo);
+    struct timeval now;
+    char time_str_out_tmp[80], time_str_out[80];
+    gettimeofday(&now, NULL);
+    timeinfo = localtime ( &now.tv_sec );
+	/* Modifying strftime to use microseconds as well */
+    strftime(time_str_out_tmp, sizeof(time_str_out_tmp), "%D,%T.%%06u", timeinfo);
+	snprintf(time_str_out, sizeof(time_str_out), time_str_out_tmp, now.tv_usec);
 
-    fprintf(fp, "%s,%s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s\n", time_str_out, aBuf, 2, aBuf+0, 12, aBuf+2, 4, aBuf+2, 4, aBuf+6, 4, aBuf+10, 4, aBuf+14, 2, aBuf+18, 4, aBuf+20);   
+    fprintf(fp, "%s,%s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s,%.*s\n", time_str_out, aBuf, 2, aBuf+0, 12, aBuf+2, 4, aBuf+2, 4, aBuf+6, 4, aBuf+10, 4, aBuf+14, 2, aBuf+18, 4, aBuf+20);
     fflush(fp);
     printf("%-32s", aBuf);
 
@@ -1725,7 +1728,7 @@ void handleReaderEventNotification (LLRP_tSReaderEventNotificationData *pNtfData
         handleAntennaEvent(pAntennaEvent, fp);
         nReported++;
     }
-    
+
     pReaderExceptionEvent =
         LLRP_ReaderEventNotificationData_getReaderExceptionEvent(pNtfData);
     if(NULL != pReaderExceptionEvent) {
