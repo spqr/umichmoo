@@ -51,8 +51,8 @@ void read_sensor(unsigned char volatile *target)
   ADC12CTL0 |= ENC;
   ADC12CTL0 |= ADC12SC;
   while (ADC12CTL1 & ADC12BUSY);    // wait while ADC finished work
-  ackReply[4] = (ADC12MEM0 & 0xff);
-  ackReply[3] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
+  target[1] = (ADC12MEM0 & 0xff);
+  target[0] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
 
   // GRAB DATA
   ADC12CTL0 &= ~ENC; // make sure this is off otherwise settings are locked.
@@ -62,8 +62,8 @@ void read_sensor(unsigned char volatile *target)
   ADC12CTL0 |= ENC;
   ADC12CTL0 |= ADC12SC;
   while (ADC12CTL1 & ADC12BUSY);    // wait while ADC finished work
-  ackReply[6] = (ADC12MEM0 & 0xff);
-  ackReply[5] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
+  target[3] = (ADC12MEM0 & 0xff);
+  target[2] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
 
   // GRAB DATA
   ADC12CTL0 &= ~ENC; // make sure this is off otherwise settings are locked.
@@ -73,8 +73,8 @@ void read_sensor(unsigned char volatile *target)
   ADC12CTL0 |= ENC;
   ADC12CTL0 |= ADC12SC;
   while (ADC12CTL1 & ADC12BUSY);    // wait while ADC finished work
-  ackReply[8] = (ADC12MEM0 & 0xff);
-  ackReply[7] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
+  target[5] = (ADC12MEM0 & 0xff);
+  target[4] = (ADC12MEM0 & 0x0f00) >> 8; // grab msb bits and store it
 
   // Power off sensor and adc
   P1DIR &= ~ACCEL_POWER;
@@ -85,8 +85,8 @@ void read_sensor(unsigned char volatile *target)
 
   // Store sensor read count
   sensor_counter++;
-  ackReply[10] = (sensor_counter & 0x00ff);
-  ackReply[9]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
+  target[7] = (sensor_counter & 0x00ff);
+  target[6]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
 
   // turn on comparator
   P1OUT |= RX_EN_PIN;
