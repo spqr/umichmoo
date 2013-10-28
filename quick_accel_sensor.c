@@ -19,7 +19,8 @@ void read_sensor(unsigned char volatile *target)
   // turn off comparator
   P1OUT &= ~RX_EN_PIN;
 
-  // slow down clock
+  // slow down clock to around .13MHz
+  // (0.13MHz from graph on page 168 of Newnes MSP430 Microcontroller Basics)
   BCSCTL1 = XT2OFF + RSEL1; // select internal resistor (still has effect when
                             // DCOR=1)
   DCOCTL = DCO1+DCO0; // set DCO step.
@@ -39,7 +40,9 @@ void read_sensor(unsigned char volatile *target)
 
   // a little time for regulator to stabilize active mode current AND
   // filter caps to settle.
-  for(int i = 0; i < 225; i++);
+  // About 10.4ms, by oscilliscope measurement.
+  // 3 instructions per cycle * i_MAX * 0.0077037 to calculate loop time (in ms)
+  for(int i = 0; i < 360; i++);
   RECEIVE_CLOCK;
 
   // GRAB DATA
