@@ -1,6 +1,10 @@
 #ifndef __DIGITAL_ACCEL_MOO_INTERFACE_
 #define __DIGITAL_ACCEL_MOO_INTERFACE_
 
+#include "digital_accel_sensor.h"
+
+#define SENSOR_DATA_TYPE_ID       0x0E
+
 extern unsigned char sensor_busy;
 
 void init_sensor();
