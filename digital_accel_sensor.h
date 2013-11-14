@@ -4,27 +4,14 @@
 
 #ifndef __DIGITAL_ACCEL_SENSOR_
 #define __DIGITAL_ACCEL_SENSOR_
-
-#define SENSOR_DATA_TYPE_ID       0x0D
-
-#define DIGITAL_ACCEL_POWER       BIT4   // Pin 1.4
-
-/*
- * Clock should be between 1 MHz and 5 MHz, according to the spec
- */
-#define DIGITAL_ACCEL_CLK         BIT0   // Pin 3.0 - UCA0CLK
-#define DIGITAL_ACCEL_MOSI        BIT4   // Pin 3.4 - UCA0SIMO
-#define DIGITAL_ACCEL_MISO        BIT5   // Pin 3.5 - UCA0SOMI
-#define DIGITAL_ACCEL_SEL         BIT6   // Pin 3.6 - GPIO 3.6
-#define DIGITAL_ACCEL_INT1        BIT1   // Pin 6.1
-#define DIGITAL_ACCEL_INT2        BIT0   // Pin 6.0
+#include "board.h"
 
 /*
  * ADXL 362 SPI commands, should be sent as first byte of SPI command
  */
 #define DIGITAL_ACCEL_WRITE       ((uint8_t) 0x0A)
 #define DIGITAL_ACCEL_READ        ((uint8_t) 0x0B)
-#define DIGITAL_ACCEL_READ_FIFO   ((uint8_t) 0x0D)
+#define DIGITAL_ACCEL_READ_FIFO   ((uint8_t) 0x0D) // @TODO: Support this!
 /* MSP430 requires data to be written to receive data, so we use dummy byte */
 #define DIGITAL_ACCEL_DUMMY       ((uint8_t) 0xFF)
 
@@ -68,14 +55,22 @@
 
 /*
  * Data for configuring the ADXL 362 filter register
+ * DIGITAL_ACCEL_REG_FILTER_CTL
  */
 enum EDigitalAccelRange {
+  /*
+   * Sets the range for the Digital Accelerometer. The range is set between
+   * +-2g's, +-4g, or +-8g
+   */
   EDigitalAccelRange_2g = 0x0,
   EDigitalAccelRange_4g = 0x1,
   EDigitalAccelRange_8g = 0x2,
-}
+};
 
 enum EDigitalAccelOdr {
+  /*
+   * Sets the frequency that we update the acclerometer information.
+   */
   EDigitalAccelOdr_12Hz = 0x0,
   EDigitalAccelOdr_25Hz = 0x1,
   EDigitalAccelOdr_50Hz = 0x2,
@@ -87,15 +82,26 @@ enum EDigitalAccelOdr {
 #define DIGITAL_ACCEL_FILT_HALF_BW 16
 #define DIGITAL_ACCEL_FILT_EXT_SAMPLE 8
 
+/* END DIGITAL_ACCEL_REG_FILTER_CTL */
+
 /*
  * Data for controlling the ADXL 362 power register
  */
 enum EDigitalAccelMode {
+  /*
+   * Standby mode is the default mode. It's low power and the accelerometer
+   * neither measures or send measurements.
+   * Measurement mode is used to actually measure accelerometer data.
+   */
   EDigitalAccelMode_Standby      =  0x0,
   EDigitalAccelMode_Measurement  =  0x2
 };
 
 enum EDigitalAccelLowNoise {
+  /*
+   * How much noise do you want to remove from the signal? This setting, using
+   * more power, removes noise from the reading
+   */
   EDigitalAccelLowNoise_normal    =  0x0,
   EDigitalAccelLowNoise_low       =  0x1,
   EDigitalAccelLowNoise_ultralow  =  0x2,
