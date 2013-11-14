@@ -36,6 +36,8 @@
     #include "quick_accel_sensor.h"
   #elif (ACTIVE_SENSOR == SENSOR_ACCEL)
     #include "accel_sensor.h"
+  #elif (ACTIVE_SENSOR == SENSOR_DIGITAL_ACCEL)
+    #include "digital_accel_moo_interface.h"
   #elif (ACTIVE_SENSOR == SENSOR_INTERNAL_TEMP)
     #include "int_temp_sensor.h"
   #elif (ACTIVE_SENSOR == SENSOR_EXTERNAL_TEMP)

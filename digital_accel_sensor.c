@@ -22,7 +22,7 @@ void digital_accel_setup_pins() {
 	/* Configure UCA0* Pins */
 	P3SEL |= DIGITAL_ACCEL_CLK + DIGITAL_ACCEL_MOSI + DIGITAL_ACCEL_MISO;
 	P3SEL &= ~(DIGITAL_ACCEL_SEL); // Non-standard select pin by design
-	P3DIR |= DIGITAL_ACCEL_SEL;    // Again, setting up non-standard sel pin
+	P3DIR &= ~(DIGITAL_ACCEL_SEL);    // Again, setting up non-standard sel pin
 	/* End configure UCA0* Pins */
 }
 
@@ -37,7 +37,7 @@ void digital_accel_power_on() {
 	P1OUT |= DIGITAL_ACCEL_POWER;
 }
 
-void digital_aceel_power_off() {
+void digital_accel_power_off() {
 	P1OUT &= ~(DIGITAL_ACCEL_POWER);
 }
 
@@ -53,7 +53,7 @@ void digital_accel_init() {
 	 *   - CPHA = 0/CKPH = 1
 	 * See http://www.ti.com/lit/ug/slau144j/slau144j.pdf page 445 for details
 	 */
-	UCA0CTL0 = UCCKPH + UCMSB + UCMST + USYNC;
+	UCA0CTL0 = UCCKPH + UCMSB + UCMST + UCSYNC;
 	/*
 	 * Setup for:
 	 *   - Clock: SMCLK
@@ -71,19 +71,19 @@ void digital_accel_init() {
   /*
    * Take SPI driver on MSP430 out of reset
    */
-  UCA0CTL1 &= ~(UCSWRT);
+  UCA0CTL1 &= ~(UCSWRST);
 }
 
 void digital_accel_set_power(enum EDigitalAccelMode mode, enum EDigitalAccelLowNoise noise, uint8_t flags) {
   uint8_t data;
   data = (uint8_t) mode + (uint8_t) (noise << 4) + flags;
-  digital_accel_write_addres(DIGITAL_ACCEL_REG_POWER_CTL, data);
+  digital_accel_write_address(DIGITAL_ACCEL_REG_POWER_CTL, data);
 }
 
 void digital_accel_set_filter(enum EDigitalAccelRange range, enum EDigitalAccelOdr odr, uint8_t flags) {
   uint8_t data;
   data = (uint8_t) (range << 6) + (uint8_t) odr + flags;
-  digital_accel_write_addres(DIGITAL_ACCEL_REG_FILTER_CTL, data);
+  digital_accel_write_address(DIGITAL_ACCEL_REG_FILTER_CTL, data);
 }
 
 void digital_accel_write_address(uint8_t address, uint8_t byte) {
@@ -100,9 +100,9 @@ void digital_accel_read_burst(uint8_t start_address, uint8_t * data, uint8_t len
   uint8_t i;
   _digital_accel_spi_select();
   _digital_accel_blocking_tx(DIGITAL_ACCEL_READ);
-  _digital_accel_blocking_tx(address);
+  _digital_accel_blocking_tx(start_address);
   for(i = 0; i < len; i++) {
-    digital_accel_blocking_rx();
+    _digital_accel_blocking_rx();
     data[i] = UCA0RXBUF;
   }
   _digital_accel_spi_deselect();
@@ -112,11 +112,11 @@ void digital_accel_write_burst(uint8_t start_address, uint8_t * data, uint8_t le
   uint8_t i;
   _digital_accel_spi_select();
   _digital_accel_blocking_tx(DIGITAL_ACCEL_WRITE);
-  _digital_accel_blocking_tx(address);
+  _digital_accel_blocking_tx(start_address);
   for(i = 0; i < len; i++) {
-    digital_accel_blocking_tx(data[i]);
+    _digital_accel_blocking_tx(data[i]);
   }
-  _digital_accel_spi_deselect():
+  _digital_accel_spi_deselect();
 }
 
 static void _digital_accel_blocking_tx(uint8_t data) {
@@ -132,9 +132,12 @@ static void _digital_accel_blocking_rx() {
 }
 
 static void _digital_accel_spi_select() {
-  P3OUT |= DIGITAL_ACCEL_SEL;
+  /* CS is active low */
+  P3OUT &= ~(DIGITAL_ACCEL_SEL);
+
 }
 
 static void _digital_accel_spi_deselect() {
-  P3OUT &= ~(DIGITAL_ACCEL_SEL);
+  /* CS is active low */
+  P3OUT |= DIGITAL_ACCEL_SEL;
 }

@@ -5,6 +5,7 @@
 #ifndef __DIGITAL_ACCEL_SENSOR_
 #define __DIGITAL_ACCEL_SENSOR_
 #include "board.h"
+#include "inttypes.h"
 
 /*
  * ADXL 362 SPI commands, should be sent as first byte of SPI command
@@ -74,7 +75,7 @@ enum EDigitalAccelOdr {
   EDigitalAccelOdr_12Hz = 0x0,
   EDigitalAccelOdr_25Hz = 0x1,
   EDigitalAccelOdr_50Hz = 0x2,
-  EDigitalAccelOdr_100Hz = 0x3
+  EDigitalAccelOdr_100Hz = 0x3,
   EDigitalAccelOdr_200Hz = 0x4,
   EDigtal_AccelOdr_400Hz = 0x4,
 };
@@ -137,7 +138,7 @@ void digital_accel_power_on();
 /*
  * Turns off the accelerometer.
  */
-void digital_aceel_power_off();
+void digital_accel_power_off();
 
 /*
  * Initializes the SPI interface for the accelerometer.
@@ -162,7 +163,6 @@ void digital_accel_set_power(enum EDigitalAccelMode, enum EDigitalAccelLowNoise,
  * Set the filter register to values that are appropriate
  */
 void digital_accel_set_filter(enum EDigitalAccelRange range, enum EDigitalAccelOdr odr, uint8_t flags); 
-
 void digital_accel_write_address(uint8_t address, uint8_t byte); 
 uint8_t digital_accel_read_address(uint8_t address); 
 void digital_accel_read_burst(uint8_t start_address, uint8_t * data, uint8_t len); 
