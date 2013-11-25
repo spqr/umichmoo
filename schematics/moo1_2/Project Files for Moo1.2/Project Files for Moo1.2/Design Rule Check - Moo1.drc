@@ -1,0 +1,56 @@
+Protel Design System Design Rule Check
+PCB File : H:\Private\SPQR - Summer Research 2013\Moo1.2_100313\Moo1.2.PcbDoc
+Date     : 10/25/2013
+Time     : 5:48:32 PM
+
+Processing Rule : Room Sensors (Bounding Region = (0mil, 0mil, 2000mil, 1000mil) (Disabled)(InComponentClass('Sensors'))
+Rule Violations :0
+
+Processing Rule : Room Moo_Top (Bounding Region = (0mil, 0mil, 2000mil, 1000mil) (Disabled)(InComponentClass('Moo_Top'))
+Rule Violations :0
+
+Processing Rule : Room Digital_1 (Bounding Region = (0mil, 0mil, 2000mil, 1000mil) (Disabled)(InComponentClass('Digital_1'))
+Rule Violations :0
+
+Processing Rule : Room AFE (Bounding Region = (0mil, 0mil, 2000mil, 1000mil) (Disabled)(InComponentClass('AFE'))
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=7mil) ((OnLayer('Bottom Layer') OR OnLayer('Top Layer'))),(All)
+Rule Violations :0
+
+Processing Rule : Hole Size Constraint (Min=1mil) (Max=100mil) (All)
+Rule Violations :0
+
+Processing Rule : Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=6mil) (Max=78mil) (Preferred=8mil) (All)
+Rule Violations :0
+
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=20mil) (Conductor Width=10mil) (Air Gap=10mil) (Entries=4) (All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=10mil) ((OnLayer('GND_Plane') OR OnLayer('Signal_Layer'))),(All)
+Rule Violations :0
+
+Processing Rule : Un-Routed Net Constraint ( (All) )
+Rule Violations :0
+
+Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=10mil) (isVia),((OnLayer('GND_Plane') OR OnLayer('Signal_Layer')))
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=7mil) (isVia),((OnLayer('Bottom Layer') OR OnLayer('Top Layer')))
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=10mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=7mil) (isVia or isPad),(isVia or isPad)
+Rule Violations :0
+
+
+Violations Detected : 0
+Time Elapsed        : 00:00:01

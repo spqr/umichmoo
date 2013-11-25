@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: Moo1.2.PcbDoc   10/25/2013  5:59:35 PM
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Moo1.2.TXT
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        8mil (0.2032mm)          Round          47               4.65 Inch (118.04 mm)
+T2        10mil (0.254mm)          Round          8                1.89 Inch (48.11 mm)
+T3        12mil (0.3048mm)         Round          2                0.51 Inch (13.05 mm)
+T4        16mil (0.4064mm)         Round          1                0.00 Inch (0.00 mm)
+T5        20mil (0.508mm)          Round          5                1.55 Inch (39.38 mm)
+T6        23.62mil (0.59995mm)     Round          42               3.19 Inch (80.98 mm)
+T7        40mil (1.016mm)          Round          2                0.14 Inch (3.59 mm)
+T8        47.24mil (1.1999mm)      Round          2                0.20 Inch (5.10 mm)
+---------------------------------------------------------------------------
+Totals                                            109              12.14 Inch (308.24 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
