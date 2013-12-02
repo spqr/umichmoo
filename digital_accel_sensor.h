@@ -1,6 +1,6 @@
 /* See license.txt for license information. */
 
-// these bit definitions are specific to Moo 1.2
+/* Moo power information. */
 
 #ifndef __DIGITAL_ACCEL_SENSOR_
 #define __DIGITAL_ACCEL_SENSOR_
@@ -169,5 +169,11 @@ void digital_accel_write_address(uint8_t address, uint8_t byte);
 uint8_t digital_accel_read_address(uint8_t address); 
 void digital_accel_read_burst(uint8_t start_address, uint8_t * data, uint8_t len); 
 void digital_accel_write_burst(uint8_t start_address, uint8_t * data, uint8_t len); 
+
+/* For SPI interrupt based transactions */
+void digital_accel_spi_start(uint8_t op, uint8_t address, uint8_t * data, uint16_t len);
+uint8_t digital_accel_spi_in_use();
+uint8_t digital_accel_spi_complete();
+void digital_accel_spi_buf_mark_read();
 
 #endif
