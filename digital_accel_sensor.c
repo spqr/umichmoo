@@ -22,7 +22,7 @@ void digital_accel_setup_pins() {
 	/* Configure UCA0* Pins */
 	P3SEL |= DIGITAL_ACCEL_CLK + DIGITAL_ACCEL_MOSI + DIGITAL_ACCEL_MISO;
 	P3SEL &= ~(DIGITAL_ACCEL_SEL); // Non-standard select pin by design
-	P3DIR &= ~(DIGITAL_ACCEL_SEL);    // Again, setting up non-standard sel pin
+	P3DIR |= DIGITAL_ACCEL_SEL;    // Again, setting up non-standard sel pin
 	/* End configure UCA0* Pins */
 }
 
@@ -62,10 +62,10 @@ void digital_accel_init() {
 	UCA0CTL1 |= UCSSEL_2;
 
   /*
-   * Clock divider = /2
+   * Clock divider = /1
    * Clock must be between 1MHz and 5MHz, per the ADXL362 spec
    */
-  UCA0BR0 = 0x02;                           // /2
+  UCA0BR0 = 0x01;                           // /1
   UCA0BR1 = 0;                              //
 
   /*
@@ -139,5 +139,6 @@ static void _digital_accel_spi_select() {
 
 static void _digital_accel_spi_deselect() {
   /* CS is active low */
-  P3OUT |= DIGITAL_ACCEL_SEL;
+
+	P3OUT |= DIGITAL_ACCEL_SEL;
 }

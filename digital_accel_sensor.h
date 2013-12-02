@@ -53,6 +53,8 @@
 #define  DIGITAL_ACCEL_REG_FILTER_CTL      ((uint8_t)  0x2C)
 #define  DIGITAL_ACCEL_REG_POWER_CTL       ((uint8_t)  0x2D)
 #define  DIGITAL_ACCEL_REG_SELF_TEST       ((uint8_t)  0x2E)
+	 
+#define  DIGITAL_ACCEL_DATA_READY_MASK     0x01
 
 /*
  * Data for configuring the ADXL 362 filter register

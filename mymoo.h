@@ -39,7 +39,7 @@
 #define SENSOR_DIGITAL_ACCEL          6
 
 // Choose Active Sensor:
-#define ACTIVE_SENSOR                 SENSOR_INTERNAL_TEMP
+#define ACTIVE_SENSOR                 SENSOR_DIGITAL_ACCEL
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 4: set EPC and TID identifiers (optional)
-#define MOO_ID 0x00, 0x08
+#define MOO_ID 0x00, 0x12
 #define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, \
     MOO_VERSION, MOO_ID
 #define TID_DESIGNER_ID_AND_MODEL_NUMBER  0xFF, 0xF0, 0x01

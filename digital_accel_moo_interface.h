@@ -3,7 +3,7 @@
 
 #include "digital_accel_sensor.h"
 
-#define SENSOR_DATA_TYPE_ID       0x0E
+#define SENSOR_DATA_TYPE_ID       0x12
 
 extern unsigned char sensor_busy;
 
