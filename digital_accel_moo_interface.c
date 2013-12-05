@@ -12,19 +12,18 @@ void init_sensor() {
 	digital_accel_setup_pins();
 	digital_accel_init();
 	digital_accel_power_on();
+	/* Need to wait 5ms to power on. In the worse case, we're running at 4.75MHz
+	 * so we need to wait, so 4.75MHz*5ms = 23750 cycles
+	 */
+	__delay_cycles(23750);
 	digital_accel_set_filter(EDigitalAccelRange_4g, EDigitalAccelOdr_50Hz, 0);
 	digital_accel_set_power(EDigitalAccelMode_Measurement,
-                            EDigitalAccelLowNoise_normal,
+                            EDigitalAccelLowNoise_low,
                             0);
 }
 
 void read_sensor(unsigned char volatile *target) {
 	int i;
-	digital_accel_power_on();
-	digital_accel_set_filter(EDigitalAccelRange_4g, EDigitalAccelOdr_50Hz, 0);
-	digital_accel_set_power(EDigitalAccelMode_Measurement,
-                            EDigitalAccelLowNoise_normal,
-                            0);
 	
 	/* We need to reverse the endianess of our data. X/Y/Z data is all two bytes,
 	 * stored big endian form Accel, but we need it little endian

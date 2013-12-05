@@ -100,9 +100,11 @@
   P5DIR = FLASH_CE | FLASH_SIMO | FLASH_SCK; \
   P8DIR = CRYSTAL_OUT;
 
+ /* Between 1.6MHz and 3.0 MHz (from datasheet) */
 #define SEND_CLOCK  \
   BCSCTL1 = XT2OFF + RSEL3 + RSEL0 ; \
     DCOCTL = DCO2 + DCO1 ;
+/* Between 2.60MHz and 4.75MHz (from datasheet + datasheet equations) */
 #define RECEIVE_CLOCK \
   BCSCTL1 = XT2OFF + RSEL3 + RSEL1 + RSEL0; \
   DCOCTL = 0; \
