@@ -2015,6 +2015,12 @@
     <name>$PROJ_DIR$\states.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\temp_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\temp_sensor.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\timerA1_isr.asm</name>
   </file>
 </project>
