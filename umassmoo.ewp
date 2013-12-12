@@ -3047,9 +3047,15 @@
   </file>
   <file>
     <name>$PROJ_DIR$\temp_sensor.c</name>
+    <excluded>
+      <configuration>TEST_ACCEL</configuration>
+    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\temp_sensor.h</name>
+    <excluded>
+      <configuration>TEST_ACCEL</configuration>
+    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\timerA1_isr.asm</name>
