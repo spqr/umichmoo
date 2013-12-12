@@ -13,6 +13,7 @@
 
 void setup_to_receive();
 void sleep();
+void sleep_ms(unsigned short);
 unsigned short is_power_good();
 #if ENABLE_SLOTS
 void lfsr();

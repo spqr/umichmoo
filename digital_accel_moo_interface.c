@@ -3,6 +3,7 @@
 
 #include "digital_accel_moo_interface.h"
 #include "rfid.h" /* sensor_counter */
+#include "moo.h"
 
 #define BUF_SIZE 6
 
@@ -12,10 +13,8 @@ void init_sensor() {
 	digital_accel_setup_pins();
 	digital_accel_init();
 	digital_accel_power_on();
-	/* Need to wait 5ms to power on. In the worse case, we're running at 4.75MHz
-	 * so we need to wait, so 4.75MHz*5ms = 23750 cycles
-	 */
-	__delay_cycles(23750);
+	/* Need to wait 5ms to power on. */
+	sleep_ms(5);
 	digital_accel_set_filter(EDigitalAccelRange_4g, EDigitalAccelOdr_50Hz, 0);
 	digital_accel_set_power(EDigitalAccelMode_Measurement,
                             EDigitalAccelLowNoise_low,
