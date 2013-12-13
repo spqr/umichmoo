@@ -14,19 +14,20 @@ void init_sensor() {
 }
 
 void read_sensor(unsigned char volatile *target) {
-  unsigned int i;
-
   // setup ADC to read external analog temperature sensor
   ADC12CTL0 &= ~ENC;                              // make sure this is off otherwise settings are locked.
   P6SEL |= TEMP_EXT_IN;                           // Enable A/D channel A4
-  ADC12CTL0 = ADC12ON + SHT0_2 + REFON + REF2_5V; // Turn on and set up ADC12
+  ADC12CTL0 = ADC12ON + SHT0_2 + REFON; // Turn on and set up ADC12
   ADC12CTL1 = SHP;                                // Use sampling timer
   ADC12MCTL0 = INCH_TEMP_EXT_IN + SREF_1;         // Vr+=Vref+
 
-  // turn on temperature sensor and allow it at least 0.7-0.8 ms to stabilize
+  // turn on temperature sensor and allow it at least 1 ms to stabilize
+  /* Spec says to wait longer than 1 ms, but lab testing shows that the data is
+   * fairly accurate at 1 ms, and I don't want to sleep too long.
+   */
   P1DIR |= TEMP_POWER;
   P1OUT |= TEMP_POWER;
-  for (i = 0; i != 100; ++i);
+  sleep_ms(1);
 
   ADC12CTL0 |= ENC | ADC12SC;    // enable and start conversion
   _BIC_SR(GIE);                  // disable interrupts while busy-waiting on ADC
