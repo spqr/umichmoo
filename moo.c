@@ -636,6 +636,38 @@ inline void sleep()
   return;
 }
 
+void sleep_ms(unsigned short delay)
+{
+	_BIC_SR(GIE); /* Disable all interrupts so we can setup sleep */
+	
+	/* Disable all interrupts */
+	P1IE = 0;
+	P2IE = 0;
+	
+	/* Setup timer B, compare */
+	TBCCTL0 = CCIE;
+	/* ACLK at 32768 Hz, this converts to ms */
+	/* 4096/125 = 32.768 */
+	TBCCR0 = (unsigned short) (((unsigned int) (delay) * 4096) / 125);
+	/**
+	 * Setup timer B, with capture 0.
+	 * MC_1 - Count up to TBCCR0
+	 * TBSSEL_1 - We use the ACLK as our clock
+	 * TBCLR - Reset the clock to TBR == 0
+	 */
+	TBCTL = MC_1 + TBSSEL_1 + TBCLR;
+	_BIS_SR(LPM3_bits + GIE);
+}
+
+// Timer B0 interrupt service routine
+#pragma vector=TIMERB0_VECTOR
+__interrupt void Timer_B (void)
+{
+	TBCCTL0 = 0; /* Disable interrupts from timer B */
+	TBCCTL0 &= ~CCIFG; /* Clear interrupt */
+	LPM3_EXIT;
+}
+
 unsigned short is_power_good()
 {
   return P2IN & VOLTAGE_SV_PIN;
