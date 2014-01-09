@@ -35,8 +35,10 @@
 #define SENSOR_EXTERNAL_TEMP          4
 // use "0A" comm statistics
 #define SENSOR_COMM_STATS             5
-// use "OD" for digital accelerometer
+// use "12" for digital accelerometer
 #define SENSOR_DIGITAL_ACCEL          6
+// use "14" for simple counter
+#define SENSOR_SIMPLE                 7
 
 // Choose Active Sensor:
 #define ACTIVE_SENSOR                 SENSOR_DIGITAL_ACCEL

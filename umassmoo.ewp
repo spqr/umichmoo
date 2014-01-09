@@ -3043,6 +3043,12 @@
     </excluded>
   </file>
   <file>
+    <name>$PROJ_DIR$\simple_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\simple_sensor.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\states.h</name>
   </file>
   <file>

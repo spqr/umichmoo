@@ -46,6 +46,8 @@
     #include "null_sensor.h"
   #elif (ACTIVE_SENSOR == SENSOR_COMM_STATS)
 	#error "SENSOR_COMM_STATS not yet implemented"
+  #elif (ACTIVE_SENSOR == SENSOR_SIMPLE)
+    #include "simple_sensor.h"
   #endif
 #endif
 
