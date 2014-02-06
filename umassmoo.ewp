@@ -2996,13 +2996,6 @@
     <name>$PROJ_DIR$\mymoo.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\port1_isr.asm</name>
-    <excluded>
-      <configuration>Debug</configuration>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
     <name>$PROJ_DIR$\quick_accel_sensor.c</name>
     <excluded>
       <configuration>Debug</configuration>
