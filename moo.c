@@ -668,6 +668,41 @@ void sleep_ms(unsigned short delay)
 	_BIS_SR(LPM3_bits + GIE);
 }
 
+//*************************************************************************
+//************************ PORT 1 INTERRUPT *******************************
+
+// warning   :  Whenever the clock frequency changes, the value of TAR should be
+//              changed in aesterick lines
+// Pin Setup :  P1.2
+// Description : Port 1 interrupt is used as finding delimeter.
+
+#pragma vector=PORT1_VECTOR
+__interrupt void Port1_ISR(void)   // (5-6 cycles) to enter interrupt
+{
+  unsigned int timer_count = TAR;
+  P1IFG = 0x00;       // 4 cycles
+  TAR = 0;            // 4 cycles
+  LPM4_EXIT;
+  
+  if (bits == 0) {
+    TAR = 0;
+	P1IES |= 0x04; /* @TODO: Fix this to more readable. Change to neg edge triggered */
+	bits++;
+	return;
+  }
+  bits = 0;
+  
+  if (timer_count < 0x010 || timer_count > 0x040) {
+    P1IES &= ~0x04;
+	bits = 0;
+	delimiterNotFound = 1;
+	return;
+  }
+  P1IE = 0;
+  TACCTL1 |= CM1 + CCIE;
+  P1SEL = 0x04;
+}
+
 // Timer B0 interrupt service routine
 #pragma vector=TIMERB0_VECTOR
 __interrupt void Timer_B (void)
