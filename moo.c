@@ -137,6 +137,10 @@ int main(void)
   queryReplyCRC = crc16_ccitt(&queryReply[0],2);
   queryReply[3] = (unsigned char)queryReplyCRC;
   queryReply[2] = (unsigned char)__swap_bytes(queryReplyCRC);
+  
+  writeReplyCRC = crc16_ccitt(&writeReply[0],3);
+  writeReply[3] = (unsigned char)queryReplyCRC;
+  writeReply[2] = (unsigned char)__swap_bytes(queryReplyCRC);
 #endif
 
 #if SENSOR_DATA_IN_ID
@@ -483,6 +487,11 @@ int main(void)
           handle_read(STATE_OPEN);
           // note: setup_to_receive() et al handled in handle_read
         }
+		if ( bits >= MIN_NUM_WRITE_BITS && ( cmd[0] == 0xC3 ) )
+		{
+			handle_write(STATE_OPEN);
+			setup_to_receive();
+		}
         //////////////////////////////////////////////////////////////////////
         // process the REQUEST_RN command
         //////////////////////////////////////////////////////////////////////

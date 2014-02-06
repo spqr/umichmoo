@@ -23,6 +23,7 @@
 #define MAX_NUM_READ_BITS       60
 #endif
 #define MAX_NUM_QUERY_BITS      25
+#define MIN_NUM_WRITE_BITS      58
 #define NUM_QUERYADJ_BITS       9
 #define NUM_QUERYREP_BITS       5
 #define MAX_NUM_QUERYADJ_BITS   9
@@ -39,7 +40,7 @@ extern unsigned short linkFrequency;
 extern unsigned char subcarrierNum;
 extern unsigned char TRext;
 extern unsigned char delimiterNotFound;
-extern unsigned short ackReplyCRC, queryReplyCRC, readReplyCRC;
+extern unsigned short ackReplyCRC, queryReplyCRC, readReplyCRC, writeReplyCRC;
 extern unsigned short Q;
 extern unsigned short slot_counter;
 extern unsigned short shift;
@@ -60,6 +61,7 @@ extern volatile unsigned char cmd[CMD_BUFFER_SIZE+1]; // stored cmd from reader
 
 extern volatile unsigned char queryReply[];
 extern volatile unsigned char ackReply[];
+extern volatile unsigned char writeReply[];
 extern volatile unsigned char tid[];
 extern volatile unsigned char usermem[];
 extern volatile unsigned char readReply[];
@@ -84,6 +86,7 @@ void handle_ack (volatile short nextState);
 void handle_request_rn (volatile short nextState);
 void handle_read (volatile short nextState);
 void handle_nak (volatile short nextState);
+void handle_write (volatile short nextState);
 void do_nothing ();
 
 #endif // RFID_H

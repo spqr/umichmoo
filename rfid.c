@@ -3,6 +3,7 @@
 #include "moo.h"
 #include "rfid.h"
 #include "mymoo.h"
+#include <inttypes.h>
 
 unsigned short Q = 0;
 unsigned short slot_counter = 0;
@@ -29,7 +30,9 @@ volatile unsigned char ackReply[] = {
     0x00, 0x00 // 16-bit CRC
 };
 
-unsigned short queryReplyCRC, ackReplyCRC, readReplyCRC;
+volatile unsigned char writeReply[5];
+
+unsigned short queryReplyCRC, ackReplyCRC, readReplyCRC, writeReplyCRC;
 
 // first 8 bits are the EPCGlobal identifier, followed by a 12-bit tag designer
 // identifer (made up), followed by a 12-bit model number
@@ -656,6 +659,38 @@ void handle_read(volatile short nextState)
 #endif
 }
 
+void handle_write(short nextState)
+{
+	static int last_led_change = 0;
+	uint16_t data = 0;
+	TACCTL1 &= ~CCIE;
+	TAR = 0;
+	
+	data = ((cmd[2] << 10) & 0xFC00);
+	data += (cmd[3] << 2) & 0x03FC;
+	data += (cmd[4] >> 6) & 0x0003;
+	data ^= 0x0003;
+	if (data == 0xDEAD) {
+		if (last_led_change == 0) {
+			P4DIR |= 0x04;
+			P4OUT ^= 0x04;
+			last_led_change = 10;
+		}
+		else {
+			last_led_change--;
+		}
+	}
+	/* 1 bit for failed/success + 16 bits for handle + 
+	 * 16 bits for RN, add one to number of bits for xmit code
+	 */
+	/* Write reply is 33 bits, so make the last 7 bits 0 just in case */
+	writeReply[4] &= 0x80;
+	writeReply[0] = 0x80; /* Set the first bit to 1 to show success */
+	
+	sendToReader(&writeReply[0], 1 + 16 + 16 + 1);
+	state = nextState;	
+}
+
 void handle_nak(volatile short nextState)
 {
   TACCTL1 &= ~CCIE;
@@ -668,4 +703,31 @@ void do_nothing()
   TACCTL1 &= ~CCIE;
   TAR = 0;
   //P1OUT &= ~RX_EN_PIN;   // turn off comparator
+}
+
+int ebv8_to_int(unsigned char * buf, short * size) {
+	int ret = 0;
+	unsigned char stop = 0;
+	*size = 0;
+	/* An extensible bit vector is formated in byte increments. The MSB of each
+	 * is 0 if this is the last byte, or 1 if there is another byte. See Annex A
+	 * of the uhfc1g2 spec for more information
+	 */
+	while (!stop) {
+		if (buf[*size] & 0x80) {
+			stop = 1;
+		}
+		/* Check to see if we overflow */
+		/* " + 1" is becausing we're assured the number is positive */
+		if (*size * 7 + 1 >= sizeof(int) * 8) {
+			goto err;
+		}
+		ret <<= 7;
+		ret |= buf[*size++] & 0xCF; /* 0b0111 1111, take only 7 bits */
+	}
+	return ret;
+	
+err:
+	*size = 0;
+	return -1;
 }
