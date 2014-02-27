@@ -19,7 +19,7 @@ void init_sensor() {
 	digital_accel_set_power(EDigitalAccelMode_Measurement,
                             EDigitalAccelLowNoise_low,
                             0);
-	//digital_accel_set_interrupt(EDigitalAccelInt_Int1, DIGITAL_ACCEL_INT_SOURCE_DATA_READY);
+	digital_accel_set_interrupt(EDigitalAccelInt_Int1, DIGITAL_ACCEL_INT_SOURCE_DATA_READY);
 }
 
 void read_sensor(unsigned char volatile *target) {
@@ -39,7 +39,7 @@ void read_sensor(unsigned char volatile *target) {
   		target[6]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
   	}
 	
-	if (!digital_accel_spi_in_use() && (digital_accel_read_address(DIGITAL_ACCEL_REG_STATUS) & DIGITAL_ACCEL_DATA_READY_MASK)) {
+	if (!digital_accel_spi_in_use() && (P2IN & BIT1)) {
 		digital_accel_spi_start(DIGITAL_ACCEL_READ, DIGITAL_ACCEL_REG_XDATA_L, buf, BUF_SIZE);
 	}
 }

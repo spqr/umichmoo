@@ -179,6 +179,11 @@ void digital_accel_setup_pins();
 void digital_accel_set_power(enum EDigitalAccelMode, enum EDigitalAccelLowNoise, uint8_t flags);
 
 /*
+ * Set the interrupt, to make the digital accel turn on an interrupt
+ */
+void digital_accel_set_interrupt(enum EDigitalAccelInt interrupt, uint8_t source);
+
+/*
  * Set the filter register to values that are appropriate
  */
 void digital_accel_set_filter(enum EDigitalAccelRange range, enum EDigitalAccelOdr odr, uint8_t flags); 

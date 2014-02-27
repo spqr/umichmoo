@@ -10,6 +10,7 @@
 unsigned char sensor_busy = 0;
 
 void init_sensor() {
+	ADC12CTL0 = ADC12ON + SHT0_2 + REFON; // Turn on and set up ADC12
   return;
 }
 
@@ -17,7 +18,7 @@ void read_sensor(unsigned char volatile *target) {
   // setup ADC to read external analog temperature sensor
   ADC12CTL0 &= ~ENC;                              // make sure this is off otherwise settings are locked.
   P6SEL |= TEMP_EXT_IN;                           // Enable A/D channel A4
-  ADC12CTL0 = ADC12ON + SHT0_2 + REFON; // Turn on and set up ADC12
+  //ADC12CTL0 = ADC12ON + SHT0_2;// + REFON; // Turn on and set up ADC12
   ADC12CTL1 = SHP;                                // Use sampling timer
   ADC12MCTL0 = INCH_TEMP_EXT_IN + SREF_1;         // Vr+=Vref+
 
