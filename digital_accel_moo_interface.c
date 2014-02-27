@@ -14,7 +14,7 @@ void init_sensor() {
 	digital_accel_init();
 	digital_accel_power_on();
 	/* Need to wait 5ms to power on. */
-	sleep_ms(5);
+	__delay_cycles(5*3000);
 	digital_accel_set_filter(EDigitalAccelRange_4g, EDigitalAccelOdr_50Hz, 0);
 	digital_accel_set_power(EDigitalAccelMode_Measurement,
                             EDigitalAccelLowNoise_low,

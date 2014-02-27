@@ -44,8 +44,10 @@
 //            is reset to 'A' with every reset at the top of the while loop.
 //******************************************************************************
 
-#if(MOO_VERSION != MOO1_1)
+#if(MOO_VERSION != MOO1_2)
   #error "Moo version not supported"
+#elseif (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
+  #error "Moo 1.2 has new digital accelerometer. Use sensor SENSOR_DIGITAL_ACCEL"
 #endif
 
 #include "moo.h"
@@ -72,7 +74,6 @@ volatile __no_init __regvar unsigned char* dest @ 4;
 // count of bits received from reader
 volatile __no_init __regvar unsigned short bits @ 5;
 unsigned short TRcal=0;
-
 int i;
 
 int main(void)
@@ -609,7 +610,7 @@ static inline void setup_to_receive()
   P1IFG = 0;  // Clear interrupt flag
 
   P1IE  |= RX_PIN; // Enable Port1 interrupt
-  _BIS_SR(LPM4_bits | GIE);
+  __low_power_mode_4();
   return;
 }
 
@@ -631,41 +632,9 @@ inline void sleep()
   if (is_power_good())
     P2IFG = VOLTAGE_SV_PIN;
 
-  _BIS_SR(LPM4_bits | GIE);
+  __low_power_mode_4();
 
   return;
-}
-
-void sleep_ms(unsigned short delay)
-{
-	_BIC_SR(GIE); /* Disable all interrupts so we can setup sleep */
-	
-	/* Disable all interrupts */
-	P1IE = 0;
-	P2IE = 0;
-	
-	/* Setup timer B, compare */
-	TBCCTL0 = CCIE;
-	/* ACLK at 32768 Hz, this converts to ms */
-	/* 4096/125 = 32.768 */
-	TBCCR0 = (unsigned short) (((unsigned int) (delay) * 4096) / 125);
-	/**
-	 * Setup timer B, with capture 0.
-	 * MC_1 - Count up to TBCCR0
-	 * TBSSEL_1 - We use the ACLK as our clock
-	 * TBCLR - Reset the clock to TBR == 0
-	 */
-	TBCTL = MC_1 + TBSSEL_1 + TBCLR;
-	_BIS_SR(LPM3_bits + GIE);
-}
-
-// Timer B0 interrupt service routine
-#pragma vector=TIMERB0_VECTOR
-__interrupt void Timer_B (void)
-{
-	TBCCTL0 = 0; /* Disable interrupts from timer B */
-	TBCCTL0 &= ~CCIFG; /* Clear interrupt */
-	LPM3_EXIT;
 }
 
 unsigned short is_power_good()
