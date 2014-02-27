@@ -110,6 +110,23 @@ enum EDigitalAccelLowNoise {
   EDigitalAccelLowNoise_ultralow  =  0x2,
 };
 
+enum EDigitalAccelInt {
+	/*
+	 * Select between interrupt 1 and interrupt 2
+	 */
+	EDigitalAccelInt_Int1        = 0x1,
+	EDigitalAccelInt_Int2        = 0x2,
+};
+
+#define  DIGITAL_ACCEL_INT_SOURCE_NONE             (0x0)
+#define  DIGITAL_ACCEL_INT_SOURCE_DATA_READY       (0x1 << 0)
+#define  DIGITAL_ACCEL_INT_SOURCE_FIFO_READY       (0x1 << 1)
+#define  DIGITAL_ACCEL_INT_SOURCE_FIFO_WATERMARK   (0x1 << 2)
+#define  DIGITAL_ACCEL_INT_SOURCE_FIFO_OVERRUN     (0x1 << 3)
+#define  DIGITAL_ACCEL_INT_SOURCE_ACT              (0x1 << 4)
+#define  DIGITAL_ACCEL_INT_SOURCE_INACT            (0x1 << 5)
+#define  DIGITAL_ACCEL_INT_SOURCE_AWAKE            (0x1 << 6)
+#define  DIGITAL_ACCEL_INT_SOURCE_INT_LOW          (0x1 << 7)
 
 #define  DIGITAL_ACCEL_POWER_AUTOSLEEP  4
 #define  DIGITAL_ACCEL_POWER_WAKEUP     8

@@ -19,6 +19,7 @@ void init_sensor() {
 	digital_accel_set_power(EDigitalAccelMode_Measurement,
                             EDigitalAccelLowNoise_low,
                             0);
+	//digital_accel_set_interrupt(EDigitalAccelInt_Int1, DIGITAL_ACCEL_INT_SOURCE_DATA_READY);
 }
 
 void read_sensor(unsigned char volatile *target) {

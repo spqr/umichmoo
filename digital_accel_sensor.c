@@ -174,6 +174,15 @@ void digital_accel_init() {
 	UCA0CTL1 &= ~(UCSWRST);
 }
 
+void digital_accel_set_interrupt(enum EDigitalAccelInt interrupt, uint8_t source) {
+	if (interrupt == EDigitalAccelInt_Int1) {
+		digital_accel_write_address(DIGITAL_ACCEL_REG_INTMAP1, source);
+	}
+	else {
+		digital_accel_write_address(DIGITAL_ACCEL_REG_INTMAP2, source);
+	}
+}
+
 void digital_accel_set_power(enum EDigitalAccelMode mode, enum EDigitalAccelLowNoise noise, uint8_t flags) {
 	uint8_t data;
 	data = (uint8_t) mode + (uint8_t) (noise << 4) + flags;
