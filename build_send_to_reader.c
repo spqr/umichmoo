@@ -2,8 +2,8 @@
 #include "rfid.h"
 #include "mymoo.h"
 
-extern volatile __no_init __regvar unsigned char* dest @ 4;
-extern volatile __no_init __regvar unsigned short bits @ 5;
+LOCK_REG(4, extern volatile unsigned char* dest);
+LOCK_REG(5, extern volatile unsigned short bits);
 
 //
 //

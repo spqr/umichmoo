@@ -2,6 +2,7 @@
 
 #include "moo.h"
 #include "flash.h"
+#include "compiler.h"
 
 unsigned char spi_iodata;
 
@@ -97,8 +98,7 @@ void extflash_erase_segment (unsigned long addr) {
     for (i = 0; i < 7500; ++i);
 }
 
-#pragma vector=USCIAB1RX_VECTOR
-__interrupt void USCIB1RX_ISR (void) {
+ISR(USCIAB1RX_VECTOR, USCIB1RX_ISR) {
     if (UC1IFG & UCB1RXIFG)
         spi_iodata = UCB1RXBUF;
 }

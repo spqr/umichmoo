@@ -46,6 +46,7 @@
 
 #include "moo.h"
 #include "rfid.h"
+#include "compiler.h"
 
 /*******************************************************************************
  ****************  Edit mymoo.h to configure this Moo  *************************
@@ -64,11 +65,11 @@ volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 
 // compiler uses working register 4 as a global variable
 // Pointer to &cmd[bits]
-volatile __no_init __regvar unsigned char* dest @ 4;
+LOCK_REG(4, volatile unsigned char* dest);
 
 // compiler uses working register 5 as a global variable
 // count of bits received from reader
-volatile __no_init __regvar unsigned short bits @ 5;
+LOCK_REG(5, volatile unsigned short bits);
 unsigned short TRcal=0;
 int i;
 
@@ -646,8 +647,7 @@ unsigned short is_power_good()
 // Pin Setup :
 // Description : Port 2 interrupt wakes on power good signal from supervisor.
 
-#pragma vector=PORT2_VECTOR
-__interrupt void Port2_ISR(void)   // (5-6 cycles) to enter interrupt
+ISR(PORT2_VECTOR,Port2_ISR)   // (5-6 cycles) to enter interrupt
 {
   P2IFG = 0x00;
   P2IE = 0;       // Interrupt disable
@@ -661,12 +661,7 @@ __interrupt void Port2_ISR(void)   // (5-6 cycles) to enter interrupt
   LPM4_EXIT;
 }
 
-#if USE_2618
-#pragma vector=TIMERA0_VECTOR
-#else
-#pragma vector=TIMERA0_VECTOR
-#endif
-__interrupt void TimerA0_ISR(void)   // (5-6 cycles) to enter interrupt
+ISR(TIMERA0_VECTOR,TimerA0_ISR)   // (5-6 cycles) to enter interrupt
 {
   TACTL = 0;    // have to manually clear interrupt flag
   TACCTL0 = 0;  // have to manually clear interrupt flag

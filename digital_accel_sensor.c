@@ -1,6 +1,7 @@
 #include "digital_accel_sensor.h"
 #include "inttypes.h"
 #include "board.h"
+#include "compiler.h"
 
 #define _ACCEL_SPI_BUF_SIZE 64
 static struct {
@@ -108,13 +109,11 @@ void _digital_accel_continue_spi(void) {
 	}
 }
 
-#pragma vector=USCIAB0RX_VECTOR
-__interrupt void _digital_accel_read_int(void) {
+ISR(USCIAB0RX_VECTOR,_digital_accel_read_int) {
 	_digital_accel_continue_spi();
 }
 
-#pragma vector=USCIAB0TX_VECTOR
-__interrupt void _digital_accel_write_int(void) {
+ISR(USCIAB0TX_VECTOR,_digital_accel_write_int) {
 	_digital_accel_continue_spi();
 }
 

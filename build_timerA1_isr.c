@@ -1,8 +1,9 @@
 #include "moo.h"
 #include "rfid.h"
 #include "mymoo.h"
+#include "compiler.h"
 
-extern volatile __no_init __regvar unsigned short bits @ 5;
+LOCK_REG(5, extern volatile unsigned short bits);
 extern unsigned short TRcal;
 
 // This is needed to make the inline assembly compile properly w/ this symbol
@@ -17,12 +18,7 @@ void timera1_isr_decls()
 // Pin Setup :  P1.2
 // Description :
 
-#if USE_2618
-#pragma vector=TIMERA1_VECTOR
-#else
-#pragma vector=TIMERA1_VECTOR
-#endif
-__interrupt void TimerA1_ISR(void)   // (6 cycles) to enter interrupt
+ISR(TIMERA1_VECTOR, TimerA1_ISR)   // (6 cycles) to enter interrupt
 {
 
     asm("MOV TACCR1, R7");  // move TACCR1 to R7(count) register (3 CYCLES)

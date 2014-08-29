@@ -1,6 +1,7 @@
 #include "moo.h"
 #include "rfid.h"
 #include "mymoo.h"
+#include "compiler.h"
 
 // This is needed to make the inline assembly compile properly w/ these symbols
 void port1_isr_decls()
@@ -19,8 +20,7 @@ void port1_isr_decls()
 // Pin Setup :  P1.2
 // Description : Port 1 interrupt is used as finding delimeter.
 
-#pragma vector=PORT1_VECTOR
-__interrupt void Port1_ISR(void)   // (5-6 cycles) to enter interrupt
+ISR(PORT1_VECTOR, Port1_ISR)   // (5-6 cycles) to enter interrupt
 {
 
 
