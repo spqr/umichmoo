@@ -1,0 +1,67 @@
+1. Install the compiler for cross compiling
+
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install g++-4.9 gcc-4.9
+(http://askubuntu.com/questions/428198/getting-installing-gcc-g-4-9-on-ubuntu)
+
+2. Install tools required for cross compiling
+sudo apt-get install libgmp3-dev libmpfr-dev libisl-dev libcloog-isl-dev libmpc-dev
+(http://wiki.osdev.org/GCC_Cross-Compiler)
+
+3. Setup build environmnet
+mkdir -p $HOME/opt/cross
+mkdir -p $HOME/src
+
+export PREFIX="$HOME/opt/cross"
+export TARGET=msp430-elf
+export PATH="$PREFIX/bin:$PATH"
+
+
+4. Build Binutils
+cd $HOME/src
+wget ftp://sourceware.org/pub/binutils/snapshots/binutils-2.24.51.tar.bz2
+tar xvf binutils-2.24.51.tar.bz2
+mkdir build_binutils_msp430
+cd build_binutils_msp430
+CC=/usr/bin/gcc-4.9 CXX=/usr/bin/g++-4.9 ../binutils-2.24.51/configure --prefix=${PREFIX} --target=${TARGET}
+make -j8
+make install
+cd ..
+
+5. Build GCC
+wget http://mirror.csclub.uwaterloo.ca/gnu/gcc/gcc-4.9.1/gcc-4.9.1.tar.bz2
+tar xvf gcc-4.9.1.tar.bz2
+mkdir build_gcc_msp430
+cd build_gcc_msp430
+CC=/usr/bin/gcc-4.9 CXX=/usr/bin/g++-4.9 ../gcc-4.9.1/configure --prefix=${PREFIX} --target=${TARGET} --with-newlib --enable-languages=c,c++
+make all-host -j8
+make install-host
+cd ..
+
+6. Build Newlib
+wget ftp://sourceware.org/pub/newlib/newlib-2.1.0.tar.gz
+tar xvf newlib-2.1.0.tar.gz
+mkdir build_newlib_msp430
+cd build_newlib_msp430
+CC=/usr/bin/gcc-4.9 CXX=/usr/bin/g++-4.9 ../newlib-2.1.0/configure --prefix=${PREFIX} --target=${TARGET} --disable-newlib-supplied-syscalls --enable-newlib-reent-small --disable-newlib-fvwrite-in-streamio --disable-newlib-fseek-optimization --disable-newlib-wide-orient --enable-newlib-nano-malloc --disable-newlib-unbuf-stream-opt --enable-lite-exit --enable-newlib-global-atexit --disable-nls
+make
+make install
+cd ..
+
+7. Build GCC round 2
+cd build_gcc_msp430
+make all-target
+make install-target
+cd ..
+
+8. Build GDB
+wget http://ftp.gnu.org/gnu/gdb/gdb-7.8.tar.xz
+tar xvf gdb-7.8.tar.xz
+mkdir build_gdb_msp430
+cd build_gdb_msp430
+CC=/usr/bin/gcc-4.9 CXX=/usr/bin/g++-4.9 ../gdb-7.8/configure --prefix=${PREFIX} --target=${TARGET}
+make
+make install
+
+
