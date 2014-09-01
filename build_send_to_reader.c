@@ -1,9 +1,10 @@
 #include "moo.h"
 #include "rfid.h"
 #include "mymoo.h"
+#include "compiler.h"
 
-LOCK_REG(4, extern volatile unsigned char* dest);
-LOCK_REG(5, extern volatile unsigned short bits);
+LOCK_REG(4, volatile unsigned char* dest);
+LOCK_REG(5, unsigned short bits);
 
 //
 //
@@ -32,7 +33,7 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 
   TAR = 0;
   TACCTL0 = OUTMOD2; // RESET MODE
-  
+
   BCSCTL2 |= DIVM_1;
 
 /*******************************************************************************
