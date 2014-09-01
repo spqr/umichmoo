@@ -22,13 +22,7 @@ void port1_isr_decls()
 
 ISR(PORT1_VECTOR, Port1_ISR)   // (5-6 cycles) to enter interrupt
 {
-
-
-#if USE_2618
   asm("MOV TAR, R7");  // move TAR to R7(count) register (3 CYCLES)
-#else
-  asm("MOV TAR, R7");  // move TAR to R7(count) register (3 CYCLES)
-#endif
   P1IFG = 0x00;       // 4 cycles
   TAR = 0;            // 4 cycles
   LPM4_EXIT;
@@ -45,11 +39,7 @@ ISR(PORT1_VECTOR, Port1_ISR)   // (5-6 cycles) to enter interrupt
                                     // 43H
   asm("JC  delimiter_Value_Is_wrong\n");
   asm("CLR P1IE");
-#if USE_2618
   asm("BIS #8010h, TACCTL1\n");     // (5 cycles)   TACCTL1 |= CM1 + CCIE
-#else
-  asm("BIS #8010h, TACCTL1\n");     // (5 cycles)   TACCTL1 |= CM1 + CCIE
-#endif
   asm("MOV #0004h, P1SEL\n");       // enable TimerA1    (4 cycles)
   asm("RETI\n");
 
@@ -60,13 +50,8 @@ ISR(PORT1_VECTOR, Port1_ISR)   // (5-6 cycles) to enter interrupt
   asm("RETI");
 
   asm("bit_Is_Zero_In_Port_Int:\n");                 // bits == 0
-#if USE_2618
   asm("MOV #0000h, TAR\n");     // reset timer (4 cycles)
-#else
-  asm("MOV #0000h, TAR\n");     // reset timer (4 cycles)
-#endif
   asm("BIS #0004h, P1IES\n");   // 4 cycles  change port interrupt edge to neg
   asm("INC R5\n");            // 1 cycle
   asm("RETI\n");
-
 }
