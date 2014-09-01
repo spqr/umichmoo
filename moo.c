@@ -69,7 +69,7 @@ LOCK_REG(4, volatile unsigned char* dest);
 
 // compiler uses working register 5 as a global variable
 // count of bits received from reader
-LOCK_REG(5, volatile unsigned short bits);
+LOCK_REG(5, unsigned short bits);
 unsigned short TRcal=0;
 int i;
 
@@ -574,7 +574,7 @@ int main(void)
 //       because function call causes PUSH instructions prior to bit read
 //       at beginning of interrupt, which screws up timing.  so, remember
 //       to change things in both places.
-static inline void setup_to_receive()
+void setup_to_receive()
 {
   _BIC_SR(GIE); // temporarily disable GIE so we can sleep and enable interrupts
                 // at the same time
