@@ -3,7 +3,7 @@
 #include "mymoo.h"
 #include "compiler.h"
 
-LOCK_REG(5, extern volatile unsigned short bits);
+LOCK_REG(5, volatile unsigned short bits);
 extern unsigned short TRcal;
 
 // This is needed to make the inline assembly compile properly w/ this symbol
