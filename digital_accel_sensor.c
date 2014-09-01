@@ -22,10 +22,10 @@ static struct {
 
 
 /* Private helper functions for this file, all declared static */
-void _digital_accel_blocking_tx(uint8_t data); 
-void _digital_accel_blocking_rx(); 
-void _digital_accel_spi_select();
-void _digital_accel_spi_deselect(); 
+static void _digital_accel_blocking_tx(uint8_t data);
+static void _digital_accel_blocking_rx();
+static void _digital_accel_spi_select();
+static void _digital_accel_spi_deselect();
 /* End private helper functions */
 
 void digital_accel_spi_start(uint8_t op, uint8_t address, uint8_t * data, uint16_t len) {
@@ -106,6 +106,10 @@ void _digital_accel_continue_spi(void) {
 				UCA0TXBUF = DIGITAL_ACCEL_DUMMY;
 			}
 		}
+	case EDigitalAccelStateComplete:
+		/* @TODO Assert, this should never happen */
+		break;
+
 	}
 }
 
@@ -128,7 +132,7 @@ void digital_accel_setup_pins() {
 	P1SEL &= ~(DIGITAL_ACCEL_POWER); // Set P1.4 to GPIO
 	P1DIR |= DIGITAL_ACCEL_POWER;    // Set Pin direction to output
 	/* End Accelerometer Power Setup */
-	
+
 	/* Configure UCA0* Pins */
 	P3SEL |= DIGITAL_ACCEL_CLK + DIGITAL_ACCEL_MOSI + DIGITAL_ACCEL_MISO;
 	P3SEL &= ~(DIGITAL_ACCEL_SEL); // Non-standard select pin by design
