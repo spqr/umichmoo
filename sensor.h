@@ -51,4 +51,10 @@
   #endif
 #endif
 
+#if (MOO_VERSION == MOO1_2 && ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
+#error No Analog Accelermeter on the Moo 1.2
+#elif (MOO_VERSION == MOO1_1 && ACTIVE_SENSOR == SENSOR_DIGITAL_ACCEL)
+#error No Digital Accel on the Moo1.1
+#endif
+
 #endif //SENSOR_CONF_H

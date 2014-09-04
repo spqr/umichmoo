@@ -44,12 +44,6 @@
 //            is reset to 'A' with every reset at the top of the while loop.
 //******************************************************************************
 
-#if(MOO_VERSION != MOO1_2)
-  #error "Moo version not supported"
-#elseif (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
-  #error "Moo 1.2 has new digital accelerometer. Use sensor SENSOR_DIGITAL_ACCEL"
-#endif
-
 #include "moo.h"
 #include "rfid.h"
 

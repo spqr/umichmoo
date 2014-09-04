@@ -2,6 +2,7 @@
 
 #ifndef MYMOO_H
 #define MYMOO_H
+#include "version.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 1: pick an application
@@ -47,9 +48,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Step 2: pick a reader and moo hardware
 // make sure this syncs with project target
-#define MOO1_1                        0x11
-#define MOO1_2                        0x12
-#define MOO_VERSION                   MOO1_2
 #define IMPINJ_READER                 1
 ////////////////////////////////////////////////////////////////////////////////
 
