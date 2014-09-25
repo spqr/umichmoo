@@ -2206,11 +2206,11 @@
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\DLIB\dl430xsfn.h</state>
+          <state>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state>$TOOLKIT_DIR$\LIB\DLIB\dl430xsfn.r43</state>
+          <state>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</state>
         </option>
         <option>
           <name>Input variant</name>
@@ -2566,7 +2566,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -2946,7 +2946,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\lnk430F2618.xcl</state>
+          <state>$TOOLKIT_DIR$\config\linker\lnk430F2618.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -3346,6 +3346,12 @@
   </file>
   <file>
     <name>$PROJ_DIR$\simple_sensor.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\spi_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\spi_sensor.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\states.h</name>

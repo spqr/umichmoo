@@ -40,9 +40,11 @@
 #define SENSOR_DIGITAL_ACCEL          6
 // use "14" for simple counter
 #define SENSOR_SIMPLE                 7
+// use "16" for spi data
+#define SENSOR_SPI                    8
 
 // Choose Active Sensor:
-#define ACTIVE_SENSOR                 SENSOR_DIGITAL_ACCEL
+#define ACTIVE_SENSOR                 SENSOR_SPI
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +79,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Step 4: set EPC and TID identifiers (optional)
-#define MOO_ID 0x12, 0x00
+#define MOO_ID 0x12, 0x1A
 #define EPC   0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, \
     MOO_VERSION, MOO_ID
 #define TID_DESIGNER_ID_AND_MODEL_NUMBER  0xFF, 0xF0, 0x01
