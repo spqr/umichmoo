@@ -4,17 +4,27 @@
 #include "mymoo.h"
 #include "rfid.h"
 #include "temp_sensor.h"
+#include "sensor.h"
 
-#if (ACTIVE_SENSOR == SENSOR_EXTERNAL_TEMP)
+static int init_sensor();
+static void read_temp_sensor(unsigned char volatile *target, unsigned long len);
 
-unsigned char sensor_busy = 0;
+static const struct sensor temp_sensor = {
+	.sensor_id = 0x0E,
+	.name      = "Temp",
+	.init      = init_sensor,
+	.read      = read_temp_sensor
+};
 
-void init_sensor() {
+sensor_init(temp_sensor);
+
+
+static int init_sensor() {
 	ADC12CTL0 = ADC12ON + SHT0_2 + REFON; // Turn on and set up ADC12
-  return;
+	return 0;
 }
 
-void read_sensor(unsigned char volatile *target) {
+static void read_temp_sensor(unsigned char volatile *target, unsigned long len) {
   // setup ADC to read external analog temperature sensor
   ADC12CTL0 &= ~ENC;                              // make sure this is off otherwise settings are locked.
   P6SEL |= TEMP_EXT_IN;                           // Enable A/D channel A4
@@ -43,8 +53,6 @@ void read_sensor(unsigned char volatile *target) {
   
   // Store sensor read count. I assume this should be after reenabling interrupts.
   sensor_counter++;                              
-  ackReply[10] = (sensor_counter & 0x00ff);      
-  ackReply[9]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
+  ackReply[8] = (sensor_counter & 0x00ff);      
+  ackReply[7]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
 }
-
-#endif

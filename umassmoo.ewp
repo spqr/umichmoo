@@ -54,7 +54,7 @@
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\DLIB\dl430xsfn.h</state>
+          <state>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
@@ -1130,11 +1130,11 @@
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\DLIB\dl430xsfn.h</state>
+          <state>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state>$TOOLKIT_DIR$\LIB\DLIB\dl430xsfn.r43</state>
+          <state>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</state>
         </option>
         <option>
           <name>Input variant</name>
@@ -1866,11 +1866,11 @@
         </option>
         <option>
           <name>XclOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\lnk430F2618.xcl</state>
+          <state>C:\Users\mark\moo\moo_mark\lnk430f2618.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2388,11 +2388,11 @@
         </option>
         <option>
           <name>CCPreprocComments</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCPreprocLine</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCFile</name>
@@ -2509,7 +2509,7 @@
         </option>
         <option>
           <name>IExtraOptionsCheck</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IExtraOptions</name>
@@ -2914,7 +2914,7 @@
         </option>
         <option>
           <name>XList</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>SegmentMap</name>
@@ -2942,11 +2942,11 @@
         </option>
         <option>
           <name>XclOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\lnk430F2618.xcl</state>
+          <state>C:\Users\mark\moo\moo_mark\lnk430f2618.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -3274,6 +3274,8 @@
     <name>$PROJ_DIR$\int_temp_sensor.c</name>
     <excluded>
       <configuration>TEST_ACCEL</configuration>
+      <configuration>Moo1.1-Debug</configuration>
+      <configuration>Moo1.2-Debug</configuration>
     </excluded>
   </file>
   <file>
@@ -3327,6 +3329,9 @@
     </excluded>
   </file>
   <file>
+    <name>$PROJ_DIR$\sensor.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\sensor.h</name>
   </file>
   <file>
@@ -3343,6 +3348,10 @@
   </file>
   <file>
     <name>$PROJ_DIR$\simple_sensor.c</name>
+    <excluded>
+      <configuration>Moo1.1-Debug</configuration>
+      <configuration>Moo1.2-Debug</configuration>
+    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\simple_sensor.h</name>
@@ -3354,6 +3363,8 @@
     <name>$PROJ_DIR$\temp_sensor.c</name>
     <excluded>
       <configuration>TEST_ACCEL</configuration>
+      <configuration>Moo1.1-Debug</configuration>
+      <configuration>Moo1.2-Debug</configuration>
     </excluded>
   </file>
   <file>

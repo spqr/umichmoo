@@ -18,8 +18,4 @@
 
 extern unsigned char sensor_busy;
 
-void init_sensor();
-
-void read_sensor(unsigned char volatile *);
-
 #endif

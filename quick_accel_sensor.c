@@ -1,19 +1,32 @@
 /* See license.txt for license information. */
 #include "mymoo.h"
-#if (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
-
+#include "sensor.h"
 #include "moo.h"
 #include "rfid.h"
 #include "quick_accel_sensor.h"
 
-unsigned char sensor_busy = 0;
+#if MOO_VERSION != MOO1_1
+#error "Unsupported moo version. Must be version 1.1"
+#endif
 
-void init_sensor()
+static int init_sensor();
+static void read_accel_sensor(unsigned char volatile *target, unsigned long len);
+
+static const struct sensor accel_sensor = {
+	.sensor_id = 0x0B,
+	.name      = "Accel",
+	.init      = init_sensor,
+	.read      = read_accel_sensor
+};
+
+sensor_init(accel_sensor);
+
+static int init_sensor()
 {
-  return;
+  return 0;
 }
 
-void read_sensor(unsigned char volatile *target)
+static void read_accel_sensor(unsigned char volatile *target, unsigned long len)
 {
 
   // turn off comparator
@@ -94,5 +107,3 @@ void read_sensor(unsigned char volatile *target)
   // turn on comparator
   P1OUT |= RX_EN_PIN;
 }
-
-#endif // (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)

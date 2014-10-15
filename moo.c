@@ -52,6 +52,8 @@
  ******************************************************************************/
 #include "mymoo.h"
 #include "sensor.h"
+#include <assert.h>
+#include <intrinsics.h>
 
 volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 
@@ -125,7 +127,7 @@ int main(void)
   // dest = destorig;
 
 #if READ_SENSOR
-  init_sensor();
+	init_sensors();
 #endif
 
 #if !(ENABLE_SLOTS)
@@ -136,7 +138,6 @@ int main(void)
 
 #if SENSOR_DATA_IN_ID
   // this branch is for sensor data in the id
-  ackReply[2] = SENSOR_DATA_TYPE_ID;
   state = STATE_READ_SENSOR;
   timeToSample++;
 #else
@@ -543,13 +544,15 @@ int main(void)
     case STATE_READ_SENSOR:
       {
 #if SENSOR_DATA_IN_READ_COMMAND
-        read_sensor(&readReply[0]);
+        read_sensor(&readReply[0], 8, null);
         // crc is computed in the read state
         RECEIVE_CLOCK;
         state = STATE_READY;
         delimiterNotFound = 1; // reset
 #elif SENSOR_DATA_IN_ID
-        read_sensor(&ackReply[3]);
+		uint8_t id;
+		read_sensor(&ackReply[3], 8, &id);
+		ackReply[2] = id;
         RECEIVE_CLOCK;
         ackReplyCRC = crc16_ccitt(&ackReply[0], 14);
         ackReply[15] = (unsigned char)ackReplyCRC;

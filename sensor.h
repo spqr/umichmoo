@@ -7,6 +7,35 @@
 #include "sessions.h"
 #endif
 
+#include <inttypes.h>
+
+struct sensor {
+	uint8_t sensor_id;
+	const char * name;
+	int (*init)(void);
+	void (*read)(unsigned char volatile * target, unsigned long size);
+};
+
+#pragma segment="SENSOR_INIT_I" __data16
+#pragma segment="SENSOR_SPACE" __data16
+
+#define __init_call     _Pragma("location=\"SENSOR_INIT_I\"")
+#define __sensor_space  _Pragma("diag_suppress=Be033") _Pragma("location=\"SENSOR_SPACE\"")
+#define __initcall(x) \
+__init_call __root static const struct sensor * const __initstruct_##x  = &(x); \
+__sensor_space __root static const struct sensor * __space_struct_##x;
+#define sensor_init(x)  __initcall(x);
+
+void init_sensors();
+void read_sensor(unsigned char volatile * target, unsigned long read, uint8_t *sensor_id);
+const struct sensor * getSensorByName(const char *,int);
+const struct sensor * getSensorById(uint8_t,int);
+const struct sensor ** getSensorIter();
+const struct sensor **getSensorNext(const struct sensor **);
+
+#define ALL_SENSORS 0
+#define ACTIVE_SENSORS 1
+
 
 #if SIMPLE_QUERY_ACK
 #define ENABLE_READS                  0
@@ -27,34 +56,6 @@
 #define ENABLE_READS                  1
 #define READ_SENSOR                   1
 #pragma message ("compiling sensor data in read command application")
-#endif
-
-
-
-#if READ_SENSOR
-  #if (ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
-    #include "quick_accel_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_ACCEL)
-    #include "accel_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_DIGITAL_ACCEL)
-    #include "digital_accel_moo_interface.h"
-  #elif (ACTIVE_SENSOR == SENSOR_INTERNAL_TEMP)
-    #include "int_temp_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_EXTERNAL_TEMP)
-	#include "temp_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_NULL)
-    #include "null_sensor.h"
-  #elif (ACTIVE_SENSOR == SENSOR_COMM_STATS)
-	#error "SENSOR_COMM_STATS not yet implemented"
-  #elif (ACTIVE_SENSOR == SENSOR_SIMPLE)
-    #include "simple_sensor.h"
-  #endif
-#endif
-
-#if (MOO_VERSION == MOO1_2 && ACTIVE_SENSOR == SENSOR_ACCEL_QUICK)
-#error No Analog Accelermeter on the Moo 1.2
-#elif (MOO_VERSION == MOO1_1 && ACTIVE_SENSOR == SENSOR_DIGITAL_ACCEL)
-#error No Digital Accel on the Moo1.1
 #endif
 
 #endif //SENSOR_CONF_H

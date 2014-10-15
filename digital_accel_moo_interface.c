@@ -1,15 +1,32 @@
 #include "mymoo.h"
-#if (ACTIVE_SENSOR == SENSOR_DIGITAL_ACCEL)
+#include "sensor.h"
 
 #include "digital_accel_moo_interface.h"
 #include "rfid.h" /* sensor_counter */
 #include "moo.h"
 
+#if MOO_VERSION != MOO1_2
+#error "Unsupported moo version. Must be version 1.2"
+#endif
+
+
 #define BUF_SIZE 6
 
 static uint8_t buf[BUF_SIZE];
 
-void init_sensor() {
+static int init_sensor();
+static void read_accel_sensor(unsigned char volatile *target, unsigned long len);
+
+static const struct sensor da_sensor = {
+	.sensor_id = 0x12,
+	.name      = "Digital_Accel",
+	.init      = init_sensor,
+	.read      = read_accel_sensor
+};
+
+sensor_init(da_sensor);
+
+static int init_sensor() {
 	digital_accel_setup_pins();
 	digital_accel_init();
 	digital_accel_power_on();
@@ -20,9 +37,10 @@ void init_sensor() {
                             EDigitalAccelLowNoise_low,
                             0);
 	digital_accel_set_interrupt(EDigitalAccelInt_Int1, DIGITAL_ACCEL_INT_SOURCE_DATA_READY);
+	return 0;
 }
 
-void read_sensor(unsigned char volatile *target) {
+static void read_accel_sensor(unsigned char volatile *target, unsigned long len) {
 	int i;
 	
 	/* We need to reverse the endianess of our data. X/Y/Z data is all two bytes,
@@ -43,5 +61,3 @@ void read_sensor(unsigned char volatile *target) {
 		digital_accel_spi_start(DIGITAL_ACCEL_READ, DIGITAL_ACCEL_REG_XDATA_L, buf, BUF_SIZE);
 	}
 }
-
-#endif
