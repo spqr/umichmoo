@@ -1,5 +1,5 @@
 #include "mymoo.h"
-#if (ACTIVE_SENSOR == SENSOR_SPI)
+#include "sensor.h"
 
 #include "spi_sensor.h"
 #include "rfid.h" /* sensor_counter */
@@ -26,17 +26,30 @@ static void spi_sensor_spi_enable();
 
 static unsigned int count = 0;
 
-void init_sensor() {
+static int init_sensor();
+static void read_spi_sensor(unsigned char volatile * target, unsigned long read);
+
+static const struct sensor spi_sensor = {
+	.sensor_id = 0x16,
+	.name      = "SPI",
+	.init      = init_sensor,
+	.read      = read_spi_sensor
+};
+
+sensor_init(spi_sensor);
+
+static int init_sensor() {
 	spi_sensor_setup_pins();
 	spi_sensor_init();
 	spi_sensor_spi_enable();
 	spi_sensor_not_ready();
 	count = 0;
+	return 0;
 }
 
 #define MAX_DATA_READY 10
 
-void read_sensor(unsigned char volatile * target) {
+static void read_spi_sensor(unsigned char volatile * target, unsigned long len) {
 	uint8_t old_IE2;
 	target[0] = count++ & 0xFF;
 	static int loop_count; /* Static because something was trashing stack*/
@@ -95,5 +108,3 @@ static void spi_sensor_init() {
 static void spi_sensor_spi_enable() {
 	UCB0CTL1 &= ~(UCSWRST);
 }
-
-#endif
