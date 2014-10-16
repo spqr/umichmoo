@@ -47,15 +47,15 @@ static void read_accel_sensor(unsigned char volatile *target, unsigned long len)
 	 * stored big endian form Accel, but we need it little endian
 	 */
 	if (digital_accel_spi_complete()) {
-		for (i = 0; i < BUF_SIZE / 2; i++) {
-			target[i*2] = buf[i*2 + 1];
-			target[i*2 + 1] = buf[i*2];
-		}
 		digital_accel_spi_buf_mark_read();
 		sensor_counter++;
-  		target[7] = (sensor_counter & 0x00ff);
-  		target[6]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
   	}
+	for (i = 0; i < BUF_SIZE / 2; i++) {
+		target[i*2] = buf[i*2 + 1];
+		target[i*2 + 1] = buf[i*2];
+	}
+	target[7] = (sensor_counter & 0x00ff);
+  	target[6]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
 	
 	if (!digital_accel_spi_in_use() && digital_accel_has_data()) {
 		digital_accel_spi_start(DIGITAL_ACCEL_READ, DIGITAL_ACCEL_REG_XDATA_L, buf, BUF_SIZE);
