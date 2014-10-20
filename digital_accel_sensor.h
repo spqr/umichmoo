@@ -196,6 +196,7 @@ void digital_accel_write_burst(uint8_t start_address, uint8_t * data, uint8_t le
 void digital_accel_spi_start(uint8_t op, uint8_t address, uint8_t * data, uint16_t len);
 uint8_t digital_accel_spi_in_use();
 uint8_t digital_accel_spi_complete();
+uint8_t digital_accel_has_data();
 void digital_accel_spi_buf_mark_read();
 
 #endif

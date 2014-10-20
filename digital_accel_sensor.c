@@ -28,6 +28,7 @@ void _digital_accel_spi_deselect();
 /* End private helper functions */
 
 void digital_accel_spi_start(uint8_t op, uint8_t address, uint8_t * data, uint16_t len) {
+	IE2 &= ~(UCA0TXIE | UCA0RXIE);
 	_accel_spi_state.op = op;
 	_accel_spi_state.address = address;
 	_accel_spi_state.buf = data;
@@ -39,6 +40,16 @@ void digital_accel_spi_start(uint8_t op, uint8_t address, uint8_t * data, uint16
 
 uint8_t digital_accel_spi_in_use() {
 	return _accel_spi_state.state != EDigitalAccelStateWaiting;
+}
+
+uint8_t digital_accel_has_data() {
+	uint8_t data = 0;
+#if MOO_VERSION == MOO1_2
+	data = P6IN & DIGITAL_ACCEL_INT1;
+#else
+	data = P2IN & DIGITAL_ACCEL_INT1;
+#endif
+	return data;
 }
 
 uint8_t digital_accel_spi_complete() {
@@ -124,6 +135,14 @@ void digital_accel_setup_pins() {
 	P3SEL &= ~(DIGITAL_ACCEL_SEL); // Non-standard select pin by design
 	P3DIR |= DIGITAL_ACCEL_SEL;    // Again, setting up non-standard sel pin
 	/* End configure UCA0* Pins */
+	
+#if MOO_VERSION == MOO1_2
+	P6SEL &= ~DIGITAL_ACCEL_INT1;
+	P6DIR &= ~DIGITAL_ACCEL_INT1;
+#else
+	P2SEL &= ~DIGITAL_ACCEL_INT1;
+	P2DIR &= ~DIGITAL_ACCEL_INT1;
+#endif
 }
 
 /*

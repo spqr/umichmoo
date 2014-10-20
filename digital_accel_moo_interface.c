@@ -5,7 +5,7 @@
 #include "rfid.h" /* sensor_counter */
 #include "moo.h"
 
-#if MOO_VERSION != MOO1_2
+#if MOO_VERSION != MOO1_2 && MOO_VERSION != MOO1_2_1
 #error "Unsupported moo version. Must be version 1.2"
 #endif
 
@@ -57,7 +57,7 @@ static void read_accel_sensor(unsigned char volatile *target, unsigned long len)
   		target[6]  = (sensor_counter & 0xff00) >> 8; // grab msb bits and store it
   	}
 	
-	if (!digital_accel_spi_in_use() && (P2IN & BIT1)) {
+	if (!digital_accel_spi_in_use() && digital_accel_has_data()) {
 		digital_accel_spi_start(DIGITAL_ACCEL_READ, DIGITAL_ACCEL_REG_XDATA_L, buf, BUF_SIZE);
 	}
 }

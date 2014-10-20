@@ -6,6 +6,8 @@
 #include "board_1_1.h"
 #elif MOO_VERSION == MOO1_2
 #include "board_1_2.h"
+#elif MOO_VERSION == MOO1_2_1
+#include "board_1_2_1.h"
 #else
 #error "Moo Version Not Supported"
 #endif

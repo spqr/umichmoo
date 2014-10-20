@@ -25,14 +25,14 @@
 
 // Port 2
 //Supervisor in: PCB is designed to P6.7, should wire connect P6.7 and P2.0
-#define  VOLTAGE_SV_PIN  BIT0  //  output/input
-#define  DEBUG_2_1       BIT1  //  output/input
-#define  DEBUG_2_2       BIT2  //  output/input
-#define  IDLE_2_3        BIT3  //  idle          pin
-#define  IDLE_2_4        BIT4  //  idle          pin
-#define  IDLE_2_5        BIT5  //  idle          pin
-#define  IDLE_2_6        BIT6  //  idle          pin
-#define  IDLE_2_7        BIT7  //  idle          pin
+#define  VOLTAGE_SV_PIN       BIT0  //  output/input
+#define  DIGITAL_ACCEL_INT1   BIT1  //  output/input
+#define  DIGITAL_ACCEL_INT2   BIT2  //  output/input
+#define  IDLE_2_3             BIT3  //  idle          pin
+#define  IDLE_2_4             BIT4  //  idle          pin
+#define  IDLE_2_5             BIT5  //  idle          pin
+#define  IDLE_2_6             BIT6  //  idle          pin
+#define  IDLE_2_7             BIT7  //  idle          pin
 
 // Port 3
 #define  DIGITAL_ACCEL_CLK   BIT0  //  output
@@ -65,8 +65,8 @@
 #define DEBUG_5_7      BIT7       // output unless externally driven
 
 // Port 6
-#define  DIGITAL_ACCEL_INT2  BIT0  //  input
-#define  DIGITAL_ACCEL_INT1  BIT1  //  input
+#define  DEBUG_6_0           BIT0  //  input
+#define  DEBUG_6_1           BIT1  //  input
 #define  IDLE_6_2            BIT2  //  input
 #define  TEMP_EXT_IN         BIT3  //  input
 #define  VSENSE_IN           BIT4  //  input
