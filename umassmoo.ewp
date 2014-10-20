@@ -4418,6 +4418,12 @@
     <name>$PROJ_DIR$\sensor.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\sensor_api.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\sensor_read.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\sessions.c</name>
     <excluded>
       <configuration>TEST_ACCEL</configuration>
