@@ -13,3 +13,5 @@ Kickstart (code size limited) edition available from TI.
 * ThingMagic Mercury 5e
 * ThingMagic Mercury 6
 * Michael Buettner's GNU Radio gen2_rfid reader (YMMV)
+
+See README.usage for information on compiling and flashing the moo.
