@@ -1,0 +1,53 @@
+README - Usage
+
+This tutorial covers how to flash the moo. It does not cover how to use a rfid
+reader to read the moo, that is available in this google doc:
+https://docs.google.com/a/umich.edu/document/d/1e1PVkyB6m8gTWLTb3xUzvAxI-aVuz4b3efYd19XbazI/edit
+
+Tools required:
+ - Hardware
+   * MSP-FET: Required to flash moo
+   * Moo JTAG Header: Required to connect MSP-FET to the Moo (this is a
+     custom part built at the University of Michigan that needs to be
+     purchused from the University of Michigan. Alternatively, you could just
+     look at the schematics, and make the part yourself. It's fairly simple.)
+   * A Moo, obviously. At the time of writing this, we only support Moo 1.1
+     and later. If you have an early moo, you'll have to use an earlier git
+     commit to make it work.
+ - Software
+   * IAR MSP430 (At the time of writing this, we are using IAR 6.10.7. We are
+     making progress on a port to GCC which we hope to have done shortly)
+ - Source Code
+   * If you're reading this, you probably already have it, but you'll need the
+     Moo git repo. The master branch will always have the latest stable code.
+
+Steps to Flash your Moo
+
+1. Open IAR Embedded Workbench
+2. File -> Open -> Workspace. Navigate to where the moo source tree is and
+   select the umichmoo.eww file. Click open.
+3. In the left "workspace panel" select which version on the moo you have.
+   Make sure the version number on your moo and in this dropdown match.
+4. Connect your jtag device to your computer and to your moo.
+5. Project -> Download and Debug (or "Ctrl + D").
+6. The debugger will pause on the first line of source code, press the "go"
+   button (three right arrows over a sheet) to let the code run.
+
+Notes on changing sensors:
+By default, the moo runs with only the accelerometer enabled. You can run
+other/multiple sensors by including them in the build. All you need to do is
+right click on the .c file of the sensor you want to use, select "Options" and
+uncheck the box "Exclude from build." Just by including the sensor's .c file
+in the build you make that sensor by queried in a round robin fashion with all
+other sensors that were enabled in the build.
+
+If you don't want to round robin in between available sensors (for example,
+you want to read the accelerometer twice for every time you read the external
+temperature sensor), then you will need to write some code of your own. Open
+the "sensor_read.c" file. There is one function there called "read_sensor".
+The function "read_sensor" gets called everytime we are ready to send data
+back to the reader. The current code there round robins through all the
+sensors. You may modify this function to do whatever you'd like, and should
+use the functions exposed in "sensor_api.h" to get access to the sensor
+structs that you will want to use. This may take a little work. Feel free to
+contact the moo project owners for help here.
