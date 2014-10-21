@@ -1870,7 +1870,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>C:\Users\mark\moo\moo_mark\lnk430f2618.xcl</state>
+          <state>$PROJ_DIR$\lnk430f2618.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2946,7 +2946,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>C:\Users\mark\moo\moo_mark\lnk430f2618.xcl</state>
+          <state>$PROJ_DIR$\lnk430f2618.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -4022,7 +4022,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>C:\Users\mark\moo\moo_mark\lnk430f2618.xcl</state>
+          <state>$PROJ_DIR$\lnk430f2618.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
