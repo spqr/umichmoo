@@ -2,6 +2,8 @@ Debug/
 settings/
 *.dep
 *.ewd
+.*.sw*
+*.o
 /path.txt
 Moo1.1-Debug/
 Moo1.2-Debug/
