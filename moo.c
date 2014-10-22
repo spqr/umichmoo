@@ -60,7 +60,7 @@ volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 // #pragma data_alignment=2 is important in sendResponse() when the words are
 // copied into arrays.  Sometimes the compiler puts reply[0] on an odd address,
 // which cannot be copied as a word and thus screws everything up.
-#pragma data_alignment=2
+// #pragma data_alignment=2
 
 // compiler uses working register 4 as a global variable
 // Pointer to &cmd[bits]

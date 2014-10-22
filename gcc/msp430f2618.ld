@@ -248,7 +248,7 @@ SECTIONS
     PROVIDE (__sensor_space_begin_link = .);
     KEEP (*(SENSOR_SPACE))
     . = ALIGN(2);
-    PROVIDE (__sensor_space_begin_link = .);
+    PROVIDE (__sensor_space_end_link = .);
   } > RAM
   
   .stack (ORIGIN (RAM) + LENGTH(RAM)) :

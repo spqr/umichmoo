@@ -3,6 +3,7 @@
 #include "moo.h"
 #include "rfid.h"
 #include "mymoo.h"
+#include "compiler.h"
 
 unsigned short Q = 0;
 unsigned short slot_counter = 0;
@@ -16,12 +17,12 @@ unsigned char subcarrierNum = 0;
 unsigned char timeToSample = 0;
 unsigned short inInventoryRound = 0;
 volatile short state;
-volatile unsigned char cmd[CMD_BUFFER_SIZE+1]; // stored command from reader
+ALIGN(volatile unsigned char cmd[CMD_BUFFER_SIZE+1], 2); // stored command from reader
 
-volatile unsigned char queryReply[]= { 0x00, 0x03, 0x00, 0x00};
+ALIGN(volatile unsigned char queryReply[],2) = { 0x00, 0x03, 0x00, 0x00};
 
 // ackReply:  First two bytes are the preamble.  Last two bytes are the crc.
-volatile unsigned char ackReply[] = {
+ALIGN(volatile unsigned char ackReply[],2) = {
     0x30, // first 5 bits of first byte specify length of EPC in 16-bit words.
           // e.g., 0x30 == 48 == 96-bit EPC.
     0x00, // various other preamble bits; sec 6.3.2.1.2.2 of v1.2.0 c1g2 std doc
@@ -33,12 +34,12 @@ unsigned short queryReplyCRC, ackReplyCRC, readReplyCRC;
 
 // first 8 bits are the EPCGlobal identifier, followed by a 12-bit tag designer
 // identifer (made up), followed by a 12-bit model number
-volatile unsigned char tid[] = { 0xE2, TID_DESIGNER_ID_AND_MODEL_NUMBER };
+ALIGN(volatile unsigned char tid[],2) = { 0xE2, TID_DESIGNER_ID_AND_MODEL_NUMBER };
 
 // just a one byte placeholder for now
-volatile unsigned char usermem[] = { 0x00 };
+ALIGN(volatile unsigned char usermem[],2) = { 0x00 };
 
-volatile unsigned char readReply[] = {
+ALIGN(volatile unsigned char readReply[],2) = {
     // header - 1 bit - 0 if successful, 1 if error code follows
     // memory words - hardcoded to 16 bits of 0xffff for now
     // rn - 16 bits - hardcoded to 0xf00f for now
