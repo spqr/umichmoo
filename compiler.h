@@ -52,4 +52,39 @@
 #endif
 /* End Pragma Message */
 
+/* Register Sensors */
+#ifdef __GNUC__
+	#define __initcall(x) \
+		static const struct sensor * const __initcall_##x __init_call = &(x); \
+		static const struct sensor * const __space_struct_##x __sensor_space;
+	#define __init_call     __attribute__ ((unused,__section__ ("SENSOR_INIT_I")))
+	#define __sensor_space  __attribute__ ((unused,__section__ ("SENSOR_SPACE")))
+#elif __IAR_SYSTEMS_ICC__
+	#pragma segment="SENSOR_INIT_I" __data16
+	#pragma segment="SENSOR_SPACE" __data16
+	#define __init_call     _Pragma("location=\"SENSOR_INIT_I\"")
+	#define __sensor_space  _Pragma("diag_suppress=Be033") _Pragma("location=\"SENSOR_SPACE\"")
+	#define __initcall(x) \
+		__init_call __root static const struct sensor * const __initstruct_##x  = &(x); \
+		__sensor_space __root static const struct sensor * __space_struct_##x;
+#endif
+/* End Register Sensors */
+#ifdef __GNUC__
+	#define __sensor_init_begin  (const struct sensor **) (&__sensor_init_begin_link)
+	#define __sensor_init_end    (const struct sensor **) (&__sensor_init_end_link)
+	#define __sensor_space_begin (const struct sensor **) (&__sensor_space_begin_link)
+	#define __sensor_space_end   (const struct sensor **) (&__sensor_space_end_link)
+#elif __IAR_SYSTEMS_ICC__
+	#include <intrinsics.h>
+	#define __moo_segment_begin(x) (const struct sensor **) __segment_begin(x)
+	#define __moo_segment_end(x) (const struct sensor **) __segment_end(x)
+	#define __sensor_init_begin  moo_segment_begin("SENSOR_INIT_I")
+	#define __sensor_init_end    moo_segment_end("SENSOR_INIT_I")
+	#define __sensor_space_begin  moo_segment_begin("SENSOR_SPACE")
+	#define __sensor_space_end  moo_segment_end("SENSOR_SPACE")
+#endif
+/* Register Sensors Segments */
+
+/* End Register Sensors Segments */
+
 #endif /*__MOO_COMPILIERS_H__ */

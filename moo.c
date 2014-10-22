@@ -54,7 +54,6 @@
 #include "mymoo.h"
 #include "sensor.h"
 #include <assert.h>
-#include <intrinsics.h>
 
 volatile unsigned char* destorig = &cmd[0]; // pointer to beginning of cmd
 

@@ -2,6 +2,7 @@
 #define __SENSOR_API_H_
 
 #include <inttypes.h>
+#include "compiler.h"
 
 /**
  * Sensor API - Describes how to create a new sensor to be added to the moo.
@@ -87,17 +88,5 @@ const struct sensor * getSensorById(uint8_t id, int active);
  */
 const struct sensor ** getSensorIter();
 const struct sensor **getSensorNext(const struct sensor **);
-
-/* PRIVATE */
-#pragma segment="SENSOR_INIT_I" __data16
-#pragma segment="SENSOR_SPACE" __data16
-#define __init_call     _Pragma("location=\"SENSOR_INIT_I\"")
-#define __sensor_space  _Pragma("diag_suppress=Be033") _Pragma("location=\"SENSOR_SPACE\"")
-#define __initcall(x) \
-__init_call __root static const struct sensor * const __initstruct_##x  = &(x); \
-__sensor_space __root static const struct sensor * __space_struct_##x;
-/* END PRIVATE */
-
-
 
 #endif
