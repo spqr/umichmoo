@@ -3,7 +3,7 @@ AS=msp430-elf-as
 OBJ_DUMP=msp430-elf-objdump
 OBJ_COPY=msp430-elf-objcopy
 MSPFLASHER=MSP430Flasher
-CFLAGS=-Wall -g -DMOO_VERSION=MOO1_2_1
+CFLAGS=-Wall -ggdb3 -DMOO_VERSION=MOO1_2_1
 ALL_CFLAGS=-ffixed-R4 -ffixed-R5 -mmcu=msp430f2618 -Igcc/ $(CFLAGS)
 LDFLAGS=
 ALL_LDFLAGS=-Tgcc/msp430f2618.ld -nostartfiles $(LDFLAGS)
