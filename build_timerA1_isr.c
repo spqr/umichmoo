@@ -21,7 +21,7 @@ void timera1_isr_decls()
 ISR(TIMERA1_VECTOR, TimerA1_ISR)   // (6 cycles) to enter interrupt
 {
 
-    asm("MOV 0x0174, R7");  // move TACCR1 to R7(count) register (3 CYCLES)
+    asm("MOV &0x0174, R7");  // move TACCR1 to R7(count) register (3 CYCLES)
     TAR = 0;               // reset timer (4 cycles)
     TACCTL1 &= ~CCIFG;      // must manually clear interrupt flag (4 cycles)
 

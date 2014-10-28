@@ -22,7 +22,7 @@ void port1_isr_decls()
 
 ISR(PORT1_VECTOR, Port1_ISR)   // (5-6 cycles) to enter interrupt
 {
-  asm("MOV 0x0170, R7");  // move TAR to R7(count) register (3 CYCLES)
+  asm("MOV &0x0170, R7");  // move TAR to R7(count) register (3 CYCLES)
   P1IFG = 0x00;       // 4 cycles
   TAR = 0;            // 4 cycles
   LPM4_EXIT;
@@ -38,20 +38,22 @@ ISR(PORT1_VECTOR, Port1_ISR)   // (5-6 cycles) to enter interrupt
   asm("CMP #0040h, R7");            // finding delimeter (12.5us, 2 cycles)
                                     // 43H
   asm("JC  delimiter_Value_Is_wrong\n");
-  asm("CLR 0x0025");
-  asm("BIS #8010h, 0x0164\n");     // (5 cycles)   TACCTL1 |= CM1 + CCIE
-  asm("MOV #0004h, 0x0026\n");       // enable TimerA1    (4 cycles)
+  //asm("CLR 0x0025");
+  P1IE=0;
+  asm("BIS #8010h, &0x0164\n");     // (5 cycles)   TACCTL1 |= CM1 + CCIE
+  asm("MOV #0004h, &0x0026\n");       // enable TimerA1    (4 cycles)
   asm("RETI\n");
 
   asm("delimiter_Value_Is_wrong:\n");
-  asm("BIC #0004h, 0x0024\n");
+  asm("BIC #0004h, &0x0024\n");
   asm("MOV #0000h, R5\n");          // bits = 0  (1 cycles)
   delimiterNotFound = 1;
   asm("RETI");
 
   asm("bit_Is_Zero_In_Port_Int:\n");                 // bits == 0
-  asm("MOV #0000h, 0x0170\n");     // reset timer (4 cycles)
-  asm("BIS #0004h, 0x0024\n");   // 4 cycles  change port interrupt edge to neg
+  //asm("MOV #0000h, 0x0170\n");     // reset timer (4 cycles)
+  TAR = 0;
+  asm("BIS #0004h, &0x0024\n");   // 4 cycles  change port interrupt edge to neg
   asm("INC R5\n");            // 1 cycle
   asm("RETI\n");
 }

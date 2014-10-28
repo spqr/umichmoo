@@ -149,18 +149,18 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("NOP");
     asm("NOP");                   // 1 cycle
 #if USE_2618
-    asm("MOV R14, 0x0172");       // 3 cycle      .. 10
+    asm("MOV R14, &0x0172");       // 3 cycle      .. 10
 #else
-    asm("MOV R14, 0x0172");       // 3 cycle      .. 10
+    asm("MOV R14, &0x0172");       // 3 cycle      .. 10
 #endif
     asm("NOP");
     asm("NOP");
     asm("NOP");
     asm("NOP");                   // 1 cycle
 #if USE_2618
-    asm("MOV R15, 0x0172");       // 3 cycle      .. 18
+    asm("MOV R15, &0x0172");       // 3 cycle      .. 18
 #else
-    asm("MOV R15, 0x0172");       // 3 cycle      .. 18
+    asm("MOV R15, &0x0172");       // 3 cycle      .. 18
 #endif
     asm("NOP");
     asm("NOP");
@@ -197,18 +197,18 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("NOP");
     asm("NOP");             // 1 cycle
 #if USE_2618
-    asm("MOV.B R14, 0x0172");// 3 cycles
+    asm("MOV.B R14, &0x0172");// 3 cycles
 #else
-    asm("MOV.B R14, 0x0172");// 3 cycles
+    asm("MOV.B R14, &0x0172");// 3 cycles
 #endif
     asm("NOP");
     asm("NOP");
     asm("NOP");
     asm("NOP");
 #if USE_2618
-    asm("MOV.B R15, 0x0172");
+    asm("MOV.B R15, &0x0172");
 #else
-    asm("MOV.B R15, 0x0172");
+    asm("MOV.B R15, &0x0172");
 #endif
     asm("NOP");
     asm("NOP");
@@ -245,9 +245,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("bit_is_one:");
 //    asm("NOP");                               // 1 cycle
 #if USE_2618
-    asm("MOV R14, 0x0172");                   // 3 cycles   ..9
+    asm("MOV R14, &0x0172");                   // 3 cycles   ..9
 #else
-    asm("MOV R14, 0x0172");                   // 3 cycles   ..9
+    asm("MOV R14, &0x0172");                   // 3 cycles   ..9
 #endif                // 4 cycles   ..11
 
     asm("DEC R6");                              // 1 cycle  ..10
@@ -256,9 +256,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     // that, update R6 with 16 bits
     //asm("MOV @R4+, R7");
 #if USE_2618
-    asm("MOV R15, 0x0172");                   // 3 cycles   .. 15
+    asm("MOV R15, &0x0172");                   // 3 cycles   .. 15
 #else
-    asm("MOV R15, 0x0172");                   // 3 cycles   .. 15
+    asm("MOV R15, &0x0172");                   // 3 cycles   .. 15
 #endif
 
     asm("MOV R13, R6");                         // 1 cycle   .. 16
@@ -274,9 +274,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 
     asm("seq_zero:");
 #if USE_2618
-    asm("MOV R15, 0x0172");         // 3 cycles       ..3
+    asm("MOV R15, &0x0172");         // 3 cycles       ..3
 #else
-    asm("MOV R15, 0x0172");         // 3 cycles       ..3
+    asm("MOV R15, &0x0172");         // 3 cycles       ..3
 #endif
     asm("NOP");
     asm("NOP");
@@ -300,9 +300,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("JC nextBitIs1");	        // 2 cycles  .. 19
     // bit is 0
 #if USE_2618
-    asm("MOV R14, 0x0172");             // 3 cycles  .. 22
+    asm("MOV R14, &0x0172");             // 3 cycles  .. 22
 #else
-    asm("MOV R14, 0x0172");             // 3 cycles  .. 22
+    asm("MOV R14, &0x0172");             // 3 cycles  .. 22
 #endif
     // Next bit is 0 , it is 00 case
     asm("JMP seq_zero");                // 2 cycles .. 24
@@ -318,9 +318,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("JC nextBitIs1");	            // 2 cycles    ..18
 
 #if USE_2618
-    asm("MOV R14, 0x0172");               // 3 cycles   .. 21
+    asm("MOV R14, &0x0172");               // 3 cycles   .. 21
 #else
-    asm("MOV R14, 0x0172");               // 3 cycles   .. 21
+    asm("MOV R14, &0x0172");               // 3 cycles   .. 21
 #endif
     asm("NOP");                         // 1 cycle   .. 22
     asm("JMP seq_zero");        // 2 cycles    .. 24
@@ -342,9 +342,9 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
 
     asm("bit_Count_Is_Not_16:");       // up to here 14
 #if USE_2618
-    asm("MOV R15, 0x0172");             // 3 cycles   .. 15
+    asm("MOV R15, &0x0172");             // 3 cycles   .. 15
 #else
-    asm("MOV R15, 0x0172");             // 3 cycles   .. 15
+    asm("MOV R15, &0x0172");             // 3 cycles   .. 15
 #endif
 
     asm("NOP");                               // 1 cycle .. 16
@@ -384,17 +384,17 @@ void sendToReader(volatile unsigned char *data, unsigned char numOfBits)
     asm("NOP");       // 5
     asm("NOP");
 #if USE_2618
-    asm("MOV.B R14, 0x0172");// 3 cycles
+    asm("MOV.B R14, &0x0172");// 3 cycles
 #else
-    asm("MOV.B R14, 0x0172");// 3 cycles
+    asm("MOV.B R14, &0x0172");// 3 cycles
 #endif
     asm("NOP");
     asm("NOP");
     asm("NOP");
 #if USE_2618
-    asm("MOV.B R15, 0x0172");
+    asm("MOV.B R15, &0x0172");
 #else
-    asm("MOV.B R15, 0x0172");
+    asm("MOV.B R15, &0x0172");
 #endif
     asm("NOP");
     asm("NOP");
