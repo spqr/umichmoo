@@ -15,7 +15,7 @@
 
 /* Interrupts */
 #ifdef __GNUC__
-	#define ISR(num, func_name) __attribute__((interrupt(num))) void func_name(void)
+	#define ISR(num, func_name) __attribute__((__interrupt__(num))) void func_name(void)
 #elif __IAR_SYSTEMS_ICC__
 	#define ISR(num, func_name) #pragma vector=num \
                                     __interrupt void func_name(void)
