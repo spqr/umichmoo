@@ -12,3 +12,4 @@ TEST_ACCEL/
 moo-prog*
 build
 .dep
+cscope.*
