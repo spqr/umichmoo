@@ -10,7 +10,7 @@ MSPFLASHER=MSP430Flasher
 MSPDEBUG=mspdebug
 CFLAGS=-Wall -DMOO_VERSION=$(MOO_VERSION)
 LDFLAGS=
-SOURCES=digital_accel_sensor.c digital_accel_moo_interface.c flash.c int_temp_sensor.c moo.c \
+SOURCES=digital_accel_sensor.c digital_accel_moo_interface.c flash.c moo.c \
 rfid.c build_send_to_reader.c build_port1_isr.c timerA1_isr.c sensor.c sensor_read.c
 
 ifeq ($(TARGET),debug)
