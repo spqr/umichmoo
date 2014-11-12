@@ -7,8 +7,10 @@
 
 #ifdef __GNUC__
 /* GNU C compiler supported */
+	#define DO_PRAGMA(x) _Pragma (#x)
 #elif __IAR_SYSTEMS_ICC__
 /* IAR compiler supported */
+	#define DO_PRAGMA(x) _Pragma (#x)
 #else
 	#error Unsupported compiler
 #endif
@@ -17,8 +19,8 @@
 #ifdef __GNUC__
 	#define ISR(num, func_name) __attribute__((__interrupt__(num))) void func_name(void)
 #elif __IAR_SYSTEMS_ICC__
-	#define ISR(num, func_name) #pragma vector=num \
-                                    __interrupt void func_name(void)
+	#define ISR(num, func_name) DO_PRAGMA(vector=num) \
+__interrupt void func_name(void)
 #endif
 /* End Interrupts */
 
@@ -26,7 +28,7 @@
 #ifdef __GNUC__
 	#define ALIGN(var_decl,al_num) var_decl __attribute__((aligned(al_num)))
 #elif __IAR_SYSTEMS_ICC__
-	#define ALIGN(var_decl,al_num) _Pragma(data_alignement, al_num) \
+	#define ALIGN(var_decl,al_num) DO_PRAGMA(data_alignment=al_num) \
 		var_decl
 #endif
 
@@ -36,7 +38,7 @@
 #ifdef __GNUC__
 	#define LOCK_REG(reg_num, var_decl) register var_decl asm(EXPAND_AND_QUOTE(R ## reg_num))
 #elif __IAR_SYSTEMS_ICC__
-	#define LOCK_REG(reg_num, var_decl) __regvar __no_init var_decl @ ## num ##
+	#define LOCK_REG(reg_num, var_decl) __regvar __no_init var_decl @ ## reg_num
 #endif
 /* End Lock Register */
 
@@ -56,10 +58,9 @@
 
 /* Pragma Message */
 #ifdef __GNUC__
-	#define DO_PRAGMA(x) _Pragma (#x)
 	#define MESSAGE(msg) DO_PRAGMA(message (msg))
 #elif __IAR_SYSTEMS_ICC__
-	#define MESSAGE(msg) #pragma message (msg)
+	#define MESSAGE(msg) DO_PRAGMA(message (msg))
 #endif
 /* End Pragma Message */
 
@@ -95,10 +96,10 @@
 	#include <intrinsics.h>
 	#define __moo_segment_begin(x) (const struct sensor **) __segment_begin(x)
 	#define __moo_segment_end(x) (const struct sensor **) __segment_end(x)
-	#define __sensor_init_begin  moo_segment_begin("SENSOR_INIT_I")
-	#define __sensor_init_end    moo_segment_end("SENSOR_INIT_I")
-	#define __sensor_space_begin  moo_segment_begin("SENSOR_SPACE")
-	#define __sensor_space_end  moo_segment_end("SENSOR_SPACE")
+	#define __sensor_init_begin  __moo_segment_begin("SENSOR_INIT_I")
+	#define __sensor_init_end    __moo_segment_end("SENSOR_INIT_I")
+	#define __sensor_space_begin  __moo_segment_begin("SENSOR_SPACE")
+	#define __sensor_space_end  __moo_segment_end("SENSOR_SPACE")
 #endif
 /* End Register Sensors Segments */
 

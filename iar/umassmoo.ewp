@@ -4307,171 +4307,139 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\board.h</name>
+    <name>$PROJ_DIR$\..\board.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\board_1_1.h</name>
+    <name>$PROJ_DIR$\..\board_1_1.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\board_1_2.h</name>
+    <name>$PROJ_DIR$\..\board_1_2.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\board_1_2_1.h</name>
+    <name>$PROJ_DIR$\..\board_1_2_1.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\digital_accel_moo_interface.c</name>
+    <name>$PROJ_DIR$\..\compiler.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\digital_accel_moo_interface.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\digital_accel_moo_interface.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\digital_accel_sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\digital_accel_sensor.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\digital_accel_test.c</name>
     <excluded>
-      <configuration>Moo1.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\digital_accel_moo_interface.h</name>
-    <excluded>
-      <configuration>Moo1.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\digital_accel_sensor.c</name>
-    <excluded>
-      <configuration>Moo1.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\digital_accel_sensor.h</name>
-    <excluded>
-      <configuration>Moo1.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\digital_accel_test.c</name>
-    <excluded>
-      <configuration>Moo1.1-Debug</configuration>
-      <configuration>Moo1.2-Debug</configuration>
       <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\int_temp_sensor.c</name>
+    <name>$PROJ_DIR$\..\flash.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\flash.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\int_temp_sensor.c</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
-      <configuration>Moo1.1-Debug</configuration>
-      <configuration>Moo1.2-Debug</configuration>
       <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\int_temp_sensor.h</name>
+    <name>$PROJ_DIR$\..\int_temp_sensor.h</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\moo.c</name>
-    <excluded>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\moo.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\mymoo.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\port1_isr.asm</name>
-    <excluded>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\quick_accel_sensor.c</name>
-    <excluded>
-      <configuration>TEST_ACCEL</configuration>
-      <configuration>Moo1.2-Debug</configuration>
       <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\quick_accel_sensor.h</name>
+    <name>$PROJ_DIR$\..\moo.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\moo.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\mymoo.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\port1_isr.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\quick_accel_sensor.c</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
-      <configuration>Moo1.2-Debug</configuration>
       <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\rfid.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\rfid.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\send_to_reader.asm</name>
+    <name>$PROJ_DIR$\..\quick_accel_sensor.h</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\sensor.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\sensor.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\sensor_api.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\sensor_read.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\sessions.c</name>
-    <excluded>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\sessions.h</name>
-    <excluded>
-      <configuration>TEST_ACCEL</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\simple_sensor.c</name>
-    <excluded>
-      <configuration>Moo1.1-Debug</configuration>
-      <configuration>Moo1.2-Debug</configuration>
       <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\simple_sensor.h</name>
+    <name>$PROJ_DIR$\..\rfid.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\states.h</name>
+    <name>$PROJ_DIR$\..\rfid.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\temp_sensor.c</name>
+    <name>$PROJ_DIR$\..\send_to_reader.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\sensor.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\sensor.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\sensor_api.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\sensor_read.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\sessions.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\sessions.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\simple_sensor.c</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
-      <configuration>Moo1.1-Debug</configuration>
-      <configuration>Moo1.2-Debug</configuration>
       <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\temp_sensor.h</name>
+    <name>$PROJ_DIR$\..\simple_sensor.h</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
+      <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\timerA1_isr.asm</name>
+    <name>$PROJ_DIR$\..\states.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\temp_sensor.c</name>
     <excluded>
-      <configuration>TEST_ACCEL</configuration>
+      <configuration>Moo1.2.1-Debug</configuration>
     </excluded>
   </file>
   <file>
-    <name>$PROJ_DIR$\version.h</name>
+    <name>$PROJ_DIR$\..\temp_sensor.h</name>
+    <excluded>
+      <configuration>Moo1.2.1-Debug</configuration>
+    </excluded>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\timerA1_isr.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\version.h</name>
   </file>
 </project>
 
