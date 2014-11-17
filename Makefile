@@ -10,26 +10,24 @@ OUTDIR=$(OUTDIR_BASE)/$(TARGET_FULL)
 DEPDIR_BASE=.dep
 DEPDIR=$(DEPDIR_BASE)/$(TARGET_FULL)
 
-include $(addprefix sensors/$(SENSORS)/, $(addsuffix .mk, $(SENSORS)))
-SENSOR_SOURCES := $(foreach sensor,$(SENSORS), sensors/$(sensor)/$(SOURCES_$(sensor)))
-SENSOR_OBJECTS := $(foreach sensor,$(SENSORS), $(OUTDIR)/sensors/$(sensor)/$(SOURCES_$(sensor):.c=.o))
+define include_sensors
+SOURCES_SAVE := $$(SOURCES)
+SOURCES :=
+d := sensors/$(strip $(1))
+include $(addsuffix /Rules.mk, $$(d))
+SENSOR_SOURCES += $$(foreach file, $$(SOURCES), $$(d)/$$(file))
+SOURCES := $$(SOURCES_SAVE)
+endef 
+
+### Include sensor code ###
+SENSOR_SOURCES :=
+$(foreach sensor, $(SENSORS), $(eval $(call include_sensors, $(sensor))))
+SENSOR_OBJECTS := $(SENSOR_SOURCES:%.c=$(OUTDIR)/%.o)
+### End sensor code ###
 
 OBJECTS=$(addprefix $(OUTDIR)/, $(notdir $(SOURCES:.c=.o)))
 EXECUTABLE=moo-prog
 HEX=$(EXECUTABLE).hex
-
-
-define depend_on_dir
-$(1): | $(dir $(1))
-	ifndef $(dir $(1))_DIRECTORY_RULE_IS_DEFINED
-		$(dir $(1)):
-    			mkdir -p $$@
-
-		$(dir $(1))_DIRECTORY_RULE_IS_DEFINED := 1
-	endif
-endef
-
-$(foreach file,$($(SENSOR_OBJECTS) $(OBJECTS)),$(eval $(call depend_on_dir,$(file))))
 
 all: $(OUTDIR)/$(HEX)
 
@@ -40,22 +38,18 @@ $(OUTDIR)/$(EXECUTABLE).elf: $(OBJECTS) $(SENSOR_OBJECTS)
 	$(CC) $(ALL_LDFLAGS) $(ALL_CFLAGS) $(OBJECTS) -o $@
 
 
-$(SENSOR_OBJECTS) $(OBJECTS): $(OUTDIR)/%.o : %.c | $(OUTDIR) $(DEPDIR)
+$(SENSOR_OBJECTS) $(OBJECTS): $(OUTDIR)/%.o : %.c
+	@$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $(DEPDIR)/$*.d)
 	$(CC) -c -MD -MP -MF '$(DEPDIR)/$*.d' $(ALL_CFLAGS) $< -o $@
 
 clean:
-	-$(RM) $(OUTDIR)/*
-	-$(RM) $(DEPDIR)/*
+	-$(RM) -r $(OUTDIR)/*
+	-$(RM) -r $(DEPDIR)/*
 
 nuke:
 	-$(RM) -r $(OUTDIR_BASE)/*
 	-$(RM) -r $(DEPDIR_BASE)/*
-
-$(OUTDIR):
-	$(MKDIR) $(OUTDIR)
-
-$(DEPDIR):
-	$(MKDIR) $(DEPDIR)
 
 -include $(addprefix $(DEPDIR)/, $(notdir $(OBJECTS:.o=.d)))
 
