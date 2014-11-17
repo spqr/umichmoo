@@ -1457,7 +1457,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state></state>
+          <state>C:\Users\mark\moo\moo_mark</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2533,7 +2533,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state></state>
+          <state>C:\Users\mark\moo\moo_mark</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -3609,7 +3609,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state></state>
+          <state>C:\Users\mark\moo\moo_mark</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -4306,6 +4306,89 @@
       <data/>
     </settings>
   </configuration>
+  <group>
+    <name>sensors</name>
+    <group>
+      <name>digital_accel</name>
+      <excluded>
+        <configuration>Moo1.1-Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\digital_accel\digital_accel_moo_interface.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\digital_accel\digital_accel_moo_interface.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\digital_accel\digital_accel_sensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\digital_accel\digital_accel_sensor.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\digital_accel\digital_accel_test.c</name>
+        <excluded>
+          <configuration>Moo1.2-Debug</configuration>
+          <configuration>Moo1.2.1-Debug</configuration>
+        </excluded>
+      </file>
+    </group>
+    <group>
+      <name>int_temp</name>
+      <excluded>
+        <configuration>Moo1.1-Debug</configuration>
+        <configuration>Moo1.2-Debug</configuration>
+        <configuration>Moo1.2.1-Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\int_temp\int_temp_sensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\int_temp\int_temp_sensor.h</name>
+      </file>
+    </group>
+    <group>
+      <name>quick_accel</name>
+      <excluded>
+        <configuration>Moo1.2-Debug</configuration>
+        <configuration>Moo1.2.1-Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\quick_accel\quick_accel_sensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\quick_accel\quick_accel_sensor.h</name>
+      </file>
+    </group>
+    <group>
+      <name>simple</name>
+      <excluded>
+        <configuration>Moo1.1-Debug</configuration>
+        <configuration>Moo1.2-Debug</configuration>
+        <configuration>Moo1.2.1-Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\simple\simple_sensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\simple\simple_sensor.h</name>
+      </file>
+    </group>
+    <group>
+      <name>temp</name>
+      <excluded>
+        <configuration>Moo1.1-Debug</configuration>
+        <configuration>Moo1.2-Debug</configuration>
+        <configuration>Moo1.2.1-Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\temp\temp_sensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\temp\temp_sensor.h</name>
+      </file>
+    </group>
+  </group>
   <file>
     <name>$PROJ_DIR$\..\board.h</name>
   </file>
@@ -4322,40 +4405,10 @@
     <name>$PROJ_DIR$\..\compiler.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\digital_accel_moo_interface.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\digital_accel_moo_interface.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\digital_accel_sensor.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\digital_accel_sensor.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\digital_accel_test.c</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
     <name>$PROJ_DIR$\..\flash.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\..\flash.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\int_temp_sensor.c</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\int_temp_sensor.h</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\..\moo.c</name>
@@ -4368,18 +4421,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\..\port1_isr.asm</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\quick_accel_sensor.c</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\quick_accel_sensor.h</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\..\rfid.c</name>
@@ -4409,31 +4450,7 @@
     <name>$PROJ_DIR$\..\sessions.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\simple_sensor.c</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\simple_sensor.h</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
     <name>$PROJ_DIR$\..\states.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\temp_sensor.c</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\..\temp_sensor.h</name>
-    <excluded>
-      <configuration>Moo1.2.1-Debug</configuration>
-    </excluded>
   </file>
   <file>
     <name>$PROJ_DIR$\..\timerA1_isr.asm</name>
