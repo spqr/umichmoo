@@ -4312,6 +4312,7 @@
       <name>digital_accel</name>
       <excluded>
         <configuration>Moo1.1-Debug</configuration>
+        <configuration>Moo1.2.1-Debug</configuration>
       </excluded>
       <file>
         <name>$PROJ_DIR$\..\sensors\digital_accel\digital_accel_moo_interface.c</name>
@@ -4379,7 +4380,6 @@
       <excluded>
         <configuration>Moo1.1-Debug</configuration>
         <configuration>Moo1.2-Debug</configuration>
-        <configuration>Moo1.2.1-Debug</configuration>
       </excluded>
       <file>
         <name>$PROJ_DIR$\..\sensors\spi\spi_sensor.c</name>

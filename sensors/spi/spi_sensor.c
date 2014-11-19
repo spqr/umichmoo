@@ -6,15 +6,15 @@
 #include "moo.h"
 #include <inttypes.h>
 
-#define SLAVE_READY_PIN BIT2
+#define SLAVE_READY_PIN BIT5
 #define SLAVE_SELECT_PIN BIT7
 
 #define SET(var, bit) (var |= bit)
 #define CLR(var, bit) (var &= ~bit)
 #define BIT(var, bit) (var & bit)
 
-static void spi_sensor_ready()     {CLR(P2OUT, SLAVE_READY_PIN);}
-static void spi_sensor_not_ready() {SET(P2OUT, SLAVE_READY_PIN);}
+static void spi_sensor_ready()     {CLR(P1OUT, SLAVE_READY_PIN);}
+static void spi_sensor_not_ready() {SET(P1OUT, SLAVE_READY_PIN);}
 static uint8_t spi_sensor_ss()     {return !(BIT(P1IN, SLAVE_SELECT_PIN));}
 static uint8_t spi_sensor_data_ready() {return BIT(IFG2,UCB0RXIFG);}
 static uint8_t spi_sensor_data()   {return UCB0RXBUF;}
@@ -63,6 +63,7 @@ static void read_spi_sensor(unsigned char volatile * target, unsigned long len) 
 		if (spi_sensor_data_ready()) {
 			target[0] = count++ & 0xFF;
 			target[1] = spi_sensor_data();
+			break;
 		}
 		loop_count++;
 	}
@@ -84,9 +85,9 @@ static void spi_sensor_setup_pins() {
 	/* End configure UCB0 Pins */
 	
 	/* Configure Slave select/slave ready pin */
-	P2OUT |= SLAVE_READY_PIN;    /* And we are currently outputing 0 */
-	P2DIR |= SLAVE_READY_PIN;    /* Make sure this is an output */
-	P2SEL &= ~(SLAVE_READY_PIN); /* SPI slave ready */
+	P1OUT |= SLAVE_READY_PIN;    /* And we are currently outputing 0 */
+	P1DIR |= SLAVE_READY_PIN;    /* Make sure this is an output */
+	P1SEL &= ~(SLAVE_READY_PIN); /* SPI slave ready */
 	
 	P1DIR &= ~(SLAVE_SELECT_PIN); /* SPI Slave select input */
 	P1SEL &= ~(SLAVE_SELECT_PIN); /* SPI Slave select */
