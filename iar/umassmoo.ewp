@@ -4375,6 +4375,20 @@
       </file>
     </group>
     <group>
+      <name>spi_sensor</name>
+      <excluded>
+        <configuration>Moo1.1-Debug</configuration>
+        <configuration>Moo1.2-Debug</configuration>
+        <configuration>Moo1.2.1-Debug</configuration>
+      </excluded>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\spi\spi_sensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\sensors\spi\spi_sensor.h</name>
+      </file>
+    </group>
+    <group>
       <name>temp</name>
       <excluded>
         <configuration>Moo1.1-Debug</configuration>
