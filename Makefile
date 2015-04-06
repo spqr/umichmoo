@@ -32,16 +32,19 @@ HEX=$(EXECUTABLE).hex
 all: $(OUTDIR)/$(HEX)
 
 $(OUTDIR)/$(HEX): $(OUTDIR)/$(EXECUTABLE).elf
-	$(OBJCOPY) -O ihex $< $@
+	@$(OBJCOPY) -O ihex $< $@
+	@printf "%-30s [HEX]\n" "$(notdir $@)"
 
 $(OUTDIR)/$(EXECUTABLE).elf: $(OBJECTS) $(SENSOR_OBJECTS)
-	$(CC) $(ALL_LDFLAGS) $(ALL_CFLAGS) $(OBJECTS) -o $@
+	@$(CC) $(ALL_LDFLAGS) $(ALL_CFLAGS) $(OBJECTS) -o $@
+	@printf "%-30s [LD]\n" "$(notdir $@)"
 
 
 $(SENSOR_OBJECTS) $(OBJECTS): $(OUTDIR)/%.o : %.c
 	@$(MKDIR) $(dir $@)
 	@$(MKDIR) $(dir $(DEPDIR)/$*.d)
-	$(CC) -c -MD -MP -MF '$(DEPDIR)/$*.d' $(ALL_CFLAGS) $< -o $@
+	@$(CC) -c -MD -MP -MF '$(DEPDIR)/$*.d' $(ALL_CFLAGS) $< -o $@
+	@printf "%-30s [CC]\n" "$(notdir $@)"
 
 clean:
 	-$(RM) -r $(OUTDIR)/*
