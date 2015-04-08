@@ -1,9 +1,9 @@
 include config.mk
 include build.mk
-SOURCES := flash.c moo.c rfid.c build_send_to_reader.c build_port1_isr.c timerA1_isr.c sensor.c sensor_read.c
 ifeq ($(TARGET),debug)
 	CFLAGS+=-ggdb3
 endif
+SOURCES := flash.c moo.c rfid.c build_send_to_reader.c build_port1_isr.c timerA1_isr.c sensor.c sensor_read.c
 TARGET_FULL=$(TARGET)-$(MOO_VERSION)
 OUTDIR_BASE=build
 OUTDIR=$(OUTDIR_BASE)/$(TARGET_FULL)
