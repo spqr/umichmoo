@@ -8,4 +8,4 @@ MSPDEBUG    := mspdebug
 CFLAGS      := -Wall -DMOO_VERSION=$(MOO_VERSION)
 LDFLAGS     :=
 ALL_CFLAGS  = -I. -std=gnu11 -ffixed-R4 -ffixed-R5 -mmcu=msp430f2618 -Igcc/ $(CFLAGS)
-ALL_LDFLAGS := -Tgcc/msp430f2618.ld $(LDFLAGS)
+ALL_LDFLAGS = -Tgcc/msp430f2618.ld -Wl,-Map=$(OUTDIR)/output.map $(LDFLAGS)

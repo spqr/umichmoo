@@ -36,7 +36,7 @@ $(OUTDIR)/$(HEX): $(OUTDIR)/$(EXECUTABLE).elf
 	@printf "%-30s [HEX]\n" "$(notdir $@)"
 
 $(OUTDIR)/$(EXECUTABLE).elf: $(OBJECTS) $(SENSOR_OBJECTS)
-	@$(CC) $(ALL_LDFLAGS) $(ALL_CFLAGS) $(OBJECTS) -o $@
+	@$(CC) $(ALL_LDFLAGS) $(ALL_CFLAGS) $(OBJECTS) $(SENSOR_OBJECTS) -o $@
 	@printf "%-30s [LD]\n" "$(notdir $@)"
 
 
